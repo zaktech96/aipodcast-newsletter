@@ -20,7 +20,7 @@ async function main() {
   try {
     console.log(chalk.cyan("\n\u{1F680} Welcome to Titan CLI!\n"));
     console.log(chalk.yellow("Pre-requisites check:"));
-    console.log(chalk.yellow("1. Docker/Orbstack must be running"));
+    console.log(chalk.yellow("1. Docker/Orbstack must be running (Only if you decide to run the DB locally)"));
     console.log(chalk.yellow("2. Supabase CLI must be installed"));
     console.log(chalk.yellow("3. SSH key must be set up with GitHub"));
     console.log(chalk.yellow("4. The following API keys ready:"));
