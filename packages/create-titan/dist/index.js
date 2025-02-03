@@ -207,9 +207,9 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
 
 `;
-        envContent += `DATABASE_URL="${dbConfig.databaseUrl}"
+        envContent += `DATABASE_URL=${dbConfig.databaseUrl}
 `;
-        envContent += `DIRECT_URL="${dbConfig.directUrl}"
+        envContent += `DIRECT_URL=${dbConfig.directUrl}
 
 `;
         envContent += `FRONTEND_URL=http://localhost:3000
@@ -219,7 +219,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         spinner.start("Setting up database tables and generating types...");
         try {
           await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
-          await execa("pnpm", ["dlx", "prisma", "db", "push"], { cwd: projectDir });
+          await execa("pnpm", ["dlx", "prisma", "migrate", "deploy"], { cwd: projectDir });
           const { stdout: stdout2 } = await execa("supabase", ["gen", "types", "typescript", "--local"], {
             cwd: projectDir,
             stdio: "pipe"
@@ -233,7 +233,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
           console.log(chalk.yellow("\nYou can try running these commands manually:"));
           console.log(chalk.cyan("  cd " + projectDir));
           console.log(chalk.cyan("  pnpm prisma generate"));
-          console.log(chalk.cyan("  pnpm prisma db push"));
+          console.log(chalk.cyan("  pnpm prisma migrate deploy"));
           console.log(chalk.cyan("  supabase gen types typescript --local > types/supabase.ts"));
           process.exit(1);
         }
@@ -298,9 +298,9 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
 
 `;
-      envContent += `DATABASE_URL="${dbConfig.databaseUrl}"
+      envContent += `DATABASE_URL=${dbConfig.databaseUrl}
 `;
-      envContent += `DIRECT_URL="${dbConfig.directUrl}"
+      envContent += `DIRECT_URL=${dbConfig.directUrl}
 
 `;
       envContent += `FRONTEND_URL=http://localhost:3000
@@ -310,7 +310,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       spinner.start("Setting up database tables and generating types...");
       try {
         await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
-        await execa("pnpm", ["dlx", "prisma", "db", "push"], { cwd: projectDir });
+        await execa("pnpm", ["dlx", "prisma", "migrate", "deploy"], { cwd: projectDir });
         const { stdout } = await execa("supabase", [
           "gen",
           "types",

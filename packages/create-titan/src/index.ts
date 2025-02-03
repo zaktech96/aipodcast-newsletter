@@ -232,8 +232,8 @@ async function main() {
         envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}\n`;
         envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}\n`;
         envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}\n\n`;
-        envContent += `DATABASE_URL="${dbConfig.databaseUrl}"\n`;
-        envContent += `DIRECT_URL="${dbConfig.directUrl}"\n\n`;
+        envContent += `DATABASE_URL=${dbConfig.databaseUrl}\n`;
+        envContent += `DIRECT_URL=${dbConfig.directUrl}\n\n`;
         envContent += `FRONTEND_URL=http://localhost:3000\n\n`;
         
         await fs.writeFile(path.join(projectDir, '.env'), envContent);
@@ -241,7 +241,7 @@ async function main() {
         spinner.start('Setting up database tables and generating types...');
         try {
           await execa('pnpm', ['dlx', 'prisma', 'generate'], { cwd: projectDir });
-          await execa('pnpm', ['dlx', 'prisma', 'db', 'push'], { cwd: projectDir });
+          await execa('pnpm', ['dlx', 'prisma', 'migrate', 'deploy'], { cwd: projectDir });
           
           const { stdout: stdout2 } = await execa('supabase', ['gen', 'types', 'typescript', '--local'], { 
             cwd: projectDir,
@@ -257,7 +257,7 @@ async function main() {
           console.log(chalk.yellow('\nYou can try running these commands manually:'));
           console.log(chalk.cyan('  cd ' + projectDir));
           console.log(chalk.cyan('  pnpm prisma generate'));
-          console.log(chalk.cyan('  pnpm prisma db push'));
+          console.log(chalk.cyan('  pnpm prisma migrate deploy'));
           console.log(chalk.cyan('  supabase gen types typescript --local > types/supabase.ts'));
           process.exit(1);
         }
@@ -323,8 +323,8 @@ async function main() {
       envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}\n`;
       envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}\n`;
       envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}\n\n`;
-      envContent += `DATABASE_URL="${dbConfig.databaseUrl}"\n`;
-      envContent += `DIRECT_URL="${dbConfig.directUrl}"\n\n`;
+      envContent += `DATABASE_URL=${dbConfig.databaseUrl}\n`;
+      envContent += `DIRECT_URL=${dbConfig.directUrl}\n\n`;
       envContent += `FRONTEND_URL=http://localhost:3000\n\n`;
       
       await fs.writeFile(path.join(projectDir, '.env'), envContent);
@@ -332,7 +332,7 @@ async function main() {
       spinner.start('Setting up database tables and generating types...');
       try {
         await execa('pnpm', ['dlx', 'prisma', 'generate'], { cwd: projectDir });
-        await execa('pnpm', ['dlx', 'prisma', 'db', 'push'], { cwd: projectDir });
+        await execa('pnpm', ['dlx', 'prisma', 'migrate', 'deploy'], { cwd: projectDir });
         
         const { stdout } = await execa('supabase', ['gen', 'types', 'typescript', '--project-ref', 
           dbConfig.supabaseUrl.split('.')[0].split('//')[1]], { 
