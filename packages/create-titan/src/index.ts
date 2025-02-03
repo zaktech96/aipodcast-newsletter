@@ -190,7 +190,7 @@ async function main() {
 
     if (dbChoice === 'local') {
       console.log(chalk.yellow('\nPre-requisites check for local database:'));
-      console.log(chalk.yellow('1. Docker/Orbstack must be running'));
+      console.log(chalk.yellow('1. Docker/Orbstack must be running (Only if you decide to run the DB locally)'));
       console.log(chalk.yellow('2. Supabase CLI must be installed\n'));
 
       const { proceed } = await prompts({
