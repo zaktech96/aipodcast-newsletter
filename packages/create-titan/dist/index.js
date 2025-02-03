@@ -156,23 +156,144 @@ Error: Directory ${projectName} already exists. Please choose a different name o
 `;
     spinner.succeed("Authentication configured");
     spinner.stop();
-    spinner.start("Starting local Supabase instance...");
-    try {
-      spinner.start("Starting Supabase (this might take a few minutes on first run)...");
-      const { stdout } = await execa("supabase", ["start"], { cwd: projectDir });
-      spinner.succeed("Supabase started");
-      const serviceKeyMatch = stdout.match(/service_role key: (.*)/);
-      if (!serviceKeyMatch) {
-        throw new Error("Could not find service_role key in Supabase output");
+    const { dbChoice } = await prompts({
+      type: "select",
+      name: "dbChoice",
+      message: "Choose your database setup:",
+      choices: [
+        { title: "Local Database (requires Docker & Supabase CLI)", value: "local" },
+        { title: "Production Database (existing Supabase project)", value: "production" }
+      ],
+      initial: 0
+    });
+    if (dbChoice === "local") {
+      console.log(chalk.yellow("\nPre-requisites check for local database:"));
+      console.log(chalk.yellow("1. Docker/Orbstack must be running"));
+      console.log(chalk.yellow("2. Supabase CLI must be installed\n"));
+      const { proceed: proceed2 } = await prompts({
+        type: "confirm",
+        name: "proceed",
+        message: "Do you have Docker running and Supabase CLI installed?",
+        initial: false
+      });
+      if (!proceed2) {
+        console.log(chalk.cyan("\nPlease set up the pre-requisites and try again."));
+        console.log(chalk.cyan("For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites"));
+        process.exit(0);
       }
-      const serviceKey = serviceKeyMatch[1].trim();
-      const dbConfig = {
-        supabaseUrl: "http://127.0.0.1:54321",
-        supabaseServiceKey: serviceKey,
-        databaseUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres",
-        directUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-      };
+      spinner.start("Starting local Supabase instance...");
+      try {
+        spinner.start("Starting Supabase (this might take a few minutes on first run)...");
+        const { stdout } = await execa("supabase", ["start"], { cwd: projectDir });
+        spinner.succeed("Supabase started");
+        const serviceKeyMatch = stdout.match(/service_role key: (.*)/);
+        const anonKeyMatch = stdout.match(/anon key: (.*)/);
+        if (!serviceKeyMatch || !anonKeyMatch) {
+          throw new Error("Could not find required keys in Supabase output");
+        }
+        const serviceKey = serviceKeyMatch[1].trim();
+        const anonKey = anonKeyMatch[1].trim();
+        const dbConfig = {
+          supabaseUrl: "http://127.0.0.1:54321",
+          supabaseAnonKey: anonKey,
+          supabaseServiceKey: serviceKey,
+          databaseUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres",
+          directUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+        };
+        envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}
+`;
+        envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}
+`;
+        envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
+
+`;
+        envContent += `DATABASE_URL="${dbConfig.databaseUrl}"
+`;
+        envContent += `DIRECT_URL="${dbConfig.directUrl}"
+
+`;
+        envContent += `FRONTEND_URL=http://localhost:3000
+
+`;
+        await fs.writeFile(path.join(projectDir, ".env"), envContent);
+        spinner.start("Setting up database tables and generating types...");
+        try {
+          await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
+          await execa("pnpm", ["dlx", "prisma", "db", "push"], { cwd: projectDir });
+          const { stdout: stdout2 } = await execa("supabase", ["gen", "types", "typescript", "--local"], {
+            cwd: projectDir,
+            stdio: "pipe"
+          });
+          await fs.writeFile(path.join(projectDir, "types", "supabase.ts"), stdout2);
+          spinner.succeed("Database tables created and types generated successfully");
+        } catch (error) {
+          spinner.fail("Failed to setup database");
+          console.error(chalk.red("Error:"), error);
+          console.log(chalk.yellow("\nMake sure you have Docker running and try again."));
+          console.log(chalk.yellow("\nYou can try running these commands manually:"));
+          console.log(chalk.cyan("  cd " + projectDir));
+          console.log(chalk.cyan("  pnpm prisma generate"));
+          console.log(chalk.cyan("  pnpm prisma db push"));
+          console.log(chalk.cyan("  supabase gen types typescript --local > types/supabase.ts"));
+          process.exit(1);
+        }
+        console.log(chalk.green("\nLocal Supabase is running! \u{1F680}"));
+        console.log(chalk.cyan("Access Supabase Studio at: http://127.0.0.1:54323"));
+      } catch (error) {
+        spinner.fail("Failed to setup local Supabase");
+        console.error(chalk.red("\nError: Docker is not running."));
+        console.log(chalk.yellow("\nPlease:"));
+        console.log(chalk.cyan("1. Install Docker/Orbstack if not installed:"));
+        console.log(chalk.cyan("   - Mac: https://docs.docker.com/desktop/install/mac-install/"));
+        console.log(chalk.cyan("   - Windows: https://docs.docker.com/desktop/install/windows-install/"));
+        console.log(chalk.cyan("2. Start Docker/Orbstack"));
+        console.log(chalk.cyan("3. Wait a few seconds for Docker to be ready"));
+        console.log(chalk.cyan("4. Run this command again\n"));
+        process.exit(1);
+      }
+    } else {
+      spinner.stop();
+      const dbConfig = await prompts([
+        {
+          type: "text",
+          name: "supabaseUrl",
+          message: "Enter your Supabase Project URL:",
+          validate: (value) => value.startsWith("https://") ? true : "URL must start with https://"
+        },
+        {
+          type: "password",
+          name: "supabaseAnonKey",
+          message: "Enter your Supabase Anon Key:"
+        },
+        {
+          type: "password",
+          name: "supabaseServiceKey",
+          message: "Enter your Supabase Service Role Key:"
+        },
+        {
+          type: "text",
+          name: "databaseUrl",
+          message: "Enter your Database URL (with pgbouncer):",
+          validate: (value) => value.includes("?pgbouncer=true") ? true : "URL must include ?pgbouncer=true"
+        },
+        {
+          type: "text",
+          name: "directUrl",
+          message: "Enter your Direct URL (without pgbouncer):"
+        }
+      ], {
+        onCancel: () => {
+          console.log("\nSetup cancelled");
+          process.exit(1);
+        }
+      });
+      if (!dbConfig.supabaseUrl || !dbConfig.supabaseAnonKey || !dbConfig.supabaseServiceKey || !dbConfig.databaseUrl || !dbConfig.directUrl) {
+        console.log(chalk.red("All database configuration values are required"));
+        process.exit(1);
+      }
       envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}
+`;
+      envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}
 `;
       envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
 
@@ -190,36 +311,24 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       try {
         await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
         await execa("pnpm", ["dlx", "prisma", "db", "push"], { cwd: projectDir });
-        const { stdout: stdout2 } = await execa("supabase", ["gen", "types", "typescript", "--local"], {
+        const { stdout } = await execa("supabase", [
+          "gen",
+          "types",
+          "typescript",
+          "--project-ref",
+          dbConfig.supabaseUrl.split(".")[0].split("//")[1]
+        ], {
           cwd: projectDir,
           stdio: "pipe"
         });
-        await fs.writeFile(path.join(projectDir, "types", "supabase.ts"), stdout2);
+        await fs.writeFile(path.join(projectDir, "types", "supabase.ts"), stdout);
         spinner.succeed("Database tables created and types generated successfully");
       } catch (error) {
         spinner.fail("Failed to setup database");
         console.error(chalk.red("Error:"), error);
-        console.log(chalk.yellow("\nMake sure you have Docker running and try again."));
-        console.log(chalk.yellow("\nYou can try running these commands manually:"));
-        console.log(chalk.cyan("  cd " + projectDir));
-        console.log(chalk.cyan("  pnpm prisma generate"));
-        console.log(chalk.cyan("  pnpm prisma db push"));
-        console.log(chalk.cyan("  supabase gen types typescript --local > types/supabase.ts"));
+        console.log(chalk.yellow("\nPlease verify your database credentials and try again."));
         process.exit(1);
       }
-      console.log(chalk.green("\nLocal Supabase is running! \u{1F680}"));
-      console.log(chalk.cyan("Access Supabase Studio at: http://127.0.0.1:54323"));
-    } catch (error) {
-      spinner.fail("Failed to setup local Supabase");
-      console.error(chalk.red("\nError: Docker is not running."));
-      console.log(chalk.yellow("\nPlease:"));
-      console.log(chalk.cyan("1. Install Docker/Orbstack if not installed:"));
-      console.log(chalk.cyan("   - Mac: https://docs.docker.com/desktop/install/mac-install/"));
-      console.log(chalk.cyan("   - Windows: https://docs.docker.com/desktop/install/windows-install/"));
-      console.log(chalk.cyan("2. Start Docker/Orbstack"));
-      console.log(chalk.cyan("3. Wait a few seconds for Docker to be ready"));
-      console.log(chalk.cyan("4. Run this command again\n"));
-      process.exit(1);
     }
     spinner.stop();
     const paymentConfig = await prompts([
