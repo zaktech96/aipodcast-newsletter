@@ -310,12 +310,13 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       spinner.start("Setting up database tables and generating types...");
       try {
         await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
+        await execa("pnpm", ["dlx", "prisma", "migrate", "dev", "--name", "initial_migration", "--create-only"], { cwd: projectDir });
         await execa("pnpm", ["dlx", "prisma", "migrate", "deploy"], { cwd: projectDir });
         const { stdout } = await execa("supabase", [
           "gen",
           "types",
           "typescript",
-          "--project-ref",
+          "--project-id",
           dbConfig.supabaseUrl.split(".")[0].split("//")[1]
         ], {
           cwd: projectDir,

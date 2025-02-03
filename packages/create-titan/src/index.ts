@@ -332,9 +332,12 @@ async function main() {
       spinner.start('Setting up database tables and generating types...');
       try {
         await execa('pnpm', ['dlx', 'prisma', 'generate'], { cwd: projectDir });
+        // Create initial migration
+        await execa('pnpm', ['dlx', 'prisma', 'migrate', 'dev', '--name', 'initial_migration', '--create-only'], { cwd: projectDir });
+        // Deploy the migration
         await execa('pnpm', ['dlx', 'prisma', 'migrate', 'deploy'], { cwd: projectDir });
         
-        const { stdout } = await execa('supabase', ['gen', 'types', 'typescript', '--project-ref', 
+        const { stdout } = await execa('supabase', ['gen', 'types', 'typescript', '--project-id', 
           dbConfig.supabaseUrl.split('.')[0].split('//')[1]], { 
           cwd: projectDir,
           stdio: 'pipe' 
