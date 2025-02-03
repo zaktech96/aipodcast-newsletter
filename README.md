@@ -16,7 +16,26 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [Vercel](https://vercel.com/) - Deployments
 
 > [!NOTE]
-> Video walkthrough coming soon...
+> - Video walkthrough coming soon...
+> - Database interactions are handled through our database module (`lib/supabase`):
+>   - Server-side: Use `createServerActionClient()` which uses `SUPABASE_SERVICE_ROLE_KEY`
+>   - Client-side: Use `createClient()` which uses `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## Database Module Usage
+
+```typescript
+// Server-side (in server actions, API routes)
+import { createServerActionClient } from '@/lib/supabase'
+
+const supabase = await createServerActionClient()
+const { data, error } = await supabase.from('table').select()
+
+// Client-side (in React components)
+import { createClient } from '@/lib/supabase'
+
+const supabase = createClient()
+const { data, error } = await supabase.from('table').select()
+```
 
 ## 1. Prerequisites
 
@@ -157,7 +176,11 @@ The following guides will help you customise the entire application UI to your l
 
 Use Cursor to guide you efficiently through the process, add new features, fix bugs etc. See [Efficency](https://blueprint.codeandcreed.tech/product-development/efficiency)
 
-## 5. Deploying the App to Production
+## 5. Recommendations
+
+> - When adding client-side database interactions, make sure to use `NEXT_PUBLIC_SUPABASE_ANON_KEY` instead of `SUPABASE_SERVICE_ROLE_KEY`. The service role key should only be used in server-side components.
+
+## 6. Deploying the App to Production
 
 1. Create a new repository on Github
 2. Push all your changes to the new repository
@@ -166,7 +189,7 @@ Use Cursor to guide you efficiently through the process, add new features, fix b
      - Create a new project
      - Note: When creating your database password, avoid special characters like '#' and '&' as they cause URL encoding issues
      - Copy your database password and keep it safe (ideally in a password manager)
-     - Copy your `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` from the 'Connect' modal on the main Project Dashboard page (click on the 'Connect' button) and then go to the 'App Frameworks' tab
+     - Copy your `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the 'Connect' modal on the main Project Dashboard page (click on the 'Connect' button) and then go to the 'App Frameworks' tab
      - Copy your `DATABASE_URL` and `DIRECT_URL` from the same 'Connect' modal under the 'ORMs' tab (without the quotations)
      - You'll use these as the env vars when deploying to Vercel
      - **IMPORTANT**: Enable Row Level Security (RLS) for all your tables in Supabase

@@ -1,7 +1,7 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createServerActionClient } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -13,21 +13,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Stripe configuration error' }, { status: 500 });
   }
 
-  const cookieStore = await cookies();
-
-  const supabase: any = createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
-  const reqText = await req.text();
-  return webhooksHandler(reqText, req, supabase);
+  try {
+    const supabase = await createServerActionClient();
+    const reqText = await req.text();
+    return webhooksHandler(reqText, req, supabase);
+  } catch (error) {
+    console.error('Error in webhook handler:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
 
 async function getCustomerEmail(customerId: string, stripeClient: Stripe): Promise<string | null> {
@@ -43,7 +36,7 @@ async function getCustomerEmail(customerId: string, stripeClient: Stripe): Promi
 async function handleSubscriptionEvent(
   event: Stripe.Event,
   type: 'created' | 'updated' | 'deleted',
-  supabase: ReturnType<typeof createServerClient>
+  supabase: SupabaseClient
 ) {
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');
@@ -118,7 +111,7 @@ async function handleSubscriptionEvent(
 async function handleInvoiceEvent(
   event: Stripe.Event,
   status: 'succeeded' | 'failed',
-  supabase: ReturnType<typeof createServerClient>
+  supabase: SupabaseClient
 ) {
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');
@@ -165,7 +158,7 @@ async function handleInvoiceEvent(
 
 async function handleCheckoutSessionCompleted(
   event: Stripe.Event,
-  supabase: ReturnType<typeof createServerClient>
+  supabase: SupabaseClient
 ) {
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');
@@ -254,7 +247,7 @@ async function handleCheckoutSessionCompleted(
 async function webhooksHandler(
   reqText: string,
   request: NextRequest,
-  supabase: ReturnType<typeof createServerClient>
+  supabase: SupabaseClient
 ): Promise<NextResponse> {
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');

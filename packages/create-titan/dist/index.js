@@ -172,9 +172,9 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         databaseUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres",
         directUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
       };
-      envContent += `SUPABASE_URL=${dbConfig.supabaseUrl}
+      envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}
 `;
-      envContent += `SUPABASE_SERVICE_KEY=${dbConfig.supabaseServiceKey}
+      envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
 
 `;
       envContent += `DATABASE_URL="${dbConfig.databaseUrl}"

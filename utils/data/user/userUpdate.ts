@@ -1,7 +1,6 @@
 'server only';
 import { userUpdateProps } from '@/utils/types';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createServerActionClient } from '@/lib/supabase';
 
 export const userUpdate = async ({
   email,
@@ -10,26 +9,8 @@ export const userUpdate = async ({
   profile_image_url,
   user_id,
 }: userUpdateProps) => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
-    console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY environment variables');
-    return { error: 'Database configuration error' };
-  }
-
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
-
   try {
+    const supabase = await createServerActionClient();
     const { data, error } = await supabase
       .from('user')
       .update([
