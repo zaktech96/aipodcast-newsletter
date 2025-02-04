@@ -11,8 +11,9 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [Clerk](https://clerk.com/) - Authentication
 - [Stripe](https://stripe.com/) - Collect Payments
 - [Plunk](https://useplunk.com/) - Send Emails
-- [Umami](https://umami.is/) - Analytics
-- [UserJot](https://userjot.com/) - User Feedback + Product Roadmap
+- [DataFast](https://datafa.st/) - User Analytics for Actionable Growth
+- [UserJot](https://userjot.com/) - User Feedback/Bug-Reports and Product Roadmap
+- [GetFernand]()
 - [Vercel](https://vercel.com/) - Deployments
 
 > [!NOTE]

@@ -63,6 +63,9 @@ export default function RootLayout({
             as="image"
           />
         </head>
+
+        {/* REPLACE ME ---- Insert </script> tag for DataFast to analyse User traffic */}
+
         <body className={GeistSans.className}>
           <Provider>
             <ThemeProvider
