@@ -13,7 +13,7 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [Plunk](https://useplunk.com/) - Send Emails
 - [DataFast](https://datafa.st/) - User Analytics for Actionable Growth
 - [UserJot](https://userjot.com/) - User Feedback/Bug-Reports and Product Roadmap
-- [GetFernand]()
+- [GetFernand](https://getfernand.com/) - Fast, Calm Customer Support
 - [Vercel](https://vercel.com/) - Deployments
 
 > [!NOTE]
