@@ -7,10 +7,10 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 ## Tech Stack
 
 - [NextJS 15](https://nextjs.org/) - Full-Stack React framework
-- [Supabase](https://supabase.com/) - Database
-- [Clerk](https://clerk.com/) - Authentication
+- [Supabase](https://supabase.com/) - Database Provider
+- [Clerk](https://clerk.com/) - Authenticate your users (ban, impersonate etc.)
 - [Stripe](https://stripe.com/) - Collect Payments
-- [Plunk](https://useplunk.com/) - Send Emails
+- [Plunk](https://useplunk.com/) - Send Emails Programmatically
 - [DataFast](https://datafa.st/) - User Analytics for Actionable Growth
 - [UserJot](https://userjot.com/) - User Feedback/Bug-Reports and Product Roadmap
 - [GetFernand](https://getfernand.com/) - Fast, Calm Customer Support
