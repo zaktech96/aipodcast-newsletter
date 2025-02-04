@@ -57,17 +57,17 @@ const { data, error } = await supabase.from('table').select()
 Some React + NextJS knowledge is assumed (just the basics is sufficient to get started).
 
 1. Install Node.js:
-   - **Windows**: Download and install 64-bit version from [nodejs.org](https://nodejs.org/) (LTS version 22)
+   - **Windows**: Download and install 64-bit version from [nodejs.org](https://nodejs.org/) (LTS version 23)
    - **Mac/Linux**: Install via [nvm](https://github.com/nvm-sh/nvm):
      ```bash
-     nvm install 22 --lts
+     nvm install stable
      ```
 
    Verify Node.js is installed:
    ```bash
    node -v
    ```
-   Should return something like `v22.x.y`
+   Should return something like `v23.x.y` (at the time of writing: 23.7.0)
 
 2. Install latest version of pnpm:
    ```bash
@@ -77,7 +77,7 @@ Some React + NextJS knowledge is assumed (just the basics is sufficient to get s
    ```bash
    pnpm -v
    ```
-   Should return something like `10.x.y`
+   Should return something like `10.x.y` (at the time of writing: 10.2.0)
 
 3. Create a new empty GitHub repository for your project
 
