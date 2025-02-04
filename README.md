@@ -176,7 +176,7 @@ You can access your local Supabase Studio at http://127.0.0.1:54323 to:
 
 ## Database Migrations
 
-For detailed instructions on working with database migrations, schema changes, and Supabase CLI commands, see our [Database Operations Guide](docs/DATABASE.md).
+For detailed instructions on working with database migrations, schema changes, and Supabase CLI commands, see our [Database Operations Guide](DATABASE-GUIDE.md).
 
 ## 4. Updating the UI
 
