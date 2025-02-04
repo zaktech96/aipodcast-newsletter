@@ -361,7 +361,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
     spinner.start("Configuring payments...");
     envContent += `STRIPE_SECRET_KEY=${paymentConfig.stripeSecretKey}
 `;
-    envContent += `NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${paymentConfig.stripePublicKey}
+    envContent += `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${paymentConfig.stripePublicKey}
 `;
     envContent += `NEXT_PUBLIC_STRIPE_PRICE_ID=${paymentConfig.stripePriceId}
 

@@ -2,7 +2,7 @@ import config from '@/config';
 
 const requiredEnvVars = {
   auth: ['NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', 'CLERK_SECRET_KEY'],
-  payments: ['STRIPE_SECRET_KEY', 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY', 'NEXT_PUBLIC_STRIPE_PRICE_ID'],
+  payments: ['STRIPE_SECRET_KEY', 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', 'NEXT_PUBLIC_STRIPE_PRICE_ID'],
   email: ['PLUNK_API_KEY'],
 } as const;
 

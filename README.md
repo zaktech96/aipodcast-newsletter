@@ -85,7 +85,7 @@ Have the SSH repository URL ready (e.g., `git@github.com:username/repo-name.git`
 
 Make sure it's the SSH URL, not the HTTPS URL!
 
-4. In order to run a local Supabase instance, you'll need to install Docker/Orbstack (depending on your OS):
+4. If you want to run a local Supabase instance, you'll need to install Docker/Orbstack (depending on your OS):
    - **Windows**: Install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
    - **Mac**: Install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/) or [Orbstack](https://orbstack.dev/download)
 
@@ -114,7 +114,7 @@ Make sure it's the SSH URL, not the HTTPS URL!
    - **Stripe** (Payments)
      - Create account at [Stripe](https://stripe.com)
      - Make sure you're in test mode (toggle at the top right)
-     - Copy your `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` from the 'API Keys' section
+     - Copy your `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` from the 'API Keys' section
      - Create a product and get your `NEXT_PUBLIC_STRIPE_PRICE_ID`
 
    - **Plunk** (Email)
