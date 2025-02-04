@@ -20,15 +20,15 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 
 All of the above services (except DataFast) have generous free tiers.
 
-But even if your product starts to grow, the cost is minimal.
+But even if your product starts to grow, the cost is minimal (average $100/month with 10,000+ users for 80%+ profit margin isn't bad huh? :p).
 
-They do the heavy lifting in key areas, so you can focus solely on building the product.
+These 3rd party services abstract away a lot of the heavy lifting in key areas (payments, authentication, database, etc.), so you can focus solely on building the product.
 
-There are ofc niche areas that might require more capital, such as healthcare (Databases need to be HIPAA compliant, etc.)
+There are ofc niche industries that might require more capital, such as healthcare (Databases need to be HIPAA compliant, etc.)
 
 The good news is that you won't need to self-host your own database, as Supabase has a HIPAA offering for $599/month.
 
-See this [Article](https://supabase.com/blog/supabase-soc2-hipaa) for more information on Supabase's SOC2 and HIPAA compliance.
+See this [Article](https://supabase.com/blog/supabase-soc2-hipaa) for more information on Supabase's SOC2 and HIPAA compliance, if you're thinking about building a healthcare app.
 
 > [!NOTE]
 > - Video walkthrough coming soon...
