@@ -11,10 +11,24 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [Clerk](https://clerk.com/) - Authenticate your users (ban, impersonate etc.)
 - [Stripe](https://stripe.com/) - Collect Payments
 - [Plunk](https://useplunk.com/) - Send Emails Programmatically
-- [DataFast](https://datafa.st/) - User Analytics for Actionable Growth
+- [DataFast](https://datafa.st/) - User Analytics for Actionable Growth (Know exactly which marketing channels are working)
 - [UserJot](https://userjot.com/) - User Feedback/Bug-Reports and Product Roadmap
 - [GetFernand](https://getfernand.com/) - Fast, Calm Customer Support
-- [Vercel](https://vercel.com/) - Deployments
+- [Vercel](https://vercel.com/) - Deployments without worrying about infrastructure (DDoS protection, etc.)
+
+## Cost of running this stack
+
+All of the above services (except DataFast) have generous free tiers.
+
+But even if your product starts to grow, the cost is minimal.
+
+They do the heavy lifting in key areas, so you can focus solely on building the product.
+
+There are ofc niche areas that might require more capital, such as healthcare (Databases need to be HIPAA compliant, etc.)
+
+The good news is that you won't need to self-host your own database, as Supabase has a HIPAA offering for $599/month.
+
+See this [Article](https://supabase.com/blog/supabase-soc2-hipaa) for more information on Supabase's SOC2 and HIPAA compliance.
 
 > [!NOTE]
 > - Video walkthrough coming soon...
