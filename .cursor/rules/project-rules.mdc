@@ -25,7 +25,8 @@ Naming Conventions
     wrapper/         # Layout wrappers
     homepage/        # Landing page components
   lib/
-    supabase/        # Database clients
+    supabase/        # Database client
+    blah/            # Other clients we want to add in the future
   utils/
     actions/         # Server actions
     data/           # Data operations
