@@ -272,13 +272,6 @@ Refer to the documentation of the individual technologies:
 
 Any beneficial contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## Common issues
-
-- If you have issues installing 3rd party components with 21.dev, try first running:
-```bash
-ln -s tailwind.config.ts tailwind.config.js
-```
-
 ## ToDos
 
 - Use Jotai or Zustand for state management client-side
