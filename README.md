@@ -18,7 +18,7 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 
 ## Cost of running this stack
 
-All of the above services (except DataFast) have generous free tiers.
+All of the above services (exept GetFernand) have generous free tiers.
 
 But even if your product starts to grow, the cost is minimal (average $100/month with 10,000+ users for 80%+ profit margin isn't bad huh? :p).
 
