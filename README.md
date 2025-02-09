@@ -36,21 +36,25 @@ See this [Article](https://supabase.com/blog/supabase-soc2-hipaa) for more infor
 >   - Server-side: Use `createServerActionClient()` which uses `SUPABASE_SERVICE_ROLE_KEY`
 >   - Client-side: Use `createClient()` which uses `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-## Database Module Usage
+## Best Practices
 
-```typescript
-// Server-side (in server actions, API routes)
-import { createServerActionClient } from '@/lib/supabase'
+The `.cursor/rules` file contains our project's best practices:
 
-const supabase = await createServerActionClient()
-const { data, error } = await supabase.from('table').select()
-
-// Client-side (in React components)
-import { createClient } from '@/lib/supabase'
-
-const supabase = createClient()
-const { data, error } = await supabase.from('table').select()
-```
+- Use functional/declarative patterns, avoid classes
+- Use TypeScript for all code, prefer interfaces over types
+- Mark server-only files with 'use server' directive
+- Use named exports for components
+- Follow directory structure: app/, components/, lib/, utils/
+- Server-side DB ops use `createServerActionClient()` with service role key
+- Client-side DB ops use `createClient()` with anon key
+- Wrap client components in Suspense
+- Dynamic load non-critical components
+- Use Shadcn UI, Radix, and Tailwind
+- Mobile-first responsive design
+- Minimize 'use client', 'useEffect', and 'setState'
+- Favor React Server Components (RSC)
+- Use 'nuqs' for URL search params
+- Optimize Web Vitals and images
 
 ## 1. Prerequisites
 
