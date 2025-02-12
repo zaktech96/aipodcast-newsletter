@@ -278,5 +278,6 @@ Any beneficial contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## ToDos
 
+- Update landing page to be more unique (and less like Rasmic's NextJS Starter Kit)
 - Use Jotai or Zustand for state management client-side
 - Worth Implementing?: stronger security rules with ArcJet (Bot detection, Rate limiting, Data Redaction, Email Validation, Application-level DDoS protection, etc.) - https://docs.arcjet.com/get-started?f=next-js
