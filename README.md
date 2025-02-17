@@ -206,9 +206,11 @@ For more examples and advanced usage, check out the [cursor-tools GitHub reposit
 3. Run `stripe listen --forward-to [your-ngrok-url]/api/payments/webhook`
 4. Done. Your site should now be able to receive webhooks from Stripe and you can test the payment flow locally.
 
-## Database Migrations
+## Working with the Database
 
-For detailed instructions on working with database migrations, schema changes, and Supabase CLI commands, see our [Database Operations Guide](DATABASE-GUIDE.md).
+For schema changes and database operations (local/production setup, migrations, etc.), see the respective commands you should run for different situations in the [Database Operations Guide](DATABASE-GUIDE.md).
+
+For database best practices, Cursor will automatically follow the patterns defined in [Project Rules](project-rules.md) so you can focus on building your app.
 
 ## 4. Updating the UI
 
