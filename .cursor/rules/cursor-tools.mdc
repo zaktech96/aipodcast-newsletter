@@ -12,8 +12,7 @@ globs:
 Use the following commands to get AI assistance:
 
 **Web Search:**
-`cursor-tools web "<your question>"` - Get answers from the web using Perplexity AI (e.g., `cursor-tools web "latest weather in London"`)
-when using web for complex queries suggest writing the output to a file somewhere like local-research/<query summary>.md.
+`cursor-tools web "<your question>"` - Get answers from the web using Perplexity AI (e.g., `cursor-tools web "latest weather in London"`) when using web for complex queries suggest writing the output to a file somewhere like local-research/<query summary>.md. Use the 'sonar-pro' model.
 
 **Repository Context:**
 `cursor-tools repo "<your question>"` - Get context-aware answers about this repository using Google Gemini (e.g., `cursor-tools repo "explain authentication flow"`)
