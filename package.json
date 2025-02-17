@@ -86,6 +86,7 @@
     "autoprefixer": "latest",
     "postcss": "latest",
     "tailwindcss": "^3.3.5",
-    "typescript": "latest"
+    "typescript": "latest",
+    "cursor-tools": "latest"
   }
 }

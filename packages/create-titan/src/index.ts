@@ -600,6 +600,13 @@ export default function RootLayout({
     await fs.writeFile(layoutPath, layoutContent);
     spinner.succeed('Application layout customized');
 
+    // Create .cursor-tools.env file
+    spinner.start('Creating .cursor-tools.env file...');
+    const cursorToolsEnvContent = `PERPLEXITY_API_KEY="your-perplexity-api-key"
+GEMINI_API_KEY="your-gemini-api-key"`;
+    await fs.writeFile(path.join(projectDir, '.cursor-tools.env'), cursorToolsEnvContent);
+    spinner.succeed('.cursor-tools.env file created');
+
   } catch (error) {
     if (spinner) spinner.fail('Failed to create project');
     console.error(chalk.red('Error:'), error);
