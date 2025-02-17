@@ -13,8 +13,8 @@ const is64Bit = os.arch() === 'x64';
 
 // Windows-specific paths
 const programFiles = is64Bit ? 'C:\\Program Files' : 'C:\\Program Files (x86)';
-const rmrf = isWindows ? ['cmd', ['/c', 'rmdir', '/s', '/q']] : ['rm', ['-rf']];
-const gitInit = isWindows ? ['cmd', ['/c', 'git', 'init']] : ['git', ['init']];
+const rmrf = process.platform === 'win32' ? ['cmd', ['/c', 'rmdir', '/s', '/q']] : ['rm', ['-rf']];
+const gitInit = process.platform === 'win32' ? ['cmd', ['/c', 'git', 'init']] : ['git', ['init']];
 
 const program = new Command()
   .name('create-titan')
@@ -35,6 +35,12 @@ async function main() {
     console.log(chalk.yellow('   - Clerk (Publishable Key & Secret Key)'));
     console.log(chalk.yellow('   - Stripe (Public Key, Secret Key & Price ID)'));
     console.log(chalk.yellow('   - Plunk API Key\n'));
+
+    if (isWindows) {
+      console.log(chalk.red('\n⚠️ Warning for Windows Users:'));
+      console.log(chalk.yellow('Docker Desktop on Windows can sometimes be unstable with Supabase.'));
+      console.log(chalk.yellow('If you experience issues, consider using a production database URL instead.\n'));
+    }
 
     const { proceed } = await prompts({
       type: 'confirm',
@@ -183,7 +189,7 @@ async function main() {
       message: 'Choose your database setup:',
       choices: [
         { title: 'Local Database (requires Docker & Supabase CLI)', value: 'local' },
-        { title: 'Production Database (existing Supabase project)', value: 'production' }
+        { title: 'Production Database (recommended for Windows users - avoids Docker issues. Or for anyone trying to ship an MVP fast)', value: 'production' }
       ],
       initial: 0
     });

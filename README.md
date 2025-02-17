@@ -143,15 +143,43 @@ Make sure it's the SSH URL, not the HTTPS URL!
    5. Generate TypeScript types for your database schema
    6. Configure your environment variables
 
-Done! Your project will be:
+Done! Your project is now set up:
 - Pushed to your GitHub repo ✅
-- Your local Supabase instance should now be running ✅
-- You're ready for local development ✅
+- Local Supabase instance running (if you chose local development) ✅
+- Ready for local development ✅
 
-You can access your local Supabase Studio at http://127.0.0.1:54323 to:
-- View your database tables
-- Run SQL queries
-- Manage your data
+If you chose local development:
+- Access your local Supabase Studio at http://127.0.0.1:54323
+- Here you can view tables, run queries, and manage data
+- Changes only affect your local database
+
+⚠️ Important: If you used your production Supabase URL instead of local development:
+- You'll be working directly with your production database
+- All changes will immediately affect your live application
+- However, we strongly recommend using local development for testing (but sometimes you might want to move very fast and don't care about data loss, specifically for MVPs). If you're on Windows and having issues with Docker Desktop crashing, you can use your production Supabase URL instead.
+
+## 2.1 Setup Cursor Tools
+
+After running the CLI, you'll notice a `.cursor-tools.env` file in your project root. You'll need to set up your API keys:
+
+1. Get your Perplexity API Key from [Perplexity AI Settings](https://www.perplexity.ai/settings/api)
+2. Get your Gemini API Key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+3. Update `.cursor-tools.env` with your keys
+
+Example usage of cursor-tools:
+
+```bash
+# Get latest TypeScript updates
+cursor-tools web "What's new in TypeScript 5.7?"
+
+# Understand project architecture
+cursor-tools repo "Explain the authentication flow in this project, which files are involved?"
+
+# Take screenshots of websites
+cursor-tools browser open "https://google.com" --screenshot=page.png
+```
+
+For more examples and advanced usage, check out the [cursor-tools GitHub repository](https://github.com/eastlondoner/cursor-tools).
 
 ## 3. Developing your app locally
 
@@ -278,6 +306,7 @@ Any beneficial contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## ToDos
 
+- Recommend that they use feature flags for everything
 - Update landing page to be more unique (and less like Rasmic's NextJS Starter Kit)
 - Use Jotai or Zustand for state management client-side
 - Worth Implementing?: stronger security rules with ArcJet (Bot detection, Rate limiting, Data Redaction, Email Validation, Application-level DDoS protection, etc.) - https://docs.arcjet.com/get-started?f=next-js
