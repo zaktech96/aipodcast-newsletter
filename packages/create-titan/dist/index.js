@@ -12,8 +12,8 @@ var path = require("path");
 var os = require("os");
 var isWindows = os.platform() === "win32";
 var is64Bit = os.arch() === "x64";
-var rmrf = isWindows ? ["cmd", ["/c", "rmdir", "/s", "/q"]] : ["rm", ["-rf"]];
-var gitInit = isWindows ? ["cmd", ["/c", "git", "init"]] : ["git", ["init"]];
+var rmrf = process.platform === "win32" ? ["cmd", ["/c", "rmdir", "/s", "/q"]] : ["rm", ["-rf"]];
+var gitInit = process.platform === "win32" ? ["cmd", ["/c", "git", "init"]] : ["git", ["init"]];
 var program = new Command().name("create-titan").description("Create a new Titan project").version("0.1.0").parse();
 async function main() {
   let spinner;
@@ -27,6 +27,11 @@ async function main() {
     console.log(chalk.yellow("   - Clerk (Publishable Key & Secret Key)"));
     console.log(chalk.yellow("   - Stripe (Public Key, Secret Key & Price ID)"));
     console.log(chalk.yellow("   - Plunk API Key\n"));
+    if (isWindows) {
+      console.log(chalk.red("\n\u26A0\uFE0F Warning for Windows Users:"));
+      console.log(chalk.yellow("Docker Desktop on Windows can sometimes be unstable with Supabase."));
+      console.log(chalk.yellow("If you experience issues, consider using a production database URL instead.\n"));
+    }
     const { proceed } = await prompts({
       type: "confirm",
       name: "proceed",
@@ -162,7 +167,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       message: "Choose your database setup:",
       choices: [
         { title: "Local Database (requires Docker & Supabase CLI)", value: "local" },
-        { title: "Production Database (existing Supabase project)", value: "production" }
+        { title: "Production Database (recommended for Windows users - avoids Docker issues. Or for anyone trying to ship an MVP fast)", value: "production" }
       ],
       initial: 0
     });
