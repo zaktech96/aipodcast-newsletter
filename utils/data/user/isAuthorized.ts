@@ -2,7 +2,7 @@
 
 import { clerkClient } from '@clerk/nextjs/server';
 import { createServerActionClient } from '@/lib/supabase';
-import config from '@/config'
+import config from '@/config';
 
 export const isAuthorized = async (
   userId: string

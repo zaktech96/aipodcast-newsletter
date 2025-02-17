@@ -136,10 +136,11 @@ export default function NavBar() {
           {userId ? (
             <UserProfile />
           ) : (
-            <Button 
+            <Button
               variant="outline"
-              disabled={!config?.auth?.enabled} 
-              onClick={() => config?.auth?.enabled && window.location.assign('/sign-in')}>
+              disabled={!config?.auth?.enabled}
+              onClick={() => config?.auth?.enabled && window.location.assign('/sign-in')}
+            >
               Sign in
             </Button>
           )}

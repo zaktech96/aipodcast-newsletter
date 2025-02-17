@@ -53,7 +53,9 @@ export const Footer = () => {
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
-              <h2 className={`${TITLE_TAILWIND_CLASS} tracking-tighter max-w-xl font-regular text-left`}>
+              <h2
+                className={`${TITLE_TAILWIND_CLASS} tracking-tighter max-w-xl font-regular text-left`}
+              >
                 Titan
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">

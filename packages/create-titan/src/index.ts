@@ -28,7 +28,9 @@ async function main() {
   try {
     console.log(chalk.cyan('\n🚀 Welcome to Titan CLI!\n'));
     console.log(chalk.yellow('Pre-requisites check:'));
-    console.log(chalk.yellow('1. Docker/Orbstack must be running (Only if you decide to run the DB locally)'));
+    console.log(
+      chalk.yellow('1. Docker/Orbstack must be running (Only if you decide to run the DB locally)')
+    );
     console.log(chalk.yellow('2. Supabase CLI must be installed'));
     console.log(chalk.yellow('3. SSH key must be set up with GitHub'));
     console.log(chalk.yellow('4. The following API keys ready:'));
@@ -38,68 +40,86 @@ async function main() {
 
     if (isWindows) {
       console.log(chalk.red('\n⚠️ Warning for Windows Users:'));
-      console.log(chalk.yellow('Docker Desktop on Windows can sometimes be unstable with Supabase.'));
-      console.log(chalk.yellow('If you experience issues, consider using a production database URL instead.\n'));
+      console.log(
+        chalk.yellow('Docker Desktop on Windows can sometimes be unstable with Supabase.')
+      );
+      console.log(
+        chalk.yellow(
+          'If you experience issues, consider using a production database URL instead.\n'
+        )
+      );
     }
 
     const { proceed } = await prompts({
       type: 'confirm',
       name: 'proceed',
       message: 'Do you have all pre-requisites ready?',
-      initial: false
+      initial: false,
     });
 
     if (!proceed) {
       console.log(chalk.cyan('\nPlease set up the pre-requisites and try again.'));
-      console.log(chalk.cyan('For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites'));
+      console.log(
+        chalk.cyan(
+          'For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites'
+        )
+      );
       process.exit(0);
     }
 
     // Project setup questions
-    const { projectName, projectDescription, githubRepo } = await prompts([
+    const { projectName, projectDescription, githubRepo } = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'projectName',
+          message: 'What is your project name?',
+          initial: 'my-titan-app',
+        },
+        {
+          type: 'text',
+          name: 'projectDescription',
+          message: 'Describe your project in a few words:',
+        },
+        {
+          type: 'text',
+          name: 'githubRepo',
+          message:
+            'Enter your GitHub repository URL (SSH format: git@github.com:username/repo.git):',
+          validate: (value: string) => {
+            const sshFormat = /^git@github\.com:.+\/.+\.git$/;
+            const httpsFormat = /^https:\/\/github\.com\/.+\/.+\.git$/;
+
+            if (sshFormat.test(value)) return true;
+            if (httpsFormat.test(value)) {
+              const sshUrl = value
+                .replace('https://github.com/', 'git@github.com:')
+                .replace(/\.git$/, '.git');
+              return `Please use the SSH URL format instead: ${sshUrl}`;
+            }
+            return 'Please enter a valid GitHub SSH URL (format: git@github.com:username/repo.git)';
+          },
+        },
+      ],
       {
-        type: 'text',
-        name: 'projectName',
-        message: 'What is your project name?',
-        initial: 'my-titan-app',
-      },
-      {
-        type: 'text',
-        name: 'projectDescription',
-        message: 'Describe your project in a few words:',
-      },
-      {
-        type: 'text',
-        name: 'githubRepo',
-        message: 'Enter your GitHub repository URL (SSH format: git@github.com:username/repo.git):',
-        validate: (value: string) => {
-          const sshFormat = /^git@github\.com:.+\/.+\.git$/;
-          const httpsFormat = /^https:\/\/github\.com\/.+\/.+\.git$/;
-          
-          if (sshFormat.test(value)) return true;
-          if (httpsFormat.test(value)) {
-            const sshUrl = value
-              .replace('https://github.com/', 'git@github.com:')
-              .replace(/\.git$/, '.git');
-            return `Please use the SSH URL format instead: ${sshUrl}`;
-          }
-          return 'Please enter a valid GitHub SSH URL (format: git@github.com:username/repo.git)';
-        }
-      },
-    ], {
-      onCancel: () => {
-        console.log('\nSetup cancelled');
-        process.exit(1);
+        onCancel: () => {
+          console.log('\nSetup cancelled');
+          process.exit(1);
+        },
       }
-    });
+    );
 
     // Create project directory
     const projectDir = path.join(process.cwd(), projectName);
-    
+
     // Check if directory exists
     try {
       await fs.access(projectDir);
-      console.error(chalk.red(`\nError: Directory ${projectName} already exists. Please choose a different name or delete the existing directory.`));
+      console.error(
+        chalk.red(
+          `\nError: Directory ${projectName} already exists. Please choose a different name or delete the existing directory.`
+        )
+      );
       process.exit(1);
     } catch {
       // Directory doesn't exist, we can proceed
@@ -111,7 +131,7 @@ async function main() {
     // Clone the repository with retries
     const maxRetries = 3;
     let retryCount = 0;
-    
+
     while (retryCount < maxRetries) {
       try {
         spinner.text = 'Cloning template repository...';
@@ -131,41 +151,52 @@ async function main() {
           console.error(chalk.red('\nError cloning repository. Please check:'));
           console.log(chalk.cyan('1. Your SSH key is set up correctly:'));
           console.log(chalk.cyan('   Run: ssh -T git@github.com'));
-          console.log(chalk.cyan('   If it fails, follow: https://docs.github.com/en/authentication/connecting-to-github-with-ssh'));
+          console.log(
+            chalk.cyan(
+              '   If it fails, follow: https://docs.github.com/en/authentication/connecting-to-github-with-ssh'
+            )
+          );
           console.log(chalk.cyan('\n2. The repository exists on GitHub:'));
           console.log(chalk.cyan('   - Go to GitHub'));
           console.log(chalk.cyan('   - Create repository named "your-repo-name"'));
-          console.log(chalk.cyan('   - Don\'t initialize with any files'));
+          console.log(chalk.cyan("   - Don't initialize with any files"));
           console.log(chalk.cyan('\n3. Try cloning manually to verify:'));
-          console.log(chalk.cyan(`   git clone --depth=1 git@github.com:ObaidUr-Rahmaan/titan.git ${projectDir}`));
+          console.log(
+            chalk.cyan(
+              `   git clone --depth=1 git@github.com:ObaidUr-Rahmaan/titan.git ${projectDir}`
+            )
+          );
           process.exit(1);
         }
         spinner.text = `Retrying clone (${retryCount}/${maxRetries})...`;
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
 
     let envContent = '';
-    
+
     // Auth Configuration
     spinner.stop();
-    const authConfig = await prompts([
+    const authConfig = await prompts(
+      [
+        {
+          type: 'password',
+          name: 'clerkPublishableKey',
+          message: 'Enter your Clerk Publishable Key:',
+        },
+        {
+          type: 'password',
+          name: 'clerkSecretKey',
+          message: 'Enter your Clerk Secret Key:',
+        },
+      ],
       {
-        type: 'password',
-        name: 'clerkPublishableKey',
-        message: 'Enter your Clerk Publishable Key:',
-      },
-      {
-        type: 'password',
-        name: 'clerkSecretKey',
-        message: 'Enter your Clerk Secret Key:',
-      },
-    ], {
-      onCancel: () => {
-        console.log('\nSetup cancelled');
-        process.exit(1);
+        onCancel: () => {
+          console.log('\nSetup cancelled');
+          process.exit(1);
+        },
       }
-    });
+    );
 
     if (!authConfig.clerkPublishableKey || !authConfig.clerkSecretKey) {
       console.log(chalk.red('Clerk keys are required'));
@@ -189,26 +220,38 @@ async function main() {
       message: 'Choose your database setup:',
       choices: [
         { title: 'Local Database (requires Docker & Supabase CLI)', value: 'local' },
-        { title: 'Production Database (recommended for Windows users - avoids Docker issues. Or for anyone trying to ship an MVP fast)', value: 'production' }
+        {
+          title:
+            'Production Database (recommended for Windows users - avoids Docker issues. Or for anyone trying to ship an MVP fast)',
+          value: 'production',
+        },
       ],
-      initial: 0
+      initial: 0,
     });
 
     if (dbChoice === 'local') {
       console.log(chalk.yellow('\nPre-requisites check for local database:'));
-      console.log(chalk.yellow('1. Docker/Orbstack must be running (Only if you decide to run the DB locally)'));
+      console.log(
+        chalk.yellow(
+          '1. Docker/Orbstack must be running (Only if you decide to run the DB locally)'
+        )
+      );
       console.log(chalk.yellow('2. Supabase CLI must be installed\n'));
 
       const { proceed } = await prompts({
         type: 'confirm',
         name: 'proceed',
         message: 'Do you have Docker running and Supabase CLI installed?',
-        initial: false
+        initial: false,
       });
 
       if (!proceed) {
         console.log(chalk.cyan('\nPlease set up the pre-requisites and try again.'));
-        console.log(chalk.cyan('For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites'));
+        console.log(
+          chalk.cyan(
+            'For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites'
+          )
+        );
         process.exit(0);
       }
 
@@ -217,22 +260,22 @@ async function main() {
         spinner.start('Starting Supabase (this might take a few minutes on first run)...');
         const { stdout } = await execa('supabase', ['start'], { cwd: projectDir });
         spinner.succeed('Supabase started');
-        
+
         const serviceKeyMatch = stdout.match(/service_role key: (.*)/);
         const anonKeyMatch = stdout.match(/anon key: (.*)/);
         if (!serviceKeyMatch || !anonKeyMatch) {
           throw new Error('Could not find required keys in Supabase output');
         }
-        
+
         const serviceKey = serviceKeyMatch[1].trim();
         const anonKey = anonKeyMatch[1].trim();
-        
+
         const dbConfig = {
           supabaseUrl: 'http://127.0.0.1:54321',
           supabaseAnonKey: anonKey,
           supabaseServiceKey: serviceKey,
           databaseUrl: 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
-          directUrl: 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
+          directUrl: 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
         };
 
         envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}\n`;
@@ -241,19 +284,23 @@ async function main() {
         envContent += `DATABASE_URL=${dbConfig.databaseUrl}\n`;
         envContent += `DIRECT_URL=${dbConfig.directUrl}\n\n`;
         envContent += `FRONTEND_URL=http://localhost:3000\n\n`;
-        
+
         await fs.writeFile(path.join(projectDir, '.env'), envContent);
 
         spinner.start('Setting up database tables and generating types...');
         try {
           await execa('pnpm', ['dlx', 'prisma', 'generate'], { cwd: projectDir });
           await execa('pnpm', ['dlx', 'prisma', 'migrate', 'deploy'], { cwd: projectDir });
-          
-          const { stdout: stdout2 } = await execa('supabase', ['gen', 'types', 'typescript', '--local'], { 
-            cwd: projectDir,
-            stdio: 'pipe' 
-          });
-          
+
+          const { stdout: stdout2 } = await execa(
+            'supabase',
+            ['gen', 'types', 'typescript', '--local'],
+            {
+              cwd: projectDir,
+              stdio: 'pipe',
+            }
+          );
+
           await fs.writeFile(path.join(projectDir, 'types', 'supabase.ts'), stdout2);
           spinner.succeed('Database tables created and types generated successfully');
         } catch (error) {
@@ -276,7 +323,9 @@ async function main() {
         console.log(chalk.yellow('\nPlease:'));
         console.log(chalk.cyan('1. Install Docker/Orbstack if not installed:'));
         console.log(chalk.cyan('   - Mac: https://docs.docker.com/desktop/install/mac-install/'));
-        console.log(chalk.cyan('   - Windows: https://docs.docker.com/desktop/install/windows-install/'));
+        console.log(
+          chalk.cyan('   - Windows: https://docs.docker.com/desktop/install/windows-install/')
+        );
         console.log(chalk.cyan('2. Start Docker/Orbstack'));
         console.log(chalk.cyan('3. Wait a few seconds for Docker to be ready'));
         console.log(chalk.cyan('4. Run this command again\n'));
@@ -285,43 +334,53 @@ async function main() {
     } else {
       // Production database setup
       spinner.stop();
-      const dbConfig = await prompts([
+      const dbConfig = await prompts(
+        [
+          {
+            type: 'text',
+            name: 'supabaseUrl',
+            message: 'Enter your Supabase Project URL:',
+            validate: (value: string) =>
+              value.startsWith('https://') ? true : 'URL must start with https://',
+          },
+          {
+            type: 'password',
+            name: 'supabaseAnonKey',
+            message: 'Enter your Supabase Anon Key:',
+          },
+          {
+            type: 'password',
+            name: 'supabaseServiceKey',
+            message: 'Enter your Supabase Service Role Key:',
+          },
+          {
+            type: 'text',
+            name: 'databaseUrl',
+            message: 'Enter your Database URL (with pgbouncer):',
+            validate: (value: string) =>
+              value.includes('?pgbouncer=true') ? true : 'URL must include ?pgbouncer=true',
+          },
+          {
+            type: 'text',
+            name: 'directUrl',
+            message: 'Enter your Direct URL (without pgbouncer):',
+          },
+        ],
         {
-          type: 'text',
-          name: 'supabaseUrl',
-          message: 'Enter your Supabase Project URL:',
-          validate: (value: string) => value.startsWith('https://') ? true : 'URL must start with https://'
-        },
-        {
-          type: 'password',
-          name: 'supabaseAnonKey',
-          message: 'Enter your Supabase Anon Key:',
-        },
-        {
-          type: 'password',
-          name: 'supabaseServiceKey',
-          message: 'Enter your Supabase Service Role Key:',
-        },
-        {
-          type: 'text',
-          name: 'databaseUrl',
-          message: 'Enter your Database URL (with pgbouncer):',
-          validate: (value: string) => value.includes('?pgbouncer=true') ? true : 'URL must include ?pgbouncer=true'
-        },
-        {
-          type: 'text',
-          name: 'directUrl',
-          message: 'Enter your Direct URL (without pgbouncer):',
+          onCancel: () => {
+            console.log('\nSetup cancelled');
+            process.exit(1);
+          },
         }
-      ], {
-        onCancel: () => {
-          console.log('\nSetup cancelled');
-          process.exit(1);
-        }
-      });
+      );
 
-      if (!dbConfig.supabaseUrl || !dbConfig.supabaseAnonKey || !dbConfig.supabaseServiceKey || 
-          !dbConfig.databaseUrl || !dbConfig.directUrl) {
+      if (
+        !dbConfig.supabaseUrl ||
+        !dbConfig.supabaseAnonKey ||
+        !dbConfig.supabaseServiceKey ||
+        !dbConfig.databaseUrl ||
+        !dbConfig.directUrl
+      ) {
         console.log(chalk.red('All database configuration values are required'));
         process.exit(1);
       }
@@ -332,23 +391,36 @@ async function main() {
       envContent += `DATABASE_URL=${dbConfig.databaseUrl}\n`;
       envContent += `DIRECT_URL=${dbConfig.directUrl}\n\n`;
       envContent += `FRONTEND_URL=http://localhost:3000\n\n`;
-      
+
       await fs.writeFile(path.join(projectDir, '.env'), envContent);
 
       spinner.start('Setting up database tables and generating types...');
       try {
         await execa('pnpm', ['dlx', 'prisma', 'generate'], { cwd: projectDir });
         // Create initial migration
-        await execa('pnpm', ['dlx', 'prisma', 'migrate', 'dev', '--name', 'initial_migration', '--create-only'], { cwd: projectDir });
+        await execa(
+          'pnpm',
+          ['dlx', 'prisma', 'migrate', 'dev', '--name', 'initial_migration', '--create-only'],
+          { cwd: projectDir }
+        );
         // Deploy the migration
         await execa('pnpm', ['dlx', 'prisma', 'migrate', 'deploy'], { cwd: projectDir });
-        
-        const { stdout } = await execa('supabase', ['gen', 'types', 'typescript', '--project-id', 
-          dbConfig.supabaseUrl.split('.')[0].split('//')[1]], { 
-          cwd: projectDir,
-          stdio: 'pipe' 
-        });
-        
+
+        const { stdout } = await execa(
+          'supabase',
+          [
+            'gen',
+            'types',
+            'typescript',
+            '--project-id',
+            dbConfig.supabaseUrl.split('.')[0].split('//')[1],
+          ],
+          {
+            cwd: projectDir,
+            stdio: 'pipe',
+          }
+        );
+
         await fs.writeFile(path.join(projectDir, 'types', 'supabase.ts'), stdout);
         spinner.succeed('Database tables created and types generated successfully');
       } catch (error) {
@@ -361,30 +433,37 @@ async function main() {
 
     // Payments Configuration
     spinner.stop();
-    const paymentConfig = await prompts([
+    const paymentConfig = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'stripePublicKey',
+          message: 'Enter your Stripe Public Key:',
+        },
+        {
+          type: 'password',
+          name: 'stripeSecretKey',
+          message: 'Enter your Stripe Secret Key:',
+        },
+        {
+          type: 'text',
+          name: 'stripePriceId',
+          message: 'Enter your Stripe Price ID:',
+        },
+      ],
       {
-        type: 'text',
-        name: 'stripePublicKey',
-        message: 'Enter your Stripe Public Key:',
-      },
-      {
-        type: 'password',
-        name: 'stripeSecretKey',
-        message: 'Enter your Stripe Secret Key:',
-      },
-      {
-        type: 'text',
-        name: 'stripePriceId',
-        message: 'Enter your Stripe Price ID:',
-      },
-    ], {
-      onCancel: () => {
-        console.log('\nSetup cancelled');
-        process.exit(1);
+        onCancel: () => {
+          console.log('\nSetup cancelled');
+          process.exit(1);
+        },
       }
-    });
+    );
 
-    if (!paymentConfig.stripeSecretKey || !paymentConfig.stripePublicKey || !paymentConfig.stripePriceId) {
+    if (
+      !paymentConfig.stripeSecretKey ||
+      !paymentConfig.stripePublicKey ||
+      !paymentConfig.stripePriceId
+    ) {
       console.log(chalk.red('All Stripe configuration values are required'));
       process.exit(1);
     }
@@ -397,18 +476,21 @@ async function main() {
 
     // Email Configuration
     spinner.stop();
-    const emailConfig = await prompts([
+    const emailConfig = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'plunkApiKey',
+          message: 'Enter your Plunk API Key:',
+        },
+      ],
       {
-        type: 'text',
-        name: 'plunkApiKey',
-        message: 'Enter your Plunk API Key:',
-      },
-    ], {
-      onCancel: () => {
-        console.log('\nSetup cancelled');
-        process.exit(1);
+        onCancel: () => {
+          console.log('\nSetup cancelled');
+          process.exit(1);
+        },
       }
-    });
+    );
 
     if (!emailConfig.plunkApiKey) {
       console.log(chalk.red('Plunk API Key is required'));
@@ -443,7 +525,7 @@ export default config;
     await fs.writeFile(configPath, configContent);
 
     spinner.succeed(chalk.green('Project configured successfully! 🚀'));
-    
+
     // Change into project directory and install dependencies
     spinner.start('Installing dependencies...');
     try {
@@ -465,7 +547,7 @@ export default config;
       await execa('git', ['commit', '-m', 'Initial commit from Titan CLI']);
       await execa('git', ['branch', '-M', 'main']); // Ensure we're on main branch
       await execa('git', ['remote', 'add', 'origin', githubRepo]);
-      
+
       // Try to push to main branch
       try {
         await execa('git', ['push', '-u', 'origin', 'main', '--force']);
@@ -474,7 +556,7 @@ export default config;
         await execa('git', ['branch', '-M', 'master']);
         await execa('git', ['push', '-u', 'origin', 'master', '--force']);
       }
-      
+
       spinner.succeed('Git repository setup complete');
     } catch (error) {
       spinner.warn('Git setup had some issues');
@@ -517,7 +599,7 @@ ${projectDescription}
     console.log(chalk.cyan('1. cd into your project'));
     console.log(chalk.cyan('2. Run pnpm install'));
     console.log(chalk.cyan('3. Run pnpm dev to start the development server'));
-    
+
     // Update layout.tsx with project-specific content
     spinner.start('Customizing application layout...');
     const layoutPath = path.join(projectDir, 'app', 'layout.tsx');
@@ -526,12 +608,12 @@ ${projectDescription}
     const formatProjectName = (name: string) => {
       return name
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     };
 
     const formattedProjectName = formatProjectName(projectName);
-    
+
     const layoutContent = `import Provider from '@/app/provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -612,7 +694,6 @@ export default function RootLayout({
 GEMINI_API_KEY="your-gemini-api-key"`;
     await fs.writeFile(path.join(projectDir, '.cursor-tools.env'), cursorToolsEnvContent);
     spinner.succeed('.cursor-tools.env file created');
-
   } catch (error) {
     if (spinner) spinner.fail('Failed to create project');
     console.error(chalk.red('Error:'), error);
@@ -628,5 +709,5 @@ process.on('SIGINT', () => {
 
 main().catch((error) => {
   console.error(error);
-  process.exit(1); 
-}); 
+  process.exit(1);
+});

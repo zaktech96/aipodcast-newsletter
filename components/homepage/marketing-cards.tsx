@@ -48,24 +48,26 @@ const ProjectsData = [
   {
     id: 6,
     name: 'Tanstack Query',
-    description: 'Powerful data fetching library that handles caching, background updates and stale data out of the box.',
+    description:
+      'Powerful data fetching library that handles caching, background updates and stale data out of the box.',
     image: 'https://utfs.io/f/ee162388-f998-4740-bfc4-9d9a7050f485-90gb5l.png',
     url: 'https://tanstack.com/query/v5',
   },
   {
     id: 7,
     name: 'Plunk',
-    description: 'Simple and powerful email service for sending transactional and marketing emails.',
+    description:
+      'Simple and powerful email service for sending transactional and marketing emails.',
     image: 'https://utfs.io/f/e1JG3uPHb3VpAbyJ8vtmNbFTjE9L3wZGsJtzPhkDR7CrI6yf',
     url: 'https://useplunk.com',
   },
   {
-    id: 8, 
+    id: 8,
     name: 'Umami Analytics',
     description: 'Privacy-focused, self-hosted web analytics solution for tracking user behavior.',
     image: 'https://utfs.io/f/e1JG3uPHb3Vp53yq1RsSqnIOvk43btcCKi60G9ezWyQ1NUVP',
     url: 'https://umami.is',
-  }
+  },
 ];
 
 const SpringAnimatedFeatures = () => {

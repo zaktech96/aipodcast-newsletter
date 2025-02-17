@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-const stripe = process.env.STRIPE_SECRET_KEY 
+const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : undefined;
 
@@ -156,10 +156,7 @@ async function handleInvoiceEvent(
   });
 }
 
-async function handleCheckoutSessionCompleted(
-  event: Stripe.Event,
-  supabase: SupabaseClient
-) {
+async function handleCheckoutSessionCompleted(event: Stripe.Event, supabase: SupabaseClient) {
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');
     return NextResponse.json({ error: 'Stripe configuration error' }, { status: 500 });

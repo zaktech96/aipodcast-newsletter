@@ -34,11 +34,7 @@ export default function HeroSection() {
           </Link>
         </Button>
 
-        <Button
-          asChild
-          variant="outline"
-          className="flex items-center gap-2"
-        >
+        <Button asChild variant="outline" className="flex items-center gap-2">
           <Link
             href="https://discord.gg/F6rUxWvKrV"
             target="_blank"
@@ -50,8 +46,8 @@ export default function HeroSection() {
         </Button>
       </div>
       <div className="hidden md:block -mt-64 relative z-0">
-        <MacbookScroll 
-          src={"https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png"}
+        <MacbookScroll
+          src={'https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png'}
           showGradient
         />
       </div>
