@@ -223,11 +223,7 @@ The following guides will help you customise the entire application UI to your l
 
 Use Cursor to guide you efficiently through the process, add new features, fix bugs etc. See [Efficency](https://blueprint.codeandcreed.tech/product-development/efficiency)
 
-## 5. Recommendations
-
-> - When adding client-side database interactions, make sure to use `NEXT_PUBLIC_SUPABASE_ANON_KEY` instead of `SUPABASE_SERVICE_ROLE_KEY`. The service role key should only be used in server-side components.
-
-## 6. Deploying the App to Production
+## 5. Deploying the App to Production
 
 1. Create a new repository on Github
 2. Push all your changes to the new repository
