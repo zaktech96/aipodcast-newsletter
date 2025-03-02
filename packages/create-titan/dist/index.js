@@ -57,15 +57,12 @@ async function installSupabaseCLI() {
 }
 async function checkGitHubSSH() {
   try {
-    const { stdout } = await execa("ssh", ["-T", "git@github.com", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no"], {
-      reject: false,
-      all: true
+    await execa("git", ["ls-remote", "git@github.com:ObaidUr-Rahmaan/titan.git", "HEAD"], {
+      timeout: 1e4
+      // 10 seconds timeout
     });
-    return stdout.includes("successfully") || stdout.includes("authenticated");
+    return true;
   } catch (error) {
-    if (error.all && (error.all.includes("successfully") || error.all.includes("authenticated"))) {
-      return true;
-    }
     return false;
   }
 }

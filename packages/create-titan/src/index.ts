@@ -76,19 +76,14 @@ async function installSupabaseCLI() {
 // Check if GitHub SSH is configured
 async function checkGitHubSSH() {
   try {
-    const { stdout } = await execa('ssh', ['-T', 'git@github.com', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=no'], { 
-      reject: false,
-      all: true
+    // Test GitHub SSH access by running a git command that requires SSH auth
+    // This directly tests if git can communicate with GitHub via SSH
+    await execa('git', ['ls-remote', 'git@github.com:ObaidUr-Rahmaan/titan.git', 'HEAD'], {
+      timeout: 10000 // 10 seconds timeout
     });
-    
-    // GitHub SSH responds with "You've successfully authenticated" or similar message containing "successfully"
-    // Error code 1 is normal for this command, we're just checking the output
-    return stdout.includes('successfully') || stdout.includes('authenticated');
+    return true;
   } catch (error: any) {
-    // Check error output for successful authentication message
-    if (error.all && (error.all.includes('successfully') || error.all.includes('authenticated'))) {
-      return true;
-    }
+    // If the command fails, SSH authentication is not working
     return false;
   }
 }
