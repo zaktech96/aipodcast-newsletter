@@ -38,6 +38,21 @@ async function main() {
     console.log(chalk.yellow('   - Stripe (Public Key, Secret Key & Price ID)'));
     console.log(chalk.yellow('   - Plunk API Key\n'));
 
+    console.log(chalk.cyan('💡 Important Note:'));
+    console.log(
+      chalk.cyan(
+        '   Only run Supabase locally if you have 16GB RAM or higher and are not experiencing Docker issues.'
+      )
+    );
+    console.log(
+      chalk.cyan(
+        '   Supabase offers 2 free projects in their free tier. Using remote DB credentials is recommended'
+      )
+    );
+    console.log(
+      chalk.cyan('   if you encounter any issues with the local setup or have limited system resources.\n')
+    );
+
     if (isWindows) {
       console.log(chalk.red('\n⚠️ Warning for Windows Users:'));
       console.log(
@@ -46,6 +61,11 @@ async function main() {
       console.log(
         chalk.yellow(
           'If you experience issues, consider using a production database URL instead.\n'
+        )
+      );
+      console.log(
+        chalk.yellow(
+          'Supabase provides 2 free projects in their free tier - using these is highly recommended for Windows users.\n'
         )
       );
     }
@@ -219,10 +239,10 @@ async function main() {
       name: 'dbChoice',
       message: 'Choose your database setup:',
       choices: [
-        { title: 'Local Database (requires Docker & Supabase CLI)', value: 'local' },
+        { title: 'Local Database (requires Docker & Supabase CLI, 16GB+ RAM recommended)', value: 'local' },
         {
           title:
-            'Production Database (recommended for Windows users - avoids Docker issues. Or for anyone trying to ship an MVP fast)',
+            'Production Database (recommended for Windows users or if you have <16GB RAM - uses Supabase free tier)',
           value: 'production',
         },
       ],
@@ -237,6 +257,17 @@ async function main() {
         )
       );
       console.log(chalk.yellow('2. Supabase CLI must be installed\n'));
+      console.log(chalk.yellow('3. 16GB+ RAM recommended for smooth experience\n'));
+      console.log(
+        chalk.cyan(
+          '💡 Remember: Supabase offers 2 free projects on their platform. If you encounter any issues'
+        )
+      );
+      console.log(
+        chalk.cyan(
+          '   with the local setup, you can always switch to using Supabase remote credentials.\n'
+        )
+      );
 
       const { proceed } = await prompts({
         type: 'confirm',
@@ -319,7 +350,7 @@ async function main() {
         console.log(chalk.cyan('Access Supabase Studio at: http://127.0.0.1:54323'));
       } catch (error) {
         spinner.fail('Failed to setup local Supabase');
-        console.error(chalk.red('\nError: Docker is not running.'));
+        console.error(chalk.red('\nError: Docker is not running or encountered issues.'));
         console.log(chalk.yellow('\nPlease:'));
         console.log(chalk.cyan('1. Install Docker/Orbstack if not installed:'));
         console.log(chalk.cyan('   - Mac: https://docs.docker.com/desktop/install/mac-install/'));
@@ -329,11 +360,36 @@ async function main() {
         console.log(chalk.cyan('2. Start Docker/Orbstack'));
         console.log(chalk.cyan('3. Wait a few seconds for Docker to be ready'));
         console.log(chalk.cyan('4. Run this command again\n'));
+        console.log(
+          chalk.green(
+            '💡 Recommendation: If you continue to face issues with local Supabase, we strongly recommend'
+          )
+        );
+        console.log(
+          chalk.green(
+            '   using Supabase remote DB credentials instead (you get 2 free projects in the free tier).'
+          )
+        );
+        console.log(
+          chalk.green(
+            '   Run this CLI again and select "Production Database" when prompted for database setup.\n'
+          )
+        );
         process.exit(1);
       }
     } else {
       // Production database setup
       spinner.stop();
+      console.log(
+        chalk.green(
+          '\n✅ Good choice! Using Supabase\'s remote database is reliable and avoids local Docker issues.'
+        )
+      );
+      console.log(
+        chalk.green(
+          '   You can find your database credentials in your Supabase project settings.\n'
+        )
+      );
       const dbConfig = await prompts(
         [
           {

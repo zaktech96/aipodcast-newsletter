@@ -1,6 +1,6 @@
 {
   "name": "@codeandcreed/create-titan",
-  "version": "2.0.36",
+  "version": "2.0.37",
   "description": "CLI tool to create new Titan projects",
   "type": "commonjs",
   "main": "dist/index.js",
@@ -8,7 +8,9 @@
     "create-titan": "dist/index.js",
     "@codeandcreed/create-titan": "dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -19,7 +21,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["titan", "create-titan", "nextjs", "boilerplate", "cli"],
+  "keywords": [
+    "titan",
+    "create-titan",
+    "nextjs",
+    "boilerplate",
+    "cli"
+  ],
   "author": "ObaidUr-Rahmaan",
   "license": "MIT",
   "dependencies": {
