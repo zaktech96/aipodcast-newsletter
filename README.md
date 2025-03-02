@@ -125,6 +125,14 @@ Make sure it's the SSH URL, not the HTTPS URL!
      - Create account at [Plunk](https://useplunk.com) (We don't care about the environment)
      - Copy your `PLUNK_API_KEY` from Project Settings > API Keys
      - Connect the domain you bought earlier (Project Settings -> Verified Domain)
+     
+   - **Supabase** (Database - if using remote instance)
+     - Create account at [Supabase](https://supabase.com)
+     - Create a new project called '[Project Name] - Dev DB' (Note: When creating your database password, avoid special characters like '#' and '&' as they cause URL encoding issues)
+     - Copy your database password and keep it safe (ideally in a password manager)
+     - Copy your `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the 'Connect' modal on the main Project Dashboard page (click on the 'Connect' button) and then go to the 'App Frameworks' tab
+     - Copy your `DATABASE_URL` (with pgbouncer) and `DIRECT_URL` (without pgbouncer) from the same 'Connect' modal under the 'ORMs' tab
+     - You'll use these as the env vars when running the Titan CLI or deploying to Vercel
 
 ## 2. Setup via CLI
 
