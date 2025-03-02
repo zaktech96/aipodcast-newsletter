@@ -15,6 +15,60 @@ var is64Bit = os.arch() === "x64";
 var rmrf = process.platform === "win32" ? ["cmd", ["/c", "rmdir", "/s", "/q"]] : ["rm", ["-rf"]];
 var gitInit = process.platform === "win32" ? ["cmd", ["/c", "git", "init"]] : ["git", ["init"]];
 var program = new Command().name("create-titan").description("Create a new Titan project").version("0.1.0").parse();
+async function checkSupabaseCLI() {
+  try {
+    await execa("supabase", ["--version"]);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+async function installSupabaseCLI() {
+  const spinner = ora("Installing Supabase CLI...").start();
+  try {
+    if (process.platform === "darwin") {
+      await execa("brew", ["install", "supabase/tap/supabase"]);
+    } else if (process.platform === "win32") {
+      try {
+        await execa("scoop", ["--version"]);
+      } catch {
+        spinner.text = "Installing scoop package manager...";
+        await execa("powershell", [
+          "-Command",
+          "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; iwr -useb get.scoop.sh | iex"
+        ]);
+      }
+      await execa("scoop", ["bucket", "add", "supabase", "https://github.com/supabase/scoop-bucket.git"]);
+      await execa("scoop", ["install", "supabase"]);
+    } else if (process.platform === "linux") {
+      await execa("curl", ["-s", "https://raw.githubusercontent.com/supabase/cli/main/install.sh", "|", "bash"]);
+    }
+    spinner.succeed("Supabase CLI installed successfully");
+    return true;
+  } catch (error) {
+    spinner.fail("Failed to install Supabase CLI");
+    console.error(chalk.red("Error:"), error);
+    console.log(chalk.yellow("Please install Supabase CLI manually:"));
+    console.log(chalk.cyan("- Mac: brew install supabase/tap/supabase"));
+    console.log(chalk.cyan("- Windows: scoop bucket add supabase https://github.com/supabase/scoop-bucket.git && scoop install supabase"));
+    console.log(chalk.cyan("- Linux: curl -s https://raw.githubusercontent.com/supabase/cli/main/install.sh | bash"));
+    return false;
+  }
+}
+async function checkGitHubSSH() {
+  try {
+    const { stdout } = await execa("ssh", ["-T", "git@github.com", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no"], {
+      reject: false,
+      all: true
+    });
+    return stdout.includes("successfully") || stdout.includes("authenticated");
+  } catch (error) {
+    if (error.all && (error.all.includes("successfully") || error.all.includes("authenticated"))) {
+      return true;
+    }
+    return false;
+  }
+}
 async function main() {
   let spinner;
   try {
@@ -23,12 +77,15 @@ async function main() {
     console.log(
       chalk.yellow("1. Docker/Orbstack must be running (Only if you decide to run the DB locally)")
     );
-    console.log(chalk.yellow("2. Supabase CLI must be installed"));
-    console.log(chalk.yellow("3. SSH key must be set up with GitHub"));
-    console.log(chalk.yellow("4. The following API keys ready:"));
+    console.log(chalk.yellow("2. The following connection info is ready:"));
     console.log(chalk.yellow("   - Clerk (Publishable Key & Secret Key)"));
     console.log(chalk.yellow("   - Stripe (Public Key, Secret Key & Price ID)"));
-    console.log(chalk.yellow("   - Plunk API Key\n"));
+    console.log(chalk.yellow("   - Plunk API Key"));
+    console.log(chalk.yellow("   - Supabase (if using remote instance):"));
+    console.log(chalk.yellow("     * NEXT_PUBLIC_SUPABASE_URL"));
+    console.log(chalk.yellow("     * SUPABASE_SERVICE_ROLE_KEY"));
+    console.log(chalk.yellow("     * DATABASE_URL (with pgbouncer)"));
+    console.log(chalk.yellow("     * DIRECT_URL (without pgbouncer)\n"));
     console.log(chalk.cyan("\u{1F4A1} Important Note:"));
     console.log(
       chalk.cyan(
@@ -59,6 +116,40 @@ async function main() {
         )
       );
     }
+    spinner = ora("Checking for Supabase CLI...").start();
+    const hasSupabaseCLI = await checkSupabaseCLI();
+    if (!hasSupabaseCLI) {
+      spinner.info("Supabase CLI not found, attempting to install...");
+      const installed = await installSupabaseCLI();
+      if (!installed) {
+        console.log(chalk.red("\nUnable to proceed without Supabase CLI. Please install it manually and try again."));
+        process.exit(1);
+      }
+    } else {
+      spinner.succeed("Supabase CLI is installed");
+    }
+    spinner.text = "Checking GitHub SSH authentication...";
+    const hasGitHubSSH = await checkGitHubSSH();
+    if (!hasGitHubSSH) {
+      spinner.fail("GitHub SSH authentication failed");
+      console.log(chalk.red("\nError: Unable to authenticate with GitHub via SSH."));
+      console.log(chalk.yellow("\nPlease set up SSH authentication with GitHub:"));
+      console.log(chalk.cyan("1. Generate an SSH key if you don't have one:"));
+      console.log(chalk.cyan('   ssh-keygen -t ed25519 -C "your_email@example.com"'));
+      console.log(chalk.cyan("2. Add your SSH key to the ssh-agent:"));
+      console.log(chalk.cyan('   eval "$(ssh-agent -s)"'));
+      console.log(chalk.cyan("   ssh-add ~/.ssh/id_ed25519"));
+      console.log(chalk.cyan("3. Add your SSH key to your GitHub account:"));
+      console.log(chalk.cyan("   - Copy your public key to clipboard:"));
+      console.log(chalk.cyan("     cat ~/.ssh/id_ed25519.pub | pbcopy"));
+      console.log(chalk.cyan("   - Go to GitHub > Settings > SSH and GPG keys > New SSH key"));
+      console.log(chalk.cyan("   - Paste your key and save"));
+      console.log(chalk.cyan("4. Test your connection:"));
+      console.log(chalk.cyan("   ssh -T git@github.com"));
+      console.log(chalk.cyan("5. Run this CLI again"));
+      process.exit(1);
+    }
+    spinner.succeed("GitHub SSH authentication successful");
     const { proceed } = await prompts({
       type: "confirm",
       name: "proceed",
@@ -665,11 +756,52 @@ export default function RootLayout({
 }`;
     await fs.writeFile(layoutPath, layoutContent);
     spinner.succeed("Application layout customized");
-    spinner.start("Creating .cursor-tools.env file...");
-    const cursorToolsEnvContent = `PERPLEXITY_API_KEY="your-perplexity-api-key"
+    spinner.stop();
+    const { setupCursorTools } = await prompts({
+      type: "confirm",
+      name: "setupCursorTools",
+      message: "Do you want to set up cursor-tools?",
+      initial: true
+    });
+    if (setupCursorTools) {
+      console.log(chalk.cyan("\n\u{1F4DD} cursor-tools Setup:"));
+      console.log(chalk.cyan("You will need API keys from Perplexity AI and Gemini:"));
+      console.log(chalk.cyan("- Perplexity API Key: https://www.perplexity.ai/settings/api"));
+      console.log(chalk.cyan("- Gemini API Key: https://aistudio.google.com/app/apikey"));
+      const apiKeys = await prompts([
+        {
+          type: "password",
+          name: "perplexityApiKey",
+          message: "Enter your Perplexity API Key:"
+        },
+        {
+          type: "password",
+          name: "geminiApiKey",
+          message: "Enter your Gemini API Key:"
+        }
+      ], {
+        onCancel: () => {
+          console.log("\nCursor-tools setup cancelled");
+          return { perplexityApiKey: "", geminiApiKey: "" };
+        }
+      });
+      spinner.start("Setting up cursor-tools...");
+      const cursorToolsEnvContent = `PERPLEXITY_API_KEY="${apiKeys.perplexityApiKey || "your-perplexity-api-key"}"
+GEMINI_API_KEY="${apiKeys.geminiApiKey || "your-gemini-api-key"}"`;
+      await fs.writeFile(path.join(projectDir, ".cursor-tools.env"), cursorToolsEnvContent);
+      try {
+        await execa("cursor-tools", ["install", "."], { cwd: projectDir });
+        spinner.succeed("cursor-tools installed and configured successfully");
+      } catch (error) {
+        spinner.warn("Failed to run cursor-tools install command");
+        console.log(chalk.yellow("You can run it manually later with: cursor-tools install ."));
+      }
+    } else {
+      const cursorToolsEnvContent = `PERPLEXITY_API_KEY="your-perplexity-api-key"
 GEMINI_API_KEY="your-gemini-api-key"`;
-    await fs.writeFile(path.join(projectDir, ".cursor-tools.env"), cursorToolsEnvContent);
-    spinner.succeed(".cursor-tools.env file created");
+      await fs.writeFile(path.join(projectDir, ".cursor-tools.env"), cursorToolsEnvContent);
+      console.log(chalk.cyan("\nSkipping cursor-tools setup. You can set it up later if needed."));
+    }
   } catch (error) {
     if (spinner)
       spinner.fail("Failed to create project");
