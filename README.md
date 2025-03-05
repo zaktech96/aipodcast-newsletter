@@ -313,6 +313,7 @@ Any beneficial contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## ToDos
 
+- Recommend to create waitlist with Clerk (not plunk)
 - Recommend that they use feature flags for everything
 - Update landing page to be more unique (and less like Rasmic's NextJS Starter Kit)
 - Use Jotai or Zustand for state management client-side
