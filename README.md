@@ -167,29 +167,6 @@ If you chose local development:
 - All changes will immediately affect your live application
 - However, we strongly recommend using local development for testing (but sometimes you might want to move very fast and don't care about data loss, specifically for MVPs). If you're on Windows and having issues with Docker Desktop crashing, you can use your production Supabase URL instead.
 
-## 2.1 Setup Cursor Tools
-
-After running the CLI, you'll notice a `.cursor-tools.env` file in your project root. You'll need to set up your API keys:
-
-1. Get your Perplexity API Key from [Perplexity AI Settings](https://www.perplexity.ai/settings/api)
-2. Get your Gemini API Key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-3. Update `.cursor-tools.env` with your keys
-
-Example usage of cursor-tools:
-
-```bash
-# Get latest TypeScript updates
-cursor-tools web "What's new in TypeScript 5.7?"
-
-# Understand project architecture
-cursor-tools repo "Explain the authentication flow in this project, which files are involved?"
-
-# Take screenshots of websites
-cursor-tools browser open "https://google.com" --screenshot=page.png
-```
-
-For more examples and advanced usage, check out the [cursor-tools GitHub repository](https://github.com/eastlondoner/cursor-tools).
-
 ## 3. Developing your app locally
 
 ### Setup ngrok
