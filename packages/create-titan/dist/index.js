@@ -753,52 +753,11 @@ export default function RootLayout({
 }`;
     await fs.writeFile(layoutPath, layoutContent);
     spinner.succeed("Application layout customized");
-    spinner.stop();
-    const { setupCursorTools } = await prompts({
-      type: "confirm",
-      name: "setupCursorTools",
-      message: "Do you want to set up cursor-tools?",
-      initial: true
-    });
-    if (setupCursorTools) {
-      console.log(chalk.cyan("\n\u{1F4DD} cursor-tools Setup:"));
-      console.log(chalk.cyan("You will need API keys from Perplexity AI and Gemini:"));
-      console.log(chalk.cyan("- Perplexity API Key: https://www.perplexity.ai/settings/api"));
-      console.log(chalk.cyan("- Gemini API Key: https://aistudio.google.com/app/apikey"));
-      const apiKeys = await prompts([
-        {
-          type: "password",
-          name: "perplexityApiKey",
-          message: "Enter your Perplexity API Key:"
-        },
-        {
-          type: "password",
-          name: "geminiApiKey",
-          message: "Enter your Gemini API Key:"
-        }
-      ], {
-        onCancel: () => {
-          console.log("\nCursor-tools setup cancelled");
-          return { perplexityApiKey: "", geminiApiKey: "" };
-        }
-      });
-      spinner.start("Setting up cursor-tools...");
-      const cursorToolsEnvContent = `PERPLEXITY_API_KEY="${apiKeys.perplexityApiKey || "your-perplexity-api-key"}"
-GEMINI_API_KEY="${apiKeys.geminiApiKey || "your-gemini-api-key"}"`;
-      await fs.writeFile(path.join(projectDir, ".cursor-tools.env"), cursorToolsEnvContent);
-      try {
-        await execa("cursor-tools", ["install", "."], { cwd: projectDir });
-        spinner.succeed("cursor-tools installed and configured successfully");
-      } catch (error) {
-        spinner.warn("Failed to run cursor-tools install command");
-        console.log(chalk.yellow("You can run it manually later with: cursor-tools install ."));
-      }
-    } else {
-      const cursorToolsEnvContent = `PERPLEXITY_API_KEY="your-perplexity-api-key"
-GEMINI_API_KEY="your-gemini-api-key"`;
-      await fs.writeFile(path.join(projectDir, ".cursor-tools.env"), cursorToolsEnvContent);
-      console.log(chalk.cyan("\nSkipping cursor-tools setup. You can set it up later if needed."));
-    }
+    console.log(chalk.green("\n\u2728 Project created and pushed to GitHub successfully! \u2728"));
+    console.log(chalk.cyan("\nNext steps:"));
+    console.log(chalk.cyan("1. cd into your project"));
+    console.log(chalk.cyan("2. Run pnpm install"));
+    console.log(chalk.cyan("3. Run pnpm dev to start the development server"));
   } catch (error) {
     if (spinner)
       spinner.fail("Failed to create project");

@@ -84,7 +84,6 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "cursor-tools": "latest",
     "postcss": "latest",
     "tailwindcss": "^3.3.5",
     "typescript": "latest"
