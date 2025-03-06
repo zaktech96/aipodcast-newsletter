@@ -307,26 +307,59 @@ async function main() {
 
     // Auth Configuration
     spinner.stop();
-    const authConfig = await prompts(
-      [
-        {
-          type: 'password',
-          name: 'clerkPublishableKey',
-          message: 'Enter your Clerk Publishable Key:',
-        },
-        {
-          type: 'password',
-          name: 'clerkSecretKey',
-          message: 'Enter your Clerk Secret Key:',
-        },
-      ],
-      {
-        onCancel: () => {
-          console.log('\nSetup cancelled');
-          process.exit(1);
-        },
+    
+    // Function to prompt for environment variable with confirmation
+    async function promptWithConfirmation(message: string, type: 'text' | 'password' = 'text') {
+      let confirmed = false;
+      let value = '';
+      
+      while (!confirmed) {
+        const result = await prompts({
+          type,
+          name: 'value',
+          message,
+        }, {
+          onCancel: () => {
+            console.log('\nSetup cancelled');
+            process.exit(1);
+          },
+        });
+        
+        value = result.value;
+        
+        if (!value) {
+          console.log(chalk.red('This value is required'));
+          continue;
+        }
+        
+        const confirmation = await prompts({
+          type: 'text',
+          name: 'confirmed',
+          message: 'Are you sure you\'ve inputted that env var correctly?',
+        }, {
+          onCancel: () => {
+            console.log('\nSetup cancelled');
+            process.exit(1);
+          },
+        });
+        
+        confirmed = confirmation.confirmed?.toLowerCase() === 'yes';
+        
+        if (!confirmed) {
+          console.log(chalk.yellow('Let\'s try again...'));
+        }
       }
-    );
+      
+      return value;
+    }
+    
+    const clerkPublishableKey = await promptWithConfirmation('Enter your Clerk Publishable Key:', 'password');
+    const clerkSecretKey = await promptWithConfirmation('Enter your Clerk Secret Key:', 'password');
+    
+    const authConfig = {
+      clerkPublishableKey,
+      clerkSecretKey
+    };
 
     if (!authConfig.clerkPublishableKey || !authConfig.clerkSecretKey) {
       console.log(chalk.red('Clerk keys are required'));
@@ -500,45 +533,31 @@ async function main() {
           '   You can find your database credentials in your Supabase project settings.\n'
         )
       );
-      const dbConfig = await prompts(
-        [
-          {
-            type: 'text',
-            name: 'supabaseUrl',
-            message: 'Enter your Supabase Project URL:',
-            validate: (value: string) =>
-              value.startsWith('https://') ? true : 'URL must start with https://',
-          },
-          {
-            type: 'password',
-            name: 'supabaseAnonKey',
-            message: 'Enter your Supabase Anon Key:',
-          },
-          {
-            type: 'password',
-            name: 'supabaseServiceKey',
-            message: 'Enter your Supabase Service Role Key:',
-          },
-          {
-            type: 'text',
-            name: 'databaseUrl',
-            message: 'Enter your Database URL (with pgbouncer):',
-            validate: (value: string) =>
-              value.includes('?pgbouncer=true') ? true : 'URL must include ?pgbouncer=true',
-          },
-          {
-            type: 'text',
-            name: 'directUrl',
-            message: 'Enter your Direct URL (without pgbouncer):',
-          },
-        ],
-        {
-          onCancel: () => {
-            console.log('\nSetup cancelled');
-            process.exit(1);
-          },
-        }
-      );
+      
+      const supabaseUrl = await promptWithConfirmation('Enter your Supabase Project URL:');
+      if (!supabaseUrl.startsWith('https://')) {
+        console.log(chalk.red('URL must start with https://'));
+        process.exit(1);
+      }
+      
+      const supabaseAnonKey = await promptWithConfirmation('Enter your Supabase Anon Key:', 'password');
+      const supabaseServiceKey = await promptWithConfirmation('Enter your Supabase Service Role Key:', 'password');
+      
+      const databaseUrl = await promptWithConfirmation('Enter your Database URL (with pgbouncer):');
+      if (!databaseUrl.includes('?pgbouncer=true')) {
+        console.log(chalk.red('URL must include ?pgbouncer=true'));
+        process.exit(1);
+      }
+      
+      const directUrl = await promptWithConfirmation('Enter your Direct URL (without pgbouncer):');
+      
+      const dbConfig = {
+        supabaseUrl,
+        supabaseAnonKey,
+        supabaseServiceKey,
+        databaseUrl,
+        directUrl
+      };
 
       if (
         !dbConfig.supabaseUrl ||
@@ -599,31 +618,16 @@ async function main() {
 
     // Payments Configuration
     spinner.stop();
-    const paymentConfig = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'stripePublicKey',
-          message: 'Enter your Stripe Public Key:',
-        },
-        {
-          type: 'password',
-          name: 'stripeSecretKey',
-          message: 'Enter your Stripe Secret Key:',
-        },
-        {
-          type: 'text',
-          name: 'stripePriceId',
-          message: 'Enter your Stripe Price ID:',
-        },
-      ],
-      {
-        onCancel: () => {
-          console.log('\nSetup cancelled');
-          process.exit(1);
-        },
-      }
-    );
+    
+    const stripePublicKey = await promptWithConfirmation('Enter your Stripe Public Key:');
+    const stripeSecretKey = await promptWithConfirmation('Enter your Stripe Secret Key:', 'password');
+    const stripePriceId = await promptWithConfirmation('Enter your Stripe Price ID:');
+    
+    const paymentConfig = {
+      stripePublicKey,
+      stripeSecretKey,
+      stripePriceId
+    };
 
     if (
       !paymentConfig.stripeSecretKey ||
@@ -642,21 +646,12 @@ async function main() {
 
     // Email Configuration
     spinner.stop();
-    const emailConfig = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'plunkApiKey',
-          message: 'Enter your Plunk API Key:',
-        },
-      ],
-      {
-        onCancel: () => {
-          console.log('\nSetup cancelled');
-          process.exit(1);
-        },
-      }
-    );
+    
+    const plunkApiKey = await promptWithConfirmation('Enter your Plunk API Key:');
+    
+    const emailConfig = {
+      plunkApiKey
+    };
 
     if (!emailConfig.plunkApiKey) {
       console.log(chalk.red('Plunk API Key is required'));
