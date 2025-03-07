@@ -16,5 +16,6 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [GetFernand](https://getfernand.com/) - Fast, Calm Customer Support
 - [Entelligence](https://www.entelligence.ai/) - AI-powered SDLC for actionable insights and productivity across your team
 - [Vercel](https://vercel.com/) - Deployments without worrying about infrastructure (DDoS protection, etc.)
+- [Bun](https://bun.sh/) - Fast JavaScript runtime and package manager
 
 Detailed Docs [here](https://blueprint.codeandcreed.tech/product-development/titan)

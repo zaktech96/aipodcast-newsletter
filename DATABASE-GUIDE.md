@@ -41,7 +41,7 @@ supabase start          # Make sure your local database is running
 ```bash
 # Edit prisma/schema.prisma file to change database structure
 # Then run:
-npx prisma migrate dev --name what_changed
+bun prisma migrate dev --name what_changed
 supabase gen types typescript --local > types/supabase.ts
 ```
 
@@ -51,7 +51,7 @@ supabase gen types typescript --local > types/supabase.ts
 supabase db dump --project-ref YOUR_REF -f backup.sql
 
 # Deploy
-prisma migrate deploy
+bun prisma migrate deploy
 supabase gen types typescript --project-ref YOUR_REF > types/supabase.ts
 ```
 
@@ -61,16 +61,16 @@ supabase gen types typescript --project-ref YOUR_REF > types/supabase.ts
 ```bash
 # Start fresh:
 supabase db reset
-npx prisma migrate reset --force
+bun prisma migrate reset --force
 ```
 
 ### "I made a bad migration!"
 ```bash
 # Only for local (not production) fixes:
-npx prisma migrate reset --force           # Reset database
+bun prisma migrate reset --force           # Reset database
 # Delete the last file from prisma/migrations/
 # Fix your schema.prisma file
-npx prisma migrate dev --name fixed_issue  # Create new migration
+bun prisma migrate dev --name fixed_issue  # Create new migration
 ```
 
 Note: You can only 'reverse' migrations locally. Once pushed to prod, you will have to create a new migration to undo a bad schema change. That's why it's important to make small, reversible changes and test them in your locally running app before applying them to the production database.
@@ -80,7 +80,7 @@ Note: You can only 'reverse' migrations locally. Once pushed to prod, you will h
 cd main
 git pull origin main     # Get their changes
 supabase db reset        # Reset your database
-npx prisma migrate dev   # Apply all migrations
+bun prisma migrate dev   # Apply all migrations
 ```
 
 ## Best Practices
@@ -90,8 +90,8 @@ npx prisma migrate dev   # Apply all migrations
 3. **Backup before production changes**
 4. **Use clear migration names** like:
    ```bash
-   npx prisma migrate dev --name add_user_profile
-   npx prisma migrate dev --name update_payment_fields
+   bun prisma migrate dev --name add_user_profile
+   bun prisma migrate dev --name update_payment_fields
    ```
 
 ## Useful Commands

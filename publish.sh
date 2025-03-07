@@ -12,15 +12,15 @@ cd packages/create-titan
 
 # Increment patch version
 echo -e "${GREEN}Incrementing version...${NC}"
-pnpm version patch
+bun version patch
 
 # Build the package
 echo -e "${GREEN}Building package...${NC}"
-pnpm build
+bun build
 
 # Publish to npm
 echo -e "${GREEN}Publishing to npm...${NC}"
-pnpm publish --no-git-checks
+bun publish --no-git-checks
 
 # Navigate back
 cd ../..

@@ -4,7 +4,7 @@ A CLI for creating Full-Stack NextJS 15 Applications (Pre-configured with Auth, 
 
 ## Installation & Usage
 ```bash
-pnpm dlx @codeandcreed/create-titan@latest
+bun dlx @codeandcreed/create-titan@latest
 ```
 
 ## Tech Stack
@@ -29,8 +29,8 @@ Contributions are welcome! Please feel free to submit a PR.
 
 Once you've made your changes:
 
-To update the package, make sure you are in the directory `packages/create-titan` and then run `pnpm version patch` to update the version number.
+To update the package, make sure you are in the directory `packages/create-titan` and then run `bun version patch` to update the version number.
 
-Then build the package: `pnpm build`
+Then build the package: `bun build`
 
-Then, run `pnpm publish --no-git-checks` to publish the new version to NPM.
+Then, run `bun publish --no-git-checks` to publish the new version to NPM.

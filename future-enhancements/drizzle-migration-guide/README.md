@@ -31,8 +31,8 @@ This guide outlines the step-by-step process for migrating from Prisma to Drizzl
 ## Step 1: Install Drizzle Dependencies
 
 ```bash
-pnpm add drizzle-orm pg
-pnpm add -D drizzle-kit @types/pg
+bun add drizzle-orm pg
+bun add -d drizzle-kit @types/pg
 ```
 
 ## Step 2: Create Drizzle Schema
@@ -321,7 +321,7 @@ echo "🗑️  Starting fresh Supabase instance..."
 supabase start
 
 echo "🗑️  Applying schema changes..."
-pnpm drizzle:push
+bun drizzle:push
 
 echo "🔄 Regenerating types..."
 supabase gen types typescript --local > types/supabase.ts
@@ -401,7 +401,7 @@ const usersWithSubscriptions = await db.query.users.findMany({
 
 1. Remove Prisma dependencies:
 ```bash
-pnpm remove prisma @prisma/client
+bun remove prisma @prisma/client
 ```
 
 2. Update any CI/CD workflows to use Drizzle instead of Prisma
