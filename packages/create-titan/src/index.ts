@@ -314,7 +314,7 @@ async function main() {
     spinner.stop();
     
     // Function to prompt for environment variable with confirmation
-    async function promptWithConfirmation(message: string, type: 'text' | 'password' = 'text') {
+    const promptWithConfirmation = async (message: string, type: 'text' | 'password' = 'text') => {
       let confirmed = false;
       let value = '';
       
@@ -356,7 +356,7 @@ async function main() {
       }
       
       return value;
-    }
+    };
     
     const clerkPublishableKey = await promptWithConfirmation('Enter your Clerk Publishable Key:', 'password');
     const clerkSecretKey = await promptWithConfirmation('Enter your Clerk Secret Key:', 'password');

@@ -262,7 +262,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
     }
     let envContent = "";
     spinner.stop();
-    async function promptWithConfirmation(message, type = "text") {
+    const promptWithConfirmation = async (message, type = "text") => {
       let confirmed = false;
       let value = "";
       while (!confirmed) {
@@ -297,7 +297,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         }
       }
       return value;
-    }
+    };
     const clerkPublishableKey = await promptWithConfirmation("Enter your Clerk Publishable Key:", "password");
     const clerkSecretKey = await promptWithConfirmation("Enter your Clerk Secret Key:", "password");
     const authConfig = {
