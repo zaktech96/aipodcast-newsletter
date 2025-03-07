@@ -91,11 +91,16 @@ async function main() {
     );
     console.log(
       chalk.cyan(
-        "   Supabase offers 2 free projects in their free tier. Using remote DB credentials is recommended"
+        '   We recommend creating a dedicated project in Supabase called "[Project Name] Dev DB"'
       )
     );
     console.log(
-      chalk.cyan("   if you encounter any issues with the local setup or have limited system resources.\n")
+      chalk.cyan(
+        "   for development purposes. Supabase offers 2 free projects in their free tier, so you can"
+      )
+    );
+    console.log(
+      chalk.cyan("   use one for development and one for production later on.\n")
     );
     if (isWindows) {
       console.log(chalk.red("\n\u26A0\uFE0F Warning for Windows Users:"));
@@ -104,12 +109,12 @@ async function main() {
       );
       console.log(
         chalk.yellow(
-          "If you experience issues, consider using a production database URL instead.\n"
+          "If you experience issues, we recommend creating a dedicated Dev DB in Supabase instead.\n"
         )
       );
       console.log(
         chalk.yellow(
-          "Supabase provides 2 free projects in their free tier - using these is highly recommended for Windows users.\n"
+          'Create a project called "[Project Name] Dev DB" in Supabase and use those credentials - this is highly recommended for Windows users.\n'
         )
       );
     }
@@ -327,11 +332,11 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       choices: [
         { title: "Local Database (requires Docker & Supabase CLI, 16GB+ RAM recommended)", value: "local" },
         {
-          title: "Production Database (recommended for Windows users or if you have <16GB RAM - uses Supabase free tier)",
+          title: 'Development Database (recommended - create a dedicated project in Supabase called "[Project Name] Dev DB")',
           value: "production"
         }
       ],
-      initial: 0
+      initial: 1
     });
     if (dbChoice === "local") {
       console.log(chalk.yellow("\nPre-requisites check for local database:"));
@@ -448,12 +453,12 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         );
         console.log(
           chalk.green(
-            "   using Supabase remote DB credentials instead (you get 2 free projects in the free tier)."
+            '   creating a dedicated project in Supabase called "[Project Name] Dev DB" and using those credentials.'
           )
         );
         console.log(
           chalk.green(
-            '   Run this CLI again and select "Production Database" when prompted for database setup.\n'
+            '   Run this CLI again and select "Development Database" when prompted for database setup.\n'
           )
         );
         process.exit(1);
@@ -462,12 +467,17 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       spinner.stop();
       console.log(
         chalk.green(
-          "\n\u2705 Good choice! Using Supabase's remote database is reliable and avoids local Docker issues."
+          "\n\u2705 Good choice! Using a dedicated Supabase Dev DB is reliable and avoids local Docker issues."
         )
       );
       console.log(
         chalk.green(
-          "   You can find your database credentials in your Supabase project settings.\n"
+          `   If you haven't already, create a project called "[Project Name] Dev DB" in Supabase.`
+        )
+      );
+      console.log(
+        chalk.green(
+          "   You can find your database credentials in the project settings.\n"
         )
       );
       const supabaseUrl = await promptWithConfirmation("Enter your Supabase Project URL:");

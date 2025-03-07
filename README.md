@@ -129,7 +129,7 @@ Make sure it's the SSH URL, not the HTTPS URL!
      
    - **Supabase** (Database - if using remote instance)
      - Create account at [Supabase](https://supabase.com)
-     - Create a new project called '[Project Name] - Dev DB' (Note: When creating your database password, avoid special characters like '#' and '&' as they cause URL encoding issues)
+     - Create a new project called '[Project Name] Dev DB' (Note: When creating your database password, avoid special characters like '#' and '&' as they cause URL encoding issues)
      - Copy your database password and keep it safe (ideally in a password manager)
      - Copy your `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the 'Connect' modal on the main Project Dashboard page (click on the 'Connect' button) and then go to the 'App Frameworks' tab
      - Copy your `DATABASE_URL` (with pgbouncer) and `DIRECT_URL` (without pgbouncer) from the same 'Connect' modal under the 'ORMs' tab
@@ -137,24 +137,25 @@ Make sure it's the SSH URL, not the HTTPS URL!
 
 ## 2. Setup via CLI
 
-1. Make sure Docker Desktop / Orbstack is running
+1. Make sure Docker Desktop / Orbstack is running (only if you want to run the database locally)
 
-2. Using your previous saved info (github repo URL and API keys), create your project locally by running:
+2. We recommend creating a dedicated project in Supabase called "[Project Name] Dev DB" for development purposes. This approach is more reliable than running Supabase locally, especially on Windows or machines with less than 16GB RAM.
+
+3. Using your previously saved info (GitHub repo URL and API keys), create your project locally by running:
    ```bash
    pnpm dlx @codeandcreed/create-titan@latest
    ```
 
-3. Follow the prompts to configure your project. The CLI will:
+4. Follow the prompts to configure your project. The CLI will:
    1. Clone the project template
-   2. Initialize a local Supabase instance
-   3. Start the database (this might take a few minutes on first run)
-   4. Create all required database tables
-   5. Generate TypeScript types for your database schema
-   6. Configure your environment variables
+   2. Initialize either a local Supabase instance or connect to your Dev DB
+   3. Create all required database tables
+   4. Generate TypeScript types for your database schema
+   5. Configure your environment variables
 
 Done! Your project is now set up:
 - Pushed to your GitHub repo ✅
-- Local Supabase instance running (if you chose local development) ✅
+- Database configured (either locally or using your Dev DB) ✅
 - Ready for local development ✅
 
 If you chose local development:
@@ -162,10 +163,15 @@ If you chose local development:
 - Here you can view tables, run queries, and manage data
 - Changes only affect your local database
 
-⚠️ Important: If you used your production Supabase URL instead of local development:
-- You'll be working directly with your production database
-- All changes will immediately affect your live application
-- However, we strongly recommend using local development for testing (but sometimes you might want to move very fast and don't care about data loss, specifically for MVPs). If you're on Windows and having issues with Docker Desktop crashing, you can use your production Supabase URL instead.
+If you chose to use a Dev DB in Supabase:
+- Access your Supabase Studio at https://app.supabase.com
+- Select your "[Project Name] Dev DB" project
+- Here you can view tables, run queries, and manage data
+
+⚠️ Important: If you're using a Supabase Dev DB:
+- All changes will immediately affect your development database
+- This is the recommended approach for most users, especially on Windows or machines with limited resources
+- You can always create a separate production database later when deploying your app
 
 ## 3. Developing your app locally
 
