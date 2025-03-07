@@ -1,5 +1,9 @@
+'use client';
+
 import Link from 'next/link';
+import { Bug } from 'lucide-react';
 import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
+import { Button } from '@/components/ui/button';
 
 export const Footer = () => {
   const navigationItems = [
@@ -71,6 +75,15 @@ export const Footer = () => {
                 >
                   Created by @_7obaid_
                 </Link>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-2 mt-2"
+                  onClick={() => window.open('https://userjot.com/', '_blank')}
+                >
+                  <Bug className="h-4 w-4" />
+                  Report Bug / Request Feature
+                </Button>
               </div>
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
                 <Link href="#" className="hover:text-primary transition-colors">
