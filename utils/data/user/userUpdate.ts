@@ -1,6 +1,8 @@
 'server only';
 import { userUpdateProps } from '@/utils/types';
-import { createServerActionClient } from '@/lib/supabase';
+import { createDirectClient } from '@/lib/drizzle';
+import { users } from '@/db/schema/users';
+import { eq } from 'drizzle-orm';
 
 export const userUpdate = async ({
   email,
@@ -10,23 +12,21 @@ export const userUpdate = async ({
   user_id,
 }: userUpdateProps) => {
   try {
-    const supabase = await createServerActionClient();
-    const { data, error } = await supabase
-      .from('user')
-      .update([
-        {
-          email,
-          first_name,
-          last_name,
-          profile_image_url,
-          user_id,
-        },
-      ])
-      .eq('email', email)
-      .select();
+    const db = createDirectClient();
+    
+    const updated = await db.update(users)
+      .set({
+        email,
+        firstName: first_name,
+        lastName: last_name,
+        profileImageUrl: profile_image_url,
+        userId: user_id,
+      })
+      .where(eq(users.email, email))
+      .returning();
 
-    if (data) return data;
-    if (error) return error;
+    if (updated.length > 0) return updated[0];
+    return { error: 'User not updated' };
   } catch (error: any) {
     console.error('Failed to update user:', error);
     return { error: error.message };

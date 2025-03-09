@@ -1,7 +1,9 @@
 'server only';
 
 import { clerkClient } from '@clerk/nextjs/server';
-import { createServerActionClient } from '@/lib/supabase';
+import { createDirectClient } from '@/lib/drizzle';
+import { subscriptions } from '@/db/schema/subscriptions';
+import { eq } from 'drizzle-orm';
 import config from '@/config';
 
 export const isAuthorized = async (
@@ -24,16 +26,19 @@ export const isAuthorized = async (
   }
 
   try {
-    const supabase = await createServerActionClient();
-    const { data, error } = await supabase.from('subscriptions').select('*').eq('user_id', userId);
+    const db = createDirectClient();
+    const userSubscriptions = await db.select()
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, userId));
 
-    if (error?.code)
+    if (userSubscriptions.length === 0) {
       return {
         authorized: false,
-        message: error.message,
+        message: 'No subscription found',
       };
+    }
 
-    if (data && data[0].status === 'active') {
+    if (userSubscriptions[0].status === 'active') {
       return {
         authorized: true,
         message: 'User is subscribed',

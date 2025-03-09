@@ -1,4 +1,4 @@
-import { createServerActionClient } from '@/lib/supabase';
+import { createServerClient } from '@/lib/drizzle';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const supabase = await createServerActionClient();
+    const supabase = await createServerClient();
     const reqText = await req.text();
     return webhooksHandler(reqText, req, supabase);
   } catch (error) {

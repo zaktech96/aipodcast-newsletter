@@ -15,46 +15,6 @@ var is64Bit = os.arch() === "x64";
 var rmrf = process.platform === "win32" ? ["cmd", ["/c", "rmdir", "/s", "/q"]] : ["rm", ["-rf"]];
 var gitInit = process.platform === "win32" ? ["cmd", ["/c", "git", "init"]] : ["git", ["init"]];
 var program = new Command().name("create-titan").description("Create a new Titan project").version("0.1.0").parse();
-async function checkSupabaseCLI() {
-  try {
-    await execa("supabase", ["--version"]);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-async function installSupabaseCLI() {
-  const spinner = ora("Installing Supabase CLI...").start();
-  try {
-    if (process.platform === "darwin") {
-      await execa("brew", ["install", "supabase/tap/supabase"]);
-    } else if (process.platform === "win32") {
-      try {
-        await execa("scoop", ["--version"]);
-      } catch {
-        spinner.text = "Installing scoop package manager...";
-        await execa("powershell", [
-          "-Command",
-          "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; iwr -useb get.scoop.sh | iex"
-        ]);
-      }
-      await execa("scoop", ["bucket", "add", "supabase", "https://github.com/supabase/scoop-bucket.git"]);
-      await execa("scoop", ["install", "supabase"]);
-    } else if (process.platform === "linux") {
-      await execa("curl", ["-s", "https://raw.githubusercontent.com/supabase/cli/main/install.sh", "|", "bash"]);
-    }
-    spinner.succeed("Supabase CLI installed successfully");
-    return true;
-  } catch (error) {
-    spinner.fail("Failed to install Supabase CLI");
-    console.error(chalk.red("Error:"), error);
-    console.log(chalk.yellow("Please install Supabase CLI manually:"));
-    console.log(chalk.cyan("- Mac: brew install supabase/tap/supabase"));
-    console.log(chalk.cyan("- Windows: scoop bucket add supabase https://github.com/supabase/scoop-bucket.git && scoop install supabase"));
-    console.log(chalk.cyan("- Linux: curl -s https://raw.githubusercontent.com/supabase/cli/main/install.sh | bash"));
-    return false;
-  }
-}
 async function checkGitHubSSH() {
   try {
     await execa("git", ["ls-remote", "git@github.com:ObaidUr-Rahmaan/titan.git", "HEAD"], {
@@ -67,7 +27,7 @@ async function checkGitHubSSH() {
   }
 }
 async function main() {
-  let spinner;
+  const spinner = ora();
   try {
     console.log(chalk.cyan("\n\u{1F680} Welcome to Titan CLI!\n"));
     console.log(chalk.yellow("Pre-requisites check:"));
@@ -117,18 +77,6 @@ async function main() {
           'Create a project called "[Project Name] Dev DB" in Supabase and use those credentials - this is highly recommended for Windows users.\n'
         )
       );
-    }
-    spinner = ora("Checking for Supabase CLI...").start();
-    const hasSupabaseCLI = await checkSupabaseCLI();
-    if (!hasSupabaseCLI) {
-      spinner.info("Supabase CLI not found, attempting to install...");
-      const installed = await installSupabaseCLI();
-      if (!installed) {
-        console.log(chalk.red("\nUnable to proceed without Supabase CLI. Please install it manually and try again."));
-        process.exit(1);
-      }
-    } else {
-      spinner.succeed("Supabase CLI is installed");
     }
     spinner.text = "Checking GitHub SSH authentication...";
     const hasGitHubSSH = await checkGitHubSSH();
@@ -217,7 +165,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
     } catch {
       await fs.mkdir(projectDir);
     }
-    spinner = ora("Creating your project...").start();
+    spinner.start("Creating your project...");
     const maxRetries = 3;
     let retryCount = 0;
     while (retryCount < maxRetries) {
@@ -325,144 +273,82 @@ Error: Directory ${projectName} already exists. Please choose a different name o
 `;
     spinner.succeed("Authentication configured");
     spinner.stop();
-    const { dbChoice } = await prompts({
+    const { dbSetup } = await prompts({
       type: "select",
-      name: "dbChoice",
+      name: "dbSetup",
       message: "Choose your database setup:",
       choices: [
-        { title: "Local Database (requires Docker & Supabase CLI, 16GB+ RAM recommended)", value: "local" },
         {
-          title: 'Development Database (recommended - create a dedicated project in Supabase called "[Project Name] Dev DB")',
-          value: "production"
+          title: 'Development Database (create a dedicated project in Supabase called "[Project Name] Dev DB")',
+          value: "dev"
+        },
+        {
+          title: "Production Database (NOT RECOMMENDED FOR NEW PROJECTS)",
+          value: "prod"
         }
-      ],
-      initial: 1
+      ]
     });
-    if (dbChoice === "local") {
-      console.log(chalk.yellow("\nPre-requisites check for local database:"));
+    if (dbSetup === "dev") {
+      spinner.stop();
       console.log(
-        chalk.yellow(
-          "1. Docker/Orbstack must be running (Only if you decide to run the DB locally)"
-        )
-      );
-      console.log(chalk.yellow("2. Supabase CLI must be installed\n"));
-      console.log(chalk.yellow("3. 16GB+ RAM recommended for smooth experience\n"));
-      console.log(
-        chalk.cyan(
-          "\u{1F4A1} Remember: Supabase offers 2 free projects on their platform. If you encounter any issues"
+        chalk.green(
+          "\n\u2705 Good choice! Using a dedicated Supabase Dev DB is reliable and avoids local Docker issues."
         )
       );
       console.log(
-        chalk.cyan(
-          "   with the local setup, you can always switch to using Supabase remote credentials.\n"
+        chalk.green(
+          `   If you haven't already, create a project called "[Project Name] Dev DB" in Supabase.`
         )
       );
-      const { proceed: proceed2 } = await prompts({
-        type: "confirm",
-        name: "proceed",
-        message: "Do you have Docker running and Supabase CLI installed?",
-        initial: false
-      });
-      if (!proceed2) {
-        console.log(chalk.cyan("\nPlease set up the pre-requisites and try again."));
-        console.log(
-          chalk.cyan(
-            "For detailed setup instructions, visit: https://github.com/ObaidUr-Rahmaan/titan#prerequisites"
-          )
-        );
-        process.exit(0);
-      }
-      spinner.start("Starting local Supabase instance...");
-      try {
-        spinner.start("Starting Supabase (this might take a few minutes on first run)...");
-        const { stdout } = await execa("supabase", ["start"], { cwd: projectDir });
-        spinner.succeed("Supabase started");
-        const serviceKeyMatch = stdout.match(/service_role key: (.*)/);
-        const anonKeyMatch = stdout.match(/anon key: (.*)/);
-        if (!serviceKeyMatch || !anonKeyMatch) {
-          throw new Error("Could not find required keys in Supabase output");
-        }
-        const serviceKey = serviceKeyMatch[1].trim();
-        const anonKey = anonKeyMatch[1].trim();
-        const dbConfig = {
-          supabaseUrl: "http://127.0.0.1:54321",
-          supabaseAnonKey: anonKey,
-          supabaseServiceKey: serviceKey,
-          databaseUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres",
-          directUrl: "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-        };
-        envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}
-`;
-        envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}
-`;
-        envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
-
-`;
-        envContent += `DATABASE_URL=${dbConfig.databaseUrl}
-`;
-        envContent += `DIRECT_URL=${dbConfig.directUrl}
-
-`;
-        envContent += `FRONTEND_URL=http://localhost:3000
-
-`;
-        await fs.writeFile(path.join(projectDir, ".env"), envContent);
-        spinner.start("Setting up database tables and generating types...");
-        try {
-          await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
-          await execa("pnpm", ["dlx", "prisma", "migrate", "deploy"], { cwd: projectDir });
-          const { stdout: stdout2 } = await execa(
-            "supabase",
-            ["gen", "types", "typescript", "--local"],
-            {
-              cwd: projectDir,
-              stdio: "pipe"
-            }
-          );
-          await fs.writeFile(path.join(projectDir, "types", "supabase.ts"), stdout2);
-          spinner.succeed("Database tables created and types generated successfully");
-        } catch (error) {
-          spinner.fail("Failed to setup database");
-          console.error(chalk.red("Error:"), error);
-          console.log(chalk.yellow("\nMake sure you have Docker running and try again."));
-          console.log(chalk.yellow("\nYou can try running these commands manually:"));
-          console.log(chalk.cyan("  cd " + projectDir));
-          console.log(chalk.cyan("  pnpm prisma generate"));
-          console.log(chalk.cyan("  pnpm prisma migrate deploy"));
-          console.log(chalk.cyan("  supabase gen types typescript --local > types/supabase.ts"));
-          process.exit(1);
-        }
-        console.log(chalk.green("\nLocal Supabase is running! \u{1F680}"));
-        console.log(chalk.cyan("Access Supabase Studio at: http://127.0.0.1:54323"));
-      } catch (error) {
-        spinner.fail("Failed to setup local Supabase");
-        console.error(chalk.red("\nError: Docker is not running or encountered issues."));
-        console.log(chalk.yellow("\nPlease:"));
-        console.log(chalk.cyan("1. Install Docker/Orbstack if not installed:"));
-        console.log(chalk.cyan("   - Mac: https://docs.docker.com/desktop/install/mac-install/"));
-        console.log(
-          chalk.cyan("   - Windows: https://docs.docker.com/desktop/install/windows-install/")
-        );
-        console.log(chalk.cyan("2. Start Docker/Orbstack"));
-        console.log(chalk.cyan("3. Wait a few seconds for Docker to be ready"));
-        console.log(chalk.cyan("4. Run this command again\n"));
-        console.log(
-          chalk.green(
-            "\u{1F4A1} Recommendation: If you continue to face issues with local Supabase, we strongly recommend"
-          )
-        );
-        console.log(
-          chalk.green(
-            '   creating a dedicated project in Supabase called "[Project Name] Dev DB" and using those credentials.'
-          )
-        );
-        console.log(
-          chalk.green(
-            '   Run this CLI again and select "Development Database" when prompted for database setup.\n'
-          )
-        );
+      console.log(
+        chalk.green(
+          "   You can find your database credentials in the project settings.\n"
+        )
+      );
+      const supabaseUrl = await promptWithConfirmation("Enter your Supabase Project URL:");
+      if (!supabaseUrl.startsWith("https://")) {
+        console.log(chalk.red("URL must start with https://"));
         process.exit(1);
       }
+      const supabaseAnonKey = await promptWithConfirmation("Enter your Supabase Anon Key:", "password");
+      const supabaseServiceKey = await promptWithConfirmation("Enter your Supabase Service Role Key:", "password");
+      const databaseUrl = await promptWithConfirmation("Enter your Database URL (with pgbouncer):");
+      if (!databaseUrl.includes("?pgbouncer=true")) {
+        console.log(chalk.red("URL must include ?pgbouncer=true"));
+        process.exit(1);
+      }
+      const directUrl = await promptWithConfirmation("Enter your Direct URL (without pgbouncer):");
+      const dbConfig = {
+        supabaseUrl,
+        supabaseAnonKey,
+        supabaseServiceKey,
+        databaseUrl,
+        directUrl
+      };
+      if (!dbConfig.supabaseUrl || !dbConfig.supabaseAnonKey || !dbConfig.supabaseServiceKey || !dbConfig.databaseUrl || !dbConfig.directUrl) {
+        console.log(chalk.red("All database configuration values are required"));
+        process.exit(1);
+      }
+      envContent += `NEXT_PUBLIC_SUPABASE_URL=${dbConfig.supabaseUrl}
+`;
+      envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${dbConfig.supabaseAnonKey}
+`;
+      envContent += `SUPABASE_SERVICE_ROLE_KEY=${dbConfig.supabaseServiceKey}
+
+`;
+      envContent += `DATABASE_URL=${dbConfig.databaseUrl}
+`;
+      envContent += `DIRECT_URL=${dbConfig.directUrl}
+
+`;
+      envContent += `FRONTEND_URL=http://localhost:3000
+
+`;
+      await fs.writeFile(path.join(projectDir, ".env"), envContent);
+      console.log(chalk.yellow("\nDatabase setup is skipped during project creation."));
+      console.log(chalk.cyan("After installation, you can set up the database with:"));
+      console.log(chalk.cyan("  cd " + projectDir));
+      console.log(chalk.cyan("  bun run db:init"));
     } else {
       spinner.stop();
       console.log(
@@ -520,37 +406,9 @@ Error: Directory ${projectName} already exists. Please choose a different name o
 
 `;
       await fs.writeFile(path.join(projectDir, ".env"), envContent);
-      spinner.start("Setting up database tables and generating types...");
-      try {
-        await execa("pnpm", ["dlx", "prisma", "generate"], { cwd: projectDir });
-        await execa(
-          "pnpm",
-          ["dlx", "prisma", "migrate", "dev", "--name", "initial_migration", "--create-only"],
-          { cwd: projectDir }
-        );
-        await execa("pnpm", ["dlx", "prisma", "migrate", "deploy"], { cwd: projectDir });
-        const { stdout } = await execa(
-          "supabase",
-          [
-            "gen",
-            "types",
-            "typescript",
-            "--project-id",
-            dbConfig.supabaseUrl.split(".")[0].split("//")[1]
-          ],
-          {
-            cwd: projectDir,
-            stdio: "pipe"
-          }
-        );
-        await fs.writeFile(path.join(projectDir, "types", "supabase.ts"), stdout);
-        spinner.succeed("Database tables created and types generated successfully");
-      } catch (error) {
-        spinner.fail("Failed to setup database");
-        console.error(chalk.red("Error:"), error);
-        console.log(chalk.yellow("\nPlease verify your database credentials and try again."));
-        process.exit(1);
-      }
+      console.log(chalk.yellow("\nDatabase setup is skipped during project creation."));
+      console.log(chalk.cyan("After installation, once you are happy with your database schema, you can update db/schema/ and then run:"));
+      console.log(chalk.cyan("  bun run db:push"));
     }
     spinner.stop();
     const stripePublicKey = await promptWithConfirmation("Enter your Stripe Public Key:");
@@ -609,13 +467,12 @@ export default config;
     spinner.succeed(chalk.green("Project configured successfully! \u{1F680}"));
     spinner.start("Installing dependencies...");
     try {
-      process.chdir(path.resolve(projectDir));
-      await execa("pnpm", ["install"], { stdio: "inherit" });
+      await execa("bun", ["install"], { stdio: "inherit" });
       spinner.succeed("Dependencies installed");
     } catch (error) {
       spinner.fail("Failed to install dependencies");
       console.error(chalk.red("Error installing dependencies:"), error);
-      process.exit(1);
+      throw error;
     }
     spinner.start("Setting up git repository...");
     try {
@@ -660,8 +517,9 @@ ${projectDescription}
     console.log(chalk.green("\n\u2728 Project created and pushed to GitHub successfully! \u2728"));
     console.log(chalk.cyan("\nNext steps:"));
     console.log(chalk.cyan("1. cd into your project"));
-    console.log(chalk.cyan("2. Run pnpm install"));
-    console.log(chalk.cyan("3. Run pnpm dev to start the development server"));
+    console.log(chalk.cyan("2. Run bun install"));
+    console.log(chalk.cyan("3. Run bun run db:init to set up your database"));
+    console.log(chalk.cyan("4. Run bun dev to start the development server"));
     spinner.start("Customizing application layout...");
     const layoutPath = path.join(projectDir, "app", "layout.tsx");
     const formatProjectName = (name) => {
@@ -743,8 +601,9 @@ export default function RootLayout({
     console.log(chalk.green("\n\u2728 Project created and pushed to GitHub successfully! \u2728"));
     console.log(chalk.cyan("\nNext steps:"));
     console.log(chalk.cyan("1. cd into your project"));
-    console.log(chalk.cyan("2. Run pnpm install"));
-    console.log(chalk.cyan("3. Run pnpm dev to start the development server"));
+    console.log(chalk.cyan("2. Run bun install"));
+    console.log(chalk.cyan("3. Run bun run db:init to set up your database"));
+    console.log(chalk.cyan("4. Run bun dev to start the development server"));
   } catch (error) {
     if (spinner)
       spinner.fail("Failed to create project");

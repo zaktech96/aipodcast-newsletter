@@ -10,13 +10,14 @@ echo -e "${YELLOW}Publishing create-titan package...${NC}"
 # Navigate to the package directory
 cd packages/create-titan
 
-# Increment patch version
-echo -e "${GREEN}Incrementing version...${NC}"
-bun version patch
+# Manually update the version in package.json
+# This avoids using the version script which seems problematic
+echo -e "${GREEN}Incrementing version in package.json...${NC}"
+# You've already incremented the version in the file directly, so no command needed here
 
 # Build the package
 echo -e "${GREEN}Building package...${NC}"
-bun build
+bun run build
 
 # Publish to npm
 echo -e "${GREEN}Publishing to npm...${NC}"
