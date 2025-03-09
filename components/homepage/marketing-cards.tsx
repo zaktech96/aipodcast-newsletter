@@ -31,11 +31,11 @@ const ProjectsData = [
   },
   {
     id: 4,
-    name: 'Prisma ORM',
+    name: 'Drizzle ORM',
     description:
-      'Modern database toolkit for TypeScript and Node.js, simplifying database interactions.',
+      'Modern headless TypeScript ORM for database interactions.',
     image: 'https://utfs.io/f/c3933696-cd5c-4de7-a24e-1822df8c4215-g7gclc.png',
-    url: 'https://prisma.io/',
+    url: 'https://orm.drizzle.team/',
   },
   {
     id: 5,
