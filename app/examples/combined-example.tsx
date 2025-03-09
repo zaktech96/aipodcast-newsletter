@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
-import { createServerDrizzle } from '@/lib/drizzle';
+import { createServerClient } from '@/lib/drizzle';
 import ClientComponentExample from './client-component-example';
 
 export default async function CombinedExamplePage() {
-  const supabase = await createServerDrizzle();
+  const supabase = await createServerClient();
   
   // Fetch subscription plans from the server
   const { data: plans, error } = await supabase
@@ -25,7 +25,7 @@ export default async function CombinedExamplePage() {
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-gray-500">
-                This data was fetched on the server using Supabase client via createServerDrizzle().
+                This data was fetched on the server using Supabase client via createServerClient().
               </p>
               <ul className="divide-y">
                 {plans?.map((plan) => (

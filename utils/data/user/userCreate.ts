@@ -1,7 +1,8 @@
 'server only';
 
 import { userCreateProps } from '@/utils/types';
-import { createServerActionClient } from '@/lib/supabase';
+import { createDirectClient } from '@/lib/drizzle';
+import { users } from '@/db/schema/users';
 
 export const userCreate = async ({
   email,
@@ -11,25 +12,20 @@ export const userCreate = async ({
   user_id,
 }: userCreateProps) => {
   try {
-    const supabase = await createServerActionClient();
-    const { data, error } = await supabase
-      .from('user')
-      .insert([
-        {
-          email,
-          first_name,
-          last_name,
-          profile_image_url,
-          user_id,
-        },
-      ])
-      .select();
+    const db = createDirectClient();
+    
+    const newUser = await db.insert(users)
+      .values({
+        email,
+        firstName: first_name,
+        lastName: last_name,
+        profileImageUrl: profile_image_url,
+        userId: user_id,
+      })
+      .returning();
 
-    console.log('data', data);
-    console.log('error', error);
-
-    if (error?.code) return error;
-    return data;
+    if (newUser.length > 0) return newUser[0];
+    return { error: 'User not created' };
   } catch (error: any) {
     console.error('Failed to create user:', error);
     return { error: error.message };

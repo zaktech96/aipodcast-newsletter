@@ -1,6 +1,6 @@
 'use client';
 
-import { createClientDrizzle } from '@/lib/drizzle';
+import { createClient } from '@/lib/drizzle';
 import { useState, useEffect } from 'react';
 
 /**
@@ -16,7 +16,7 @@ export default function ClientComponentExample() {
     async function fetchUsers() {
       try {
         // Get Supabase client for client-side use
-        const supabase = createClientDrizzle();
+        const supabase = createClient();
         
         // Query using Supabase client (respects RLS policies)
         const { data, error } = await supabase

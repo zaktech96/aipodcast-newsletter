@@ -1,28 +1,30 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { createBrowserClient, createServerClient } from '@supabase/ssr';
+import { createBrowserClient, createServerClient as createSupabaseServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { SupabaseClient } from '@supabase/supabase-js';
+import * as schema from '@/db/schema';
 
-let clientSingleton: ReturnType<typeof drizzle>;
+// Singleton instance for direct DB connection
+let directClientSingleton: ReturnType<typeof drizzle>;
 
-// Direct database connection (for server-only operations)
+// Direct database connection (for server-only operations) - bypasses RLS
 export function createDirectClient() {
   if (!process.env.DIRECT_URL) {
     throw new Error('Missing DIRECT_URL environment variable');
   }
 
-  if (!clientSingleton) {
+  if (!directClientSingleton) {
     const client = postgres(process.env.DIRECT_URL);
-    clientSingleton = drizzle(client);
+    directClientSingleton = drizzle(client, { schema });
   }
 
-  return clientSingleton;
+  return directClientSingleton;
 }
 
-// Client-side Supabase + Drizzle client (respects RLS)
-export function createClientDrizzle() {
+// Client-side Supabase client - respects RLS
+export function createClient(): SupabaseClient {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     throw new Error(
       'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables'
@@ -34,13 +36,11 @@ export function createClientDrizzle() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
-  // When using with Supabase, we return the Supabase client directly
-  // You'll use the Supabase query builder with Postgres syntax
   return supabase;
 }
 
-// Server-side Supabase + Drizzle client (can bypass RLS)
-export async function createServerDrizzle() {
+// Server-side Supabase client - respects RLS with authentication context
+export async function createServerClient(): Promise<SupabaseClient> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error(
       'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables'
@@ -49,7 +49,7 @@ export async function createServerDrizzle() {
 
   const cookieStore = await cookies();
 
-  const supabase = createServerClient(
+  const supabase = createSupabaseServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
@@ -67,31 +67,13 @@ export async function createServerDrizzle() {
     }
   );
 
-  // When using with Supabase, we return the Supabase client directly
-  // You'll use the Supabase query builder with Postgres syntax
   return supabase;
 }
 
 /**
  * Usage:
  * 
- * Client Components ('use client'):
- * import { createClientDrizzle } from '@/lib/drizzle';
- * 
- * function MyComponent() {
- *   const supabase = createClientDrizzle();
- *   // Use supabase for database queries, auth, storage, etc.
- * }
- * 
- * Server Components (default) & API Routes:
- * import { createServerDrizzle } from '@/lib/drizzle';
- * 
- * async function MyServerComponent() {
- *   const supabase = await createServerDrizzle();
- *   // Use supabase for database queries, auth, storage, etc.
- * }
- * 
- * Server Actions with Direct DB Access:
+ * Direct Drizzle ORM Access (Server Components and Server Actions):
  * import { createDirectClient } from '@/lib/drizzle';
  * import { users } from '@/db/schema';
  * 
@@ -99,5 +81,21 @@ export async function createServerDrizzle() {
  *   const db = createDirectClient();
  *   // Use db for database operations that bypass RLS
  *   const allUsers = await db.select().from(users);
+ * }
+ * 
+ * Client Components ('use client') - still using Supabase client:
+ * import { createClient } from '@/lib/drizzle';
+ * 
+ * function MyComponent() {
+ *   const supabase = createClient();
+ *   // Use supabase for database queries, auth, storage, etc.
+ * }
+ * 
+ * Server Components (default) & API Routes - still using Supabase client:
+ * import { createServerClient } from '@/lib/drizzle';
+ * 
+ * async function MyServerComponent() {
+ *   const supabase = await createServerClient();
+ *   // Use supabase for database queries, auth, storage, etc.
  * }
  */ 

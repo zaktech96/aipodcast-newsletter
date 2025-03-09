@@ -1,11 +1,11 @@
-import { createServerDrizzle } from '@/lib/drizzle';
+import { createServerClient } from '@/lib/drizzle';
 
 /**
  * Server component example using Supabase client 
  * This respects RLS policies configured in Supabase
  */
 export default async function ServerComponentExample() {
-  const supabase = await createServerDrizzle();
+  const supabase = await createServerClient();
   
   // Fetch users with Supabase client (respects RLS policies)
   const { data: users, error } = await supabase
