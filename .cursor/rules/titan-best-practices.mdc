@@ -57,7 +57,7 @@ Database Patterns
   ```
 
 Data Fetching Patterns
-- Server Actions:
+- PREFERRED: Use Server Actions for all database operations (Next.js 15+):
   ```typescript
   'use server'
   export async function actionName() {
@@ -65,15 +65,44 @@ Data Fetching Patterns
     // DB operations
   }
   ```
-- React Query Hooks:
+
+- React Query Hooks for client-side state management:
   ```typescript
   export const useResourceName = () => {
     return useQuery({
       queryKey: ['key-name'],
-      queryFn: () => serverAction()
+      queryFn: () => serverAction(),
+      staleTime: 60 * 1000 // Configure based on data needs
     })
   }
   ```
+
+- Hybrid Approach (RECOMMENDED):
+  In Next.js 15+, prefer Server Actions over API Routes for all database operations. Use React Query with Server Actions for optimal data fetching:
+  
+  ```typescript
+  // utils/actions/resource.ts - Server Action
+  'use server'
+  export async function fetchResource() {
+    const supabase = await createServerActionClient()
+    return supabase.from('resource').select('*')
+  }
+  
+  // utils/hooks/useResource.ts - React Query hook
+  'use client'
+  export function useResource() {
+    return useQuery({
+      queryKey: ['resource'],
+      queryFn: () => fetchResource()
+    })
+  }
+  ```
+
+- AVOID API Routes for database operations when possible:
+  Server Actions provide better performance, type safety, and reduced bundle size compared to API Routes for most database operations. Only use API Routes when:
+  - Building a public API for external consumption
+  - Needing webhook endpoints
+  - Working with legacy code that requires REST endpoints
 
 UI Component Patterns
 - Client Components ('use client'):
