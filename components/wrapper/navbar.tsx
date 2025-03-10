@@ -19,8 +19,8 @@ import { cn } from '@/lib/utils';
 // Navigation items with sections to scroll to
 const navigationItems = [
   { title: 'Home', href: '#hero', section: 'hero' },
-  { title: 'Features', href: '#features', section: 'features' },
-  { title: 'Technologies', href: '#stack', section: 'stack' },
+  { title: 'Benefits', href: '#benefits', section: 'benefits' },
+  { title: 'Stack', href: '#stack', section: 'stack' },
   { title: 'Pricing', href: '#pricing', section: 'pricing' },
   { title: 'FAQ', href: '#faq', section: 'faq' },
 ];
