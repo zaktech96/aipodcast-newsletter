@@ -35,7 +35,7 @@ const ProjectsData = [
     id: 4,
     name: 'Drizzle ORM',
     description:
-      'Modern headless TypeScript ORM for database interactions.',
+      'Modern headless TypeScript ORM for high-speed database interactions.',
     image: '/logos/drizzle-logo.png',
     url: 'https://orm.drizzle.team/',
   },
