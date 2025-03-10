@@ -126,7 +126,7 @@ export default function NavBar() {
 
   return (
     <header className={`w-full z-40 fixed top-0 left-0 transition-all duration-300 ${hasScrolled ? 'bg-black/90 backdrop-blur-sm border-b border-green-900/20' : 'bg-transparent'}`}>
-      <div className="container relative mx-auto min-h-20 flex justify-between items-center">
+      <div className="container relative mx-auto min-h-20 flex justify-between items-center px-4 sm:px-6 md:px-8">
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="text-xl font-bold text-white">

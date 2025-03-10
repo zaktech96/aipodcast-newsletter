@@ -118,7 +118,7 @@ const SpringAnimatedFeatures = () => {
   return (
     <motion.div 
       ref={ref}
-      className="flex flex-col justify-center items-center lg:w-[75%] py-24 bg-black"
+      className="flex flex-col justify-center items-center w-full py-24 bg-black px-4 sm:px-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

@@ -15,12 +15,25 @@ export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${window.scrollY}px`;
     } else {
+      const scrollY = document.body.style.top;
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      }
     }
     
     return () => {
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
     };
   }, [isOpen]);
   
@@ -38,7 +51,7 @@ export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
         <>
           {/* Overlay */}
           <motion.div
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-[1000]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -47,7 +60,7 @@ export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
           
           {/* Drawer */}
           <motion.div
-            className="fixed right-0 top-0 h-full w-[280px] bg-black z-50 overflow-auto border-l border-green-900/30 shadow-xl"
+            className="fixed right-0 top-0 h-full w-[280px] bg-black z-[1001] overflow-auto border-l border-green-900/30 shadow-xl"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
