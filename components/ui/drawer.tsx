@@ -31,6 +31,7 @@ export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            style={{ backgroundColor: '#000000' }}
           >
             <div className="flex flex-col h-full">
               <div className="flex justify-end p-4">

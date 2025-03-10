@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import OrbitingCircles from '@/components/magicui/orbiting-circles';
 import Image from 'next/image';
+import { Cover } from '@/components/ui/cover';
 
 const features = [
   {
@@ -172,8 +173,9 @@ export default function SideBySide() {
                     src="/logos/typescript-logo.png" 
                     alt="TypeScript" 
                     width={30} 
-                    height={30} 
-                    className="object-contain"
+                    height={30}
+                    priority
+                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -190,8 +192,9 @@ export default function SideBySide() {
                     src="/logos/tailwind-logo.png" 
                     alt="Tailwind CSS" 
                     width={30} 
-                    height={30} 
-                    className="object-contain"
+                    height={30}
+                    priority
+                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -209,8 +212,9 @@ export default function SideBySide() {
                     src="/logos/nextjs-logo.png" 
                     alt="Next.js" 
                     width={40} 
-                    height={40} 
-                    className="object-contain"
+                    height={40}
+                    priority
+                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -228,8 +232,9 @@ export default function SideBySide() {
                     src="/logos/supabase-logo.png" 
                     alt="Supabase" 
                     width={40} 
-                    height={40} 
-                    className="object-contain" 
+                    height={40}
+                    priority
+                    unoptimized
                   />
                 </div>
               </OrbitingCircles>

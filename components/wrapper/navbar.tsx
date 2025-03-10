@@ -19,8 +19,8 @@ import { cn } from '@/lib/utils';
 // Navigation items with sections to scroll to
 const navigationItems = [
   { title: 'Home', href: '#hero', section: 'hero' },
-  { title: 'Benefits', href: '#benefits', section: 'benefits' },
-  { title: 'Stack', href: '#stack', section: 'stack' },
+  { title: 'Features', href: '#features', section: 'features' },
+  { title: 'Technologies', href: '#stack', section: 'stack' },
   { title: 'Pricing', href: '#pricing', section: 'pricing' },
   { title: 'FAQ', href: '#faq', section: 'faq' },
 ];
@@ -121,9 +121,9 @@ export default function NavBar() {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-4">
-          {userId ? (
+          {config?.auth?.enabled && userId ? (
             <UserProfile />
-          ) : config?.auth?.enabled ? (
+          ) : (
             <Button
               variant="outline"
               className="text-white border-green-800/40 hover:bg-green-900/20"
@@ -131,7 +131,7 @@ export default function NavBar() {
             >
               Sign in
             </Button>
-          ) : null}
+          )}
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -144,12 +144,13 @@ export default function NavBar() {
 
       {/* Mobile Drawer */}
       <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)}>
-        <div className="flex flex-col gap-6 pt-6">
+        <div className="flex flex-col gap-6 pt-4">
+          <h2 className="text-xl font-bold text-white mb-4">Menu</h2>
           {navigationItems.map((item) => (
             <button
               key={item.title}
               className={cn(
-                "flex text-left text-lg font-medium py-3 px-2 border-l-2 transition-colors",
+                "flex text-left text-lg font-medium py-3 px-4 border-l-2 transition-colors w-full",
                 activeSection === item.section
                   ? "text-green-400 border-green-500 bg-green-900/10"
                   : "text-white border-transparent hover:border-green-600/30 hover:bg-green-900/5"
@@ -161,17 +162,15 @@ export default function NavBar() {
           ))}
           
           {/* Mobile Auth Button */}
-          {config?.auth?.enabled && !userId && (
-            <div className="mt-6 pt-6 border-t border-gray-800">
-              <Button
-                variant="outline"
-                className="w-full text-white border-green-800/40 hover:bg-green-900/20"
-                onClick={() => window.location.assign('/sign-in')}
-              >
-                Sign in
-              </Button>
-            </div>
-          )}
+          <div className="mt-6 pt-6 border-t border-gray-800">
+            <Button
+              variant="outline"
+              className="w-full text-white border-green-800/40 hover:bg-green-900/20"
+              onClick={() => window.location.assign('/sign-in')}
+            >
+              Sign in
+            </Button>
+          </div>
         </div>
       </Drawer>
     </header>

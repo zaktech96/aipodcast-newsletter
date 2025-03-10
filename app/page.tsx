@@ -14,7 +14,7 @@ export default function Home() {
         <HeroSection />
       </section>
       
-      <section id="benefits" className="flex my-8 w-full justify-center items-center">
+      <section id="features" className="flex my-8 w-full justify-center items-center">
         <SideBySide />
       </section>
       
