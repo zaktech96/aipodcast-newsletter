@@ -25,7 +25,7 @@ const ProjectsData = [
     id: 3,
     name: 'Supabase (PostgreSQL)',
     description:
-      'PostgreSQL-based open-source database with Supabase for building scalable applications.',
+      'PostgreSQL-based open-source database for building scalable applications.',
     image: 'https://utfs.io/f/c62a5d13-91e4-476f-9d36-786d9995c97f-rqpuxo.png',
     url: 'https://supabase.com/',
   },
