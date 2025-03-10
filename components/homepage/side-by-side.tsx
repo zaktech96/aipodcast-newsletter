@@ -168,14 +168,15 @@ export default function SideBySide() {
                 radius={80}
                 path={true}
               >
-                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                <div className="bg-white dark:bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
                   <Image 
-                    src="/logos/typescript-logo.png" 
+                    src="/logos/typescript-logo-new.svg" 
                     alt="TypeScript" 
                     width={30} 
                     height={30}
+                    sizes="30px"
+                    className="object-contain"
                     priority
-                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -187,14 +188,15 @@ export default function SideBySide() {
                 radius={80}
                 path={true}
               >
-                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                <div className="bg-white dark:bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
                   <Image 
-                    src="/logos/tailwind-logo.png" 
+                    src="/logos/tailwind-logo-new.svg" 
                     alt="Tailwind CSS" 
                     width={30} 
                     height={30}
+                    sizes="30px"
+                    className="object-contain"
                     priority
-                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -207,14 +209,15 @@ export default function SideBySide() {
                 duration={20}
                 path={true}
               >
-                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                <div className="bg-white dark:bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
                   <Image 
-                    src="/logos/nextjs-logo.png" 
+                    src="/logos/nextjs-logo-new.svg" 
                     alt="Next.js" 
                     width={40} 
                     height={40}
+                    sizes="40px"
+                    className="object-contain"
                     priority
-                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
@@ -227,14 +230,15 @@ export default function SideBySide() {
                 delay={20}
                 path={true}
               >
-                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                <div className="bg-white dark:bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
                   <Image 
-                    src="/logos/supabase-logo.png" 
+                    src="/logos/supabase-logo-new.svg" 
                     alt="Supabase" 
                     width={40} 
                     height={40}
+                    sizes="40px"
+                    className="object-contain"
                     priority
-                    unoptimized
                   />
                 </div>
               </OrbitingCircles>
