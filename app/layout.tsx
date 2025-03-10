@@ -3,10 +3,13 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import AuthWrapper from '@/components/wrapper/auth-wrapper';
 import { Analytics } from '@vercel/analytics/react';
-import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
 import './globals.css';
 import { validateConfig } from '@/lib/config-validator';
+import '@fontsource/sora/400.css';
+import '@fontsource/sora/500.css';
+import '@fontsource/sora/600.css';
+import '@fontsource/sora/700.css';
 
 // Validate config on app initialization
 validateConfig();
@@ -51,6 +54,7 @@ export default function RootLayout({
     <AuthWrapper>
       <html lang="en" suppressHydrationWarning>
         <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
           <link rel="icon" type="image/png" href="/favicon.png" />
           <link
             rel="preload"
@@ -66,7 +70,7 @@ export default function RootLayout({
 
         {/* REPLACE ME ---- Insert </script> tag for DataFast to analyse User traffic */}
 
-        <body className={GeistSans.className}>
+        <body className="font-sora">
           <Provider>
             <ThemeProvider
               attribute="class"

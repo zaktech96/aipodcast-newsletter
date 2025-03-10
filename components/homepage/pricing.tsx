@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
@@ -19,27 +19,28 @@ import { loadStripe } from '@stripe/stripe-js';
 import { toast } from 'sonner';
 import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
 import { useRouter } from 'next/navigation';
-import { PaymentSetupNotice } from '@/components/payment-setup-notice';
 import config from '@/config';
+import { motion, useInView } from 'framer-motion';
 
 type PricingSwitchProps = {
-  onSwitch: (value: string) => void;
+  isYearly: boolean;
+  togglePricingPeriod: (value: string) => void;
 };
 
 type PricingCardProps = {
-  user: any;
-  handleCheckout: any;
-  priceIdMonthly: any;
-  priceIdYearly: any;
-  isYearly?: boolean;
   title: string;
   monthlyPrice?: number;
   yearlyPrice?: number;
   description: string;
   features: string[];
-  actionLabel: string;
+  priceId?: string;
+  btnText?: string;
   popular?: boolean;
   exclusive?: boolean;
+  isYearly?: boolean;
+  user: any;
+  handleCheckout: (priceId: string) => Promise<void>;
+  tier?: number;
 };
 
 const PricingHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
@@ -54,231 +55,281 @@ const PricingHeader = ({ title, subtitle }: { title: string; subtitle: string })
   </section>
 );
 
-const PricingSwitch = ({ onSwitch }: PricingSwitchProps) => (
-  <Tabs defaultValue="0" className="w-40 mx-auto" onValueChange={onSwitch}>
-    <TabsList className="py-6 px-2">
-      <TabsTrigger value="0" className="text-base">
-        <p className="text-black dark:text-white">Monthly</p>
-      </TabsTrigger>
-      <TabsTrigger value="1" className="text-base">
-        <p className="text-black dark:text-white">Yearly</p>
-      </TabsTrigger>
-    </TabsList>
-  </Tabs>
-);
+const PricingSwitch = ({ isYearly, togglePricingPeriod }: PricingSwitchProps) => {
+  return (
+    <div className="mx-auto flex items-center justify-center space-x-4 mb-8">
+      <span 
+        className={`text-sm ${!isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}
+        onClick={() => togglePricingPeriod('0')}
+        style={{ cursor: 'pointer' }}
+      >
+        Monthly
+      </span>
+      
+      <div className="relative h-7 w-14 rounded-full bg-gray-800 cursor-pointer" onClick={() => togglePricingPeriod(isYearly ? '0' : '1')}>
+        <div 
+          className={`absolute top-1 h-5 w-5 rounded-full bg-green-500 transition-all duration-300 ${isYearly ? 'left-8' : 'left-1'}`} 
+        />
+      </div>
+      
+      <span 
+        className={`text-sm ${isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}
+        onClick={() => togglePricingPeriod('1')}
+        style={{ cursor: 'pointer' }}
+      >
+        Yearly
+      </span>
+    </div>
+  );
+};
 
 const PricingCard = ({
-  user,
-  handleCheckout,
-  isYearly,
   title,
-  priceIdMonthly,
-  priceIdYearly,
   monthlyPrice,
   yearlyPrice,
   description,
   features,
-  actionLabel,
+  priceId,
+  btnText = 'Get started',
   popular,
   exclusive,
+  isYearly,
+  user,
+  handleCheckout,
+  tier = 0,
 }: PricingCardProps) => {
   const router = useRouter();
   return (
-    <Card
-      className={cn(
-        `w-72 flex flex-col justify-between py-1 ${popular ? 'border-rose-400' : 'border-zinc-700'} mx-auto sm:mx-0`,
-        {
-          'animate-background-shine bg-white dark:bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors':
-            exclusive,
-        }
-      )}
+    <motion.div
+      className={cn('flex flex-col justify-between w-full', {
+        'lg:scale-105 z-10': popular,
+      })}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: tier * 0.1 }}
     >
-      <div>
-        <CardHeader className="pb-8 pt-4">
-          {isYearly && yearlyPrice && monthlyPrice ? (
-            <div className="flex justify-between">
-              <CardTitle className="text-zinc-700 dark:text-zinc-300 text-lg">{title}</CardTitle>
-              <div
-                className={cn(
-                  'px-2.5 rounded-xl h-fit text-sm py-1 bg-zinc-200 text-black dark:bg-zinc-800 dark:text-white',
-                  {
-                    'bg-gradient-to-r from-orange-400 to-rose-400 dark:text-black ': popular,
-                  }
-                )}
-              >
-                Save ${monthlyPrice * 12 - yearlyPrice}
-              </div>
-            </div>
-          ) : (
-            <CardTitle className="text-zinc-700 dark:text-zinc-300 text-lg">{title}</CardTitle>
-          )}
-          <div className="flex gap-0.5">
-            <h2 className="text-3xl font-bold">
-              {yearlyPrice && isYearly
-                ? '$' + yearlyPrice
-                : monthlyPrice
-                  ? '$' + monthlyPrice
-                  : 'Custom'}
-            </h2>
-            <span className="flex flex-col justify-end text-sm mb-1">
-              {yearlyPrice && isYearly ? '/year' : monthlyPrice ? '/month' : null}
+      <Card
+        className={cn('h-full min-w-[260px]', {
+          'border border-green-500/20 shadow-lg shadow-green-500/5 dark:shadow-green-500/10': popular,
+          'bg-black border-gray-800 hover:border-green-500/20 transition-all duration-200': !popular,
+          'bg-gradient-to-br from-black to-green-950 border-green-500/20': popular,
+        })}
+      >
+        <CardHeader className="pb-6">
+          <CardTitle className={cn('text-xl font-medium text-white')}>{title}</CardTitle>
+          <div className="flex items-baseline gap-1 mt-4">
+            <span className="text-5xl font-bold text-white">
+              ${yearlyPrice && isYearly ? yearlyPrice : monthlyPrice}
+            </span>
+            <span className="text-sm font-normal text-gray-400">
+              {yearlyPrice && isYearly ? '/year' : '/month'}
             </span>
           </div>
-          <CardDescription className="pt-1.5 h-12">{description}</CardDescription>
+          <CardDescription className="pt-3 h-12 text-gray-400">{description}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          {features.map((feature: string) => (
+        <CardContent className="flex flex-col gap-4 py-4">
+          {features.map((feature) => (
             <CheckItem key={feature} text={feature} />
           ))}
         </CardContent>
-      </div>
-      <CardFooter className="mt-2">
-        <Button
-          onClick={() => {
-            if (user?.id) {
-              handleCheckout(isYearly ? priceIdYearly : priceIdMonthly, true);
-            } else {
-              toast('Please login or sign up to purchase', {
-                description: 'You must be logged in to make a purchase',
-                action: {
-                  label: 'Sign Up',
-                  onClick: () => {
-                    router.push('/sign-up');
-                  },
-                },
-              });
-            }
-          }}
-          className="relative inline-flex w-full items-center justify-center rounded-md bg-black text-white dark:bg-white px-6 font-medium dark:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-          type="button"
-        >
-          <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b fr om-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
-          {actionLabel}
-        </Button>
-      </CardFooter>
-    </Card>
+        <CardFooter className="pt-6 pb-8">
+          <Button
+            onClick={() => {
+              priceId
+                ? handleCheckout(priceId)
+                : router.push(
+                    `${config.auth.enabled && !user ? '/sign-up?redirectUrl=' : ''}/contact`
+                  );
+            }}
+            className={cn('w-full py-6', {
+              'bg-gradient-to-r from-green-400 to-emerald-600 hover:from-green-500 hover:to-emerald-700 text-white': popular,
+              'bg-black text-white hover:bg-gray-900 border border-gray-800 hover:border-green-500/20': !popular,
+            })}
+          >
+            {btnText}
+          </Button>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };
 
 const CheckItem = ({ text }: { text: string }) => (
-  <div className="flex gap-2">
-    <CheckCircle2 size={18} className="my-auto text-green-400" />
-    <p className="pt-0.5 text-zinc-700 dark:text-zinc-300 text-sm">{text}</p>
+  <div className="flex items-center gap-3">
+    <CheckCircle2 size={20} className="shrink-0 text-green-400" />
+    <p className="text-white text-sm">{text}</p>
   </div>
 );
 
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState<boolean>(false);
   const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1);
-  const { user } = useUser();
+  
+  // Only use the Clerk hook if auth is enabled
+  const clerkUser = config.auth.enabled ? useUser() : { user: null, isLoaded: true, isSignedIn: false };
+  const { user } = clerkUser;
+  const router = useRouter();
+  
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
 
   useEffect(() => {
-    setStripePromise(loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!));
+    // Only load Stripe if payments are enabled
+    if (config.payments.enabled) {
+      setStripePromise(loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!));
+    }
   }, []);
 
-  const handleCheckout = async (priceId: string, subscription: boolean) => {
+  const handleCheckout = async (priceId: string) => {
+    if (!config.payments.enabled) {
+      toast.error('Payments are not configured');
+      return;
+    }
+
+    if (!user && config.auth.enabled) {
+      toast('Please sign in to continue', {
+        description: 'You need to be signed in to make a purchase',
+        action: {
+          label: 'Sign In',
+          onClick: () => {
+            router.push('/sign-in');
+          },
+        },
+      });
+      return;
+    }
+
     try {
-      const { data } = await axios.post(`/api/payments/create-checkout-session`, {
-        userId: user?.id,
-        email: user?.emailAddresses?.[0]?.emailAddress,
-        priceId,
-        subscription,
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user?.emailAddresses?.[0]?.emailAddress,
+          priceId,
+        }),
       });
 
-      if (data.sessionId) {
-        const stripe = await stripePromise;
+      const data = await res.json();
 
-        const response = await stripe?.redirectToCheckout({
-          sessionId: data.sessionId,
-        });
-
-        return response;
-      } else {
-        console.error('Failed to create checkout session');
-        toast('Failed to create checkout session');
-        return;
+      if (!res.ok) {
+        throw new Error(data.message || 'Something went wrong');
       }
-    } catch (error) {
-      console.error('Error during checkout:', error);
-      toast('Error during checkout');
-      return;
+
+      const stripe = await stripePromise;
+      const { error } = await stripe!.redirectToCheckout({
+        sessionId: data.sessionId,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      toast.error('Failed to checkout', {
+        description: error.message,
+      });
     }
   };
 
-  if (!config.payments.enabled) {
-    return <PaymentSetupNotice />;
-  }
-
+  // Define the pricing plans
   const plans = [
     {
-      title: 'Starter',
-      monthlyPrice: 15,
-      yearlyPrice: 150,
-      description: 'Perfect for small teams just getting started',
-      features: [
-        'Up to 10 team members',
-        'Basic AI insights',
-        'Real-time collaboration',
-        'Standard integrations',
-      ],
-      priceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-      priceIdYearly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-      actionLabel: 'Start Free Trial',
+      title: 'Hobby',
+      description: 'Perfect for personal projects and learning.',
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      features: ['1 Project', 'Basic Support', '500MB Storage', 'Community Access'],
+      btnText: 'Get Started',
+      popular: false,
+      tier: 0,
     },
     {
       title: 'Pro',
-      monthlyPrice: 49,
-      yearlyPrice: 490,
-      description: 'Advanced features for growing teams',
+      description: 'For professional developers and small teams.',
+      monthlyPrice: 19,
+      yearlyPrice: 190,
+      priceId: 'price_pro', // Replace with actual Stripe price ID
       features: [
-        'Up to 50 team members',
-        'Advanced AI analytics',
-        'Custom workflow automation',
-        'Priority support',
+        'Unlimited Projects',
+        'Priority Support',
+        '10GB Storage',
+        'API Access',
+        'Team Collaboration',
       ],
-      actionLabel: 'Start Free Trial',
-      priceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-      priceIdYearly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
+      btnText: 'Get Pro',
       popular: true,
+      tier: 1,
     },
     {
       title: 'Enterprise',
-      price: 'Custom',
-      description: 'Custom solutions for large organizations',
+      description: 'For large teams with advanced needs.',
+      monthlyPrice: 99,
+      yearlyPrice: 990,
       features: [
-        'Unlimited team members',
-        'Custom AI model training',
-        'Dedicated success manager',
-        'SLA guarantees',
+        'Custom Solutions',
+        'Dedicated Support',
+        'Unlimited Storage',
+        'Advanced Security',
+        'Custom Integrations',
       ],
-      actionLabel: 'Contact Sales',
-      priceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-      priceIdYearly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-      exclusive: true,
+      btnText: 'Contact Us',
+      popular: false,
+      tier: 2,
     },
   ];
 
   return (
-    <div>
-      <PricingHeader
-        title="Simple, Transparent Pricing"
-        subtitle="Choose the plan that's right for your team"
-      />
-      <PricingSwitch onSwitch={togglePricingPeriod} />
-      <section className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-8 mt-8">
-        {plans.map((plan) => {
-          return (
-            <PricingCard
-              user={user}
-              handleCheckout={handleCheckout}
-              key={plan.title}
-              {...plan}
-              isYearly={isYearly}
-            />
-          );
-        })}
-      </section>
+    <div ref={ref} className="w-full pt-8 py-16 bg-black">
+      <motion.div
+        className="mx-auto w-full max-w-7xl px-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="text-center">
+          <motion.h2
+            className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Example pricing
+          </motion.h2>
+          <motion.p
+            className="text-gray-400 max-w-2xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Start building with Titan for free, or upgrade to unlock all features. Our pricing is designed to scale with your business.
+          </motion.p>
+          
+          <PricingSwitch isYearly={isYearly} togglePricingPeriod={togglePricingPeriod} />
+          
+          <section className="flex flex-col lg:flex-row flex-wrap justify-center gap-8 lg:gap-8 mt-12">
+            {plans.map((plan) => (
+              <div key={plan.title} className="w-full sm:w-[350px] lg:flex-1">
+                <PricingCard
+                  title={plan.title}
+                  description={plan.description}
+                  monthlyPrice={plan.monthlyPrice}
+                  yearlyPrice={plan.yearlyPrice}
+                  features={plan.features}
+                  priceId={plan.priceId}
+                  btnText={plan.btnText}
+                  popular={plan.popular}
+                  isYearly={isYearly}
+                  user={user}
+                  handleCheckout={handleCheckout}
+                  tier={plan.tier}
+                />
+              </div>
+            ))}
+          </section>
+        </div>
+      </motion.div>
     </div>
   );
 }
