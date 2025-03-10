@@ -57,43 +57,29 @@ const PricingHeader = ({ title, subtitle }: { title: string; subtitle: string })
 
 const PricingSwitch = ({ isYearly, togglePricingPeriod }: PricingSwitchProps) => {
   return (
-    <div className="mx-auto flex max-w-xs items-center justify-center space-x-2 mb-8">
-      <span className={`text-sm ${!isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}>
-        Monthly
-      </span>
-      <Tabs
-        defaultValue={isYearly ? '1' : '0'}
-        className="mr-1"
-        onValueChange={togglePricingPeriod}
-      >
-        <TabsList className="bg-gray-900 border border-gray-800">
-          <TabsTrigger
-            value="0"
-            className={cn(
-              'text-xs',
-              !isYearly
-                ? 'bg-green-500 text-black font-medium'
-                : 'text-white data-[state=active]:bg-transparent'
-            )}
-          >
-            Monthly
-          </TabsTrigger>
-          <TabsTrigger
-            value="1"
-            className={cn(
-              'text-xs',
-              isYearly
-                ? 'bg-green-500 text-black font-medium'
-                : 'text-white data-[state=active]:bg-transparent'
-            )}
-          >
-            Yearly
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <span className={`text-sm ${isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}>
-        Yearly
-      </span>
+    <div className="mx-auto flex items-center justify-center mb-12 mt-8">
+      <div className="bg-gray-900 p-1 rounded-full flex items-center">
+        <button 
+          onClick={() => togglePricingPeriod('0')}
+          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+            !isYearly 
+              ? 'bg-green-500 text-black' 
+              : 'text-gray-300 hover:text-white'
+          }`}
+        >
+          Monthly
+        </button>
+        <button 
+          onClick={() => togglePricingPeriod('1')}
+          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+            isYearly 
+              ? 'bg-green-500 text-black' 
+              : 'text-gray-300 hover:text-white'
+          }`}
+        >
+          Yearly
+        </button>
+      </div>
     </div>
   );
 };
@@ -130,24 +116,24 @@ const PricingCard = ({
           'bg-gradient-to-br from-black to-green-950 border-green-500/20': popular,
         })}
       >
-        <CardHeader>
-          <CardTitle className={cn('text-xl font-medium text-white')}>{title}</CardTitle>
-          <div className="flex items-baseline gap-1 mt-2">
-            <span className="text-3xl font-bold text-white">
+        <CardHeader className="pb-10">
+          <CardTitle className={cn('text-2xl font-medium text-white')}>{title}</CardTitle>
+          <div className="flex items-baseline gap-1 mt-6">
+            <span className="text-5xl font-bold text-white">
               ${yearlyPrice && isYearly ? yearlyPrice : monthlyPrice}
             </span>
             <span className="text-sm font-normal text-gray-400">
               {yearlyPrice && isYearly ? '/year' : '/month'}
             </span>
           </div>
-          <CardDescription className="pt-1.5 h-12 text-gray-400">{description}</CardDescription>
+          <CardDescription className="pt-4 text-gray-400 text-base">{description}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className="flex flex-col gap-4 pb-8">
           {features.map((feature) => (
             <CheckItem key={feature} text={feature} />
           ))}
         </CardContent>
-        <CardFooter className="mt-2">
+        <CardFooter className="pt-4 pb-6">
           <Button
             onClick={() => {
               priceId
@@ -156,7 +142,7 @@ const PricingCard = ({
                     `${config.auth.enabled && !user ? '/sign-up?redirectUrl=' : ''}/contact`
                   );
             }}
-            className={cn('w-full', {
+            className={cn('w-full py-6 text-base font-medium', {
               'bg-gradient-to-r from-green-400 to-emerald-600 hover:from-green-500 hover:to-emerald-700 text-white': popular,
               'bg-black text-white hover:bg-gray-900 border border-gray-800 hover:border-green-500/20': !popular,
             })}
@@ -170,9 +156,9 @@ const PricingCard = ({
 };
 
 const CheckItem = ({ text }: { text: string }) => (
-  <div className="flex gap-2">
-    <CheckCircle2 size={18} className="my-auto text-green-400" />
-    <p className="pt-0.5 text-white text-sm">{text}</p>
+  <div className="flex gap-3 items-center">
+    <CheckCircle2 size={20} className="text-green-400 flex-shrink-0" />
+    <p className="text-white text-base">{text}</p>
   </div>
 );
 
@@ -296,16 +282,16 @@ export default function Pricing() {
   ];
 
   return (
-    <div ref={ref} className="w-full py-16 bg-black">
+    <div ref={ref} className="w-full py-24 bg-black">
       <motion.div
-        className="mx-auto max-w-6xl"
+        className="mx-auto max-w-7xl px-6"
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
       >
         <div className="text-center">
           <motion.h2
-            className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-4"
+            className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -313,7 +299,7 @@ export default function Pricing() {
             Simple, transparent pricing
           </motion.h2>
           <motion.p
-            className="text-gray-400 max-w-2xl mx-auto"
+            className="text-gray-400 max-w-2xl mx-auto text-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -323,7 +309,7 @@ export default function Pricing() {
           
           <PricingSwitch isYearly={isYearly} togglePricingPeriod={togglePricingPeriod} />
           
-          <section className="flex flex-col lg:flex-row justify-center gap-8 mt-8">
+          <section className="flex flex-col lg:flex-row justify-center gap-8 mt-8 lg:gap-12">
             {plans.map((plan) => (
               <PricingCard
                 key={plan.title}
