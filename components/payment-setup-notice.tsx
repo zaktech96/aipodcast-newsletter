@@ -1,28 +1,28 @@
-import { AlertCircle } from 'lucide-react';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
-export function PaymentSetupNotice() {
+export const PaymentSetupNotice = () => {
   return (
-    <Alert variant="destructive" className="max-w-2xl mx-auto my-8 mt-24">
-      <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Payments Not Configured</AlertTitle>
-      <AlertDescription className="mt-2">
-        <p>Stripe payments are not configured. To enable payments:</p>
-        <ol className="list-decimal ml-6 mt-2 space-y-1">
-          <li>Set up a Stripe account</li>
-          <li>Add your Stripe API keys to your .env file</li>
-          <li>Enable payments in config.ts</li>
-        </ol>
-        <div className="mt-4">
-          <Link href="https://dashboard.stripe.com/" target="_blank">
-            <Button variant="outline" size="sm">
-              Go to Stripe Dashboard
-            </Button>
+    <Card className="w-full mx-auto">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">Payment Setup Required</CardTitle>
+        <CardDescription>
+          Payment processing is not configured yet. You need to add your Stripe keys.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground">
+          To enable payments, you need to add your Stripe API keys to the environment variables.
+          Follow the instructions in the docs to set up Stripe.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="https://github.com/ObaidUr-Rahmaan/titan" target="_blank">
+            View Documentation
           </Link>
-        </div>
-      </AlertDescription>
-    </Alert>
+        </Button>
+      </CardContent>
+    </Card>
   );
-}
+}; 

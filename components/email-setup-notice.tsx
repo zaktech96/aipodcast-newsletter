@@ -1,28 +1,28 @@
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export function EmailSetupNotice() {
+export const EmailSetupNotice = () => {
   return (
-    <Alert variant="destructive" className="max-w-2xl mx-auto my-8">
-      <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Waitlist Disabled</AlertTitle>
-      <AlertDescription className="mt-2">
-        <p>Email service is not configured. To enable emails:</p>
-        <ol className="list-decimal ml-6 mt-2 space-y-1">
-          <li>Set up a Plunk account</li>
-          <li>Add your Plunk secret API key to your .env file</li>
-          <li>Enable email in config.ts</li>
-        </ol>
-        <div className="mt-4">
-          <Link href="https://dashboard.useplunk.com/" target="_blank">
-            <Button variant="outline" size="sm">
-              Go to Plunk Dashboard
-            </Button>
+    <Card className="w-full mx-auto">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">Email Setup Required</CardTitle>
+        <CardDescription>
+          Email sending is not configured yet. You need to add your email provider credentials.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground">
+          To enable email functionality, you need to add your email provider API keys to the environment variables.
+          Follow the instructions in the docs to set up email services.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="https://github.com/ObaidUr-Rahmaan/titan" target="_blank">
+            View Documentation
           </Link>
-        </div>
-      </AlertDescription>
-    </Alert>
+        </Button>
+      </CardContent>
+    </Card>
   );
-}
+}; 

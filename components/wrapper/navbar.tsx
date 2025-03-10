@@ -10,7 +10,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Menu, MoveRight, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import ModeToggle from '../mode-toggle';
 import { useAuth } from '@clerk/nextjs';
@@ -20,53 +20,9 @@ import { UserProfile } from '../user-profile';
 export default function NavBar() {
   const navigationItems = [
     {
-      title: 'Home',
+      title: 'Titan',
       href: '/',
       description: '',
-    },
-    {
-      title: 'Features',
-      description: 'Everything you need to build your next SaaS',
-      items: [
-        {
-          title: 'Feature 1',
-          href: '#',
-        },
-        {
-          title: 'Feature 2',
-          href: '#',
-        },
-        {
-          title: 'Feature 3',
-          href: '#',
-        },
-        {
-          title: 'Feature 4',
-          href: '#',
-        },
-      ],
-    },
-    {
-      title: 'Resources',
-      description: 'Helpful resources to get you started',
-      items: [
-        {
-          title: 'Test Resource',
-          href: '#',
-        },
-        {
-          title: 'GitHub',
-          href: 'https://github.com',
-        },
-        {
-          title: 'Examples',
-          href: '#',
-        },
-        {
-          title: 'Community',
-          href: '#',
-        },
-      ],
     },
   ];
 
@@ -77,22 +33,9 @@ export default function NavBar() {
   }
 
   const [isOpen, setOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setHasScrolled(scrollPosition > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
-    <header className={`w-full z-40 fixed top-0 left-0 bg-background/80 backdrop-blur-sm ${hasScrolled ? 'border-b' : ''} transition-all duration-200`}>
+    <header className="w-full z-40 fixed top-0 left-0 bg-background/80 backdrop-blur-sm border-b">
       <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center">
         <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
           <NavigationMenu className="flex justify-start items-start">
@@ -143,7 +86,6 @@ export default function NavBar() {
           </NavigationMenu>
         </div>
         <div className="flex lg:justify-center">
-          <p className="font-semibold">Titan</p>
         </div>
         <div className="flex justify-end w-full gap-4 items-center">
           {userId ? (
@@ -164,7 +106,7 @@ export default function NavBar() {
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
           {isOpen && (
-            <div className={`absolute top-20 ${hasScrolled ? 'border-t' : ''} flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8`}>
+            <div className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8">
               {navigationItems.map((item) => (
                 <div key={item.title}>
                   <div className="flex flex-col gap-2">

@@ -170,14 +170,31 @@ const CheckItem = ({ text }: { text: string }) => (
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState<boolean>(false);
   const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1);
-  const { user } = useUser();
+  
+  // Only use the Clerk hook if auth is enabled
+  const clerkUser = config.auth.enabled ? useUser() : { user: null, isLoaded: true, isSignedIn: false };
+  const { user } = clerkUser;
+  
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
+  // Only load Stripe if payments are enabled
   useEffect(() => {
-    setStripePromise(loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!));
+    if (config.payments.enabled && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      setStripePromise(loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY));
+    }
   }, []);
 
   const handleCheckout = async (priceId: string, subscription: boolean) => {
+    if (!config.payments.enabled) {
+      toast.error('Payments are not configured');
+      return;
+    }
+    
+    if (!user) {
+      toast.error('Please sign in to continue');
+      return;
+    }
+    
     try {
       const { data } = await axios.post(`/api/payments/create-checkout-session`, {
         userId: user?.id,
@@ -188,24 +205,19 @@ export default function Pricing() {
 
       if (data.sessionId) {
         const stripe = await stripePromise;
-
-        const response = await stripe?.redirectToCheckout({
-          sessionId: data.sessionId,
-        });
-
-        return response;
-      } else {
-        console.error('Failed to create checkout session');
-        toast('Failed to create checkout session');
-        return;
+        if (stripe) {
+          stripe.redirectToCheckout({ sessionId: data.sessionId });
+        } else {
+          toast.error('Stripe failed to initialize');
+        }
       }
     } catch (error) {
-      console.error('Error during checkout:', error);
-      toast('Error during checkout');
-      return;
+      console.error(error);
+      toast.error('Something went wrong!');
     }
   };
 
+  // Skip rendering if payments are not configured
   if (!config.payments.enabled) {
     return <PaymentSetupNotice />;
   }
