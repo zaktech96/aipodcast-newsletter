@@ -9,7 +9,7 @@
     "lint": "biome lint .",
     "format": "biome format . --write",
     "check": "biome check --apply .",
-    "publish-titan": "./publish.sh",
+    "publish-titan": "./publish-cli.sh",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
