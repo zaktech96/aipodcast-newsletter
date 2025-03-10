@@ -8,6 +8,7 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 
 - [NextJS 15](https://nextjs.org/) - Full-Stack React framework
 - [Supabase](https://supabase.com/) - Database Provider
+- [Drizzle](https://drizzle.dev/) - ORM (TypeScript-first)
 - [Clerk](https://clerk.com/) - Authenticate your users (ban, impersonate etc.)
 - [Stripe](https://stripe.com/) - Collect Payments
 - [Plunk](https://useplunk.com/) - Send Emails Programmatically
