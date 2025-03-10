@@ -15,12 +15,13 @@ import config from '@/config';
 import { UserProfile } from '../user-profile';
 import { Drawer } from '../ui/drawer';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Navigation items with sections to scroll to
 const navigationItems = [
   { title: 'Home', href: '#hero', section: 'hero' },
-  { title: 'Benefits', href: '#benefits', section: 'benefits' },
-  { title: 'Stack', href: '#stack', section: 'stack' },
+  { title: 'Features', href: '#features', section: 'features' },
+  { title: 'Technologies', href: '#stack', section: 'stack' },
   { title: 'Pricing', href: '#pricing', section: 'pricing' },
   { title: 'FAQ', href: '#faq', section: 'faq' },
 ];
@@ -125,39 +126,116 @@ export default function NavBar() {
     });
   };
 
+  // Animation variants
+  const navbarVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.5, 
+        ease: "easeOut" 
+      }
+    }
+  };
+  
+  const logoVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        duration: 0.5, 
+        ease: "easeOut",
+        delay: 0.2
+      }
+    }
+  };
+  
+  const navItemVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: (i: number) => ({ 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.3, 
+        delay: 0.3 + (i * 0.1),
+        ease: "easeOut"
+      }
+    })
+  };
+  
+  const underlineVariants = {
+    hidden: { width: "0%" },
+    visible: { 
+      width: "100%", 
+      transition: { 
+        duration: 0.3, 
+        ease: "easeOut" 
+      }
+    }
+  };
+
   return (
-    <header className={`w-full z-40 fixed top-0 left-0 transition-all duration-300 ${hasScrolled ? 'bg-black/90 backdrop-blur-sm border-b border-green-900/20' : 'bg-transparent'}`}>
+    <motion.header 
+      className={`w-full z-40 fixed top-0 left-0 transition-all duration-300 ${hasScrolled ? 'bg-black/90 backdrop-blur-sm border-b border-green-900/20' : 'bg-transparent'}`}
+      initial="hidden"
+      animate="visible"
+      variants={navbarVariants}
+    >
       <div className="container relative mx-auto min-h-20 flex justify-between items-center px-4 sm:px-6 md:px-8">
         {/* Logo */}
-        <div className="flex items-center">
+        <motion.div 
+          className="flex items-center"
+          variants={logoVariants}
+        >
           <Link href="/" className="text-xl font-bold text-white">
             Titan
           </Link>
-        </div>
+        </motion.div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center">
           <NavigationMenu>
             <NavigationMenuList className="flex gap-6">
-              {navigationItems.map((item) => (
-                <NavigationMenuItem key={item.title}>
-                  <NavigationMenuLink
-                    className={cn(
-                      "text-sm font-medium text-white cursor-pointer relative py-2",
-                      activeSection === item.section ? "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-green-500" : ""
-                    )}
-                    onClick={() => scrollToSection(item.section)}
-                  >
-                    {item.title}
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+              {navigationItems.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  custom={index}
+                  variants={navItemVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      className={cn(
+                        "text-sm font-medium text-white cursor-pointer relative py-2",
+                      )}
+                      onClick={() => scrollToSection(item.section)}
+                    >
+                      {item.title}
+                      {activeSection === item.section && (
+                        <motion.div 
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-500"
+                          layoutId="activeSection"
+                          transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
+                        />
+                      )}
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                </motion.div>
               ))}
             </NavigationMenuList>
           </NavigationMenu>
         </div>
 
         {/* Auth Buttons */}
-        <div className="flex items-center gap-4">
+        <motion.div 
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
           {/* Sign in button - visible only on desktop */}
           <div className="hidden md:block">
             {userId ? (
@@ -176,22 +254,33 @@ export default function NavBar() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <Button variant="ghost" onClick={() => setDrawerOpen(true)}>
+            <Button 
+              variant="ghost" 
+              onClick={() => setDrawerOpen(true)}
+              className="transition-all hover:bg-green-900/20"
+            >
               <Menu className="w-5 h-5" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Mobile Drawer */}
       <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)}>
         <div className="flex flex-col gap-6 pt-4">
-          <h2 className="text-xl font-bold text-white mb-4">Menu</h2>
+          <motion.h2 
+            className="text-xl font-bold text-white mb-4"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            Menu
+          </motion.h2>
           
           {/* Navigation Items */}
           <div className="flex flex-col gap-4">
-            {navigationItems.map((item) => (
-              <button
+            {navigationItems.map((item, index) => (
+              <motion.button
                 key={item.title}
                 className={cn(
                   "flex text-left text-lg font-medium py-3 px-4 border-l-2 transition-colors w-full",
@@ -200,14 +289,23 @@ export default function NavBar() {
                     : "text-white border-transparent hover:border-green-600/30 hover:bg-green-900/5"
                 )}
                 onClick={() => scrollToSection(item.section)}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 * index }}
+                whileHover={{ x: 5, transition: { duration: 0.2 } }}
               >
                 {item.title}
-              </button>
+              </motion.button>
             ))}
           </div>
           
           {/* Mobile Auth Button */}
-          <div className="mt-6 pt-6 border-t border-gray-800">
+          <motion.div 
+            className="mt-6 pt-6 border-t border-gray-800"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
             {userId ? (
               <div className="p-4">
                 <UserProfile />
@@ -222,9 +320,9 @@ export default function NavBar() {
                 Sign in
               </Button>
             )}
-          </div>
+          </motion.div>
         </div>
       </Drawer>
-    </header>
+    </motion.header>
   );
 }
