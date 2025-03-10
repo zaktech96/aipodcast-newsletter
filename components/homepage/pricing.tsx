@@ -57,29 +57,31 @@ const PricingHeader = ({ title, subtitle }: { title: string; subtitle: string })
 
 const PricingSwitch = ({ isYearly, togglePricingPeriod }: PricingSwitchProps) => {
   return (
-    <div className="mx-auto flex items-center justify-center mb-12 mt-8">
-      <div className="bg-gray-900 p-1 rounded-full flex items-center">
-        <button 
-          onClick={() => togglePricingPeriod('0')}
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-            !isYearly 
-              ? 'bg-green-500 text-black' 
-              : 'text-gray-300 hover:text-white'
-          }`}
-        >
-          Monthly
-        </button>
-        <button 
-          onClick={() => togglePricingPeriod('1')}
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+    <div className="mx-auto flex max-w-xs items-center justify-center space-x-4 mb-8">
+      <span 
+        className={`text-sm cursor-pointer ${!isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}
+        onClick={() => togglePricingPeriod("0")}
+      >
+        Monthly
+      </span>
+      <div 
+        className="w-14 h-7 bg-gray-900 border border-gray-800 rounded-full p-1 cursor-pointer flex"
+        onClick={() => togglePricingPeriod(isYearly ? "0" : "1")}
+      >
+        <div 
+          className={`w-5 h-5 rounded-full transition-all duration-300 ${
             isYearly 
-              ? 'bg-green-500 text-black' 
-              : 'text-gray-300 hover:text-white'
+              ? 'bg-green-500 ml-6' 
+              : 'bg-white ml-0'
           }`}
-        >
-          Yearly
-        </button>
+        />
       </div>
+      <span 
+        className={`text-sm cursor-pointer ${isYearly ? 'font-semibold text-white' : 'text-gray-400'}`}
+        onClick={() => togglePricingPeriod("1")}
+      >
+        Yearly
+      </span>
     </div>
   );
 };
@@ -102,7 +104,7 @@ const PricingCard = ({
   const router = useRouter();
   return (
     <motion.div
-      className={cn('flex flex-col justify-between', {
+      className={cn('flex flex-col justify-between h-full', {
         'lg:scale-105 z-10': popular,
       })}
       initial={{ opacity: 0, y: 20 }}
@@ -110,30 +112,30 @@ const PricingCard = ({
       transition={{ duration: 0.5, delay: tier * 0.1 }}
     >
       <Card
-        className={cn('h-full', {
-          'border border-green-500/20 shadow-lg shadow-green-500/5 dark:shadow-green-500/10': popular,
-          'bg-black border-gray-800 hover:border-green-500/20 transition-all duration-200': !popular,
-          'bg-gradient-to-br from-black to-green-950 border-green-500/20': popular,
+        className={cn('h-full flex flex-col', {
+          'border border-green-500/30 shadow-lg shadow-green-500/10': popular,
+          'bg-black/30 border-gray-800 hover:border-green-500/20 transition-all duration-200': !popular,
+          'bg-gradient-to-br from-green-950/40 to-green-900/20 border-green-500/30': popular,
         })}
       >
-        <CardHeader className="pb-10">
-          <CardTitle className={cn('text-2xl font-medium text-white')}>{title}</CardTitle>
-          <div className="flex items-baseline gap-1 mt-6">
-            <span className="text-5xl font-bold text-white">
+        <CardHeader className="pb-0">
+          <CardTitle className="text-2xl font-semibold text-white mb-1">{title}</CardTitle>
+          <div className="flex items-baseline gap-1 mt-6 mb-3">
+            <span className="text-6xl font-bold text-white">
               ${yearlyPrice && isYearly ? yearlyPrice : monthlyPrice}
             </span>
-            <span className="text-sm font-normal text-gray-400">
+            <span className="text-base font-normal text-gray-400 ml-1">
               {yearlyPrice && isYearly ? '/year' : '/month'}
             </span>
           </div>
-          <CardDescription className="pt-4 text-gray-400 text-base">{description}</CardDescription>
+          <CardDescription className="text-gray-400 text-base min-h-[60px]">{description}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4 pb-8">
+        <CardContent className="flex flex-col gap-5 py-8 flex-grow">
           {features.map((feature) => (
             <CheckItem key={feature} text={feature} />
           ))}
         </CardContent>
-        <CardFooter className="pt-4 pb-6">
+        <CardFooter className="pt-4 pb-8">
           <Button
             onClick={() => {
               priceId
@@ -143,8 +145,8 @@ const PricingCard = ({
                   );
             }}
             className={cn('w-full py-6 text-base font-medium', {
-              'bg-gradient-to-r from-green-400 to-emerald-600 hover:from-green-500 hover:to-emerald-700 text-white': popular,
-              'bg-black text-white hover:bg-gray-900 border border-gray-800 hover:border-green-500/20': !popular,
+              'bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-emerald-600 text-white': popular,
+              'bg-black/60 text-white hover:bg-gray-900 border border-gray-800 hover:border-green-500/20': !popular,
             })}
           >
             {btnText}
@@ -156,8 +158,8 @@ const PricingCard = ({
 };
 
 const CheckItem = ({ text }: { text: string }) => (
-  <div className="flex gap-3 items-center">
-    <CheckCircle2 size={20} className="text-green-400 flex-shrink-0" />
+  <div className="flex gap-3 items-start">
+    <CheckCircle2 size={18} className="mt-0.5 text-green-400 shrink-0" />
     <p className="text-white text-base">{text}</p>
   </div>
 );
@@ -282,16 +284,16 @@ export default function Pricing() {
   ];
 
   return (
-    <div ref={ref} className="w-full py-24 bg-black">
+    <div ref={ref} className="w-full py-20 bg-black">
       <motion.div
-        className="mx-auto max-w-7xl px-6"
+        className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="text-center">
+        <div className="text-center mb-16">
           <motion.h2
-            className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-4"
+            className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -299,7 +301,7 @@ export default function Pricing() {
             Simple, transparent pricing
           </motion.h2>
           <motion.p
-            className="text-gray-400 max-w-2xl mx-auto text-lg"
+            className="text-xl text-gray-400 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -309,7 +311,7 @@ export default function Pricing() {
           
           <PricingSwitch isYearly={isYearly} togglePricingPeriod={togglePricingPeriod} />
           
-          <section className="flex flex-col lg:flex-row justify-center gap-8 mt-8 lg:gap-12">
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 w-full max-w-6xl mx-auto">
             {plans.map((plan) => (
               <PricingCard
                 key={plan.title}
