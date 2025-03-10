@@ -5,6 +5,7 @@ import { MacbookScroll } from '../ui/macbook-scroll';
 import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
 import { ArrowRight, Github, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Cover } from '@/components/ui/cover';
 
 // Electric animation component
 const ElectricHighlight = ({ children }: { children: React.ReactNode }) => {
@@ -75,7 +76,7 @@ export default function HeroSection() {
             damping: 10 
           }}
         >
-          <ElectricHighlight>Build & Ship Fast</ElectricHighlight>
+          <ElectricHighlight>Build & Ship <Cover>Fast</Cover></ElectricHighlight>
         </motion.h1>
       </motion.div>
 
