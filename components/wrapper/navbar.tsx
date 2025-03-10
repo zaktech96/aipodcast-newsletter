@@ -10,7 +10,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Menu, MoveRight, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ModeToggle from '../mode-toggle';
 import { useAuth } from '@clerk/nextjs';
@@ -33,9 +33,22 @@ export default function NavBar() {
   }
 
   const [isOpen, setOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setHasScrolled(scrollPosition > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <header className="w-full z-40 fixed top-0 left-0 bg-background/80 backdrop-blur-sm border-b">
+    <header className={`w-full z-40 fixed top-0 left-0 transition-all duration-300 ${hasScrolled ? 'bg-background/80 backdrop-blur-sm border-b' : 'bg-transparent'}`}>
       <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center">
         <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
           <NavigationMenu className="flex justify-start items-start">
@@ -86,6 +99,7 @@ export default function NavBar() {
           </NavigationMenu>
         </div>
         <div className="flex lg:justify-center">
+          <p className="font-semibold">Titan</p>
         </div>
         <div className="flex justify-end w-full gap-4 items-center">
           {userId ? (

@@ -59,8 +59,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   return (
     <>
       <NavBar />
-      <AnimatedBackground />
-      <main className="flex min-w-screen min-h-screen flex-col pt-[4rem] items-center dark:bg-black/20 bg-transparent justify-between">
+      <main className="flex min-w-screen min-h-screen flex-col items-center dark:bg-black/20 bg-transparent justify-between">
         {children}
       </main>
       <Footer />
