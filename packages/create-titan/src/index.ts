@@ -44,25 +44,17 @@ async function main() {
   try {
     console.log(chalk.cyan('\n🚀 Welcome to Titan CLI!\n'));
     console.log(chalk.yellow('Pre-requisites check:'));
-    console.log(
-      chalk.yellow('1. Docker/Orbstack must be running (Only if you decide to run the DB locally)')
-    );
-    console.log(chalk.yellow('2. The following connection info is ready:'));
+    console.log(chalk.yellow('1. The following connection info is ready:'));
     console.log(chalk.yellow('   - Clerk (Publishable Key & Secret Key)'));
     console.log(chalk.yellow('   - Stripe (Public Key, Secret Key & Price ID)'));
     console.log(chalk.yellow('   - Plunk API Key'));
-    console.log(chalk.yellow('   - Supabase (if using remote instance):'));
+    console.log(chalk.yellow('   - Supabase:'));
     console.log(chalk.yellow('     * NEXT_PUBLIC_SUPABASE_URL'));
     console.log(chalk.yellow('     * SUPABASE_SERVICE_ROLE_KEY'));
     console.log(chalk.yellow('     * DATABASE_URL (with pgbouncer)'));
     console.log(chalk.yellow('     * DIRECT_URL (without pgbouncer)\n'));
 
     console.log(chalk.cyan('💡 Important Note:'));
-    console.log(
-      chalk.cyan(
-        '   Only run Supabase locally if you have 16GB RAM or higher and are not experiencing Docker issues.'
-      )
-    );
     console.log(
       chalk.cyan(
         '   We recommend creating a dedicated project in Supabase called "[Project Name] Dev DB"'
@@ -76,23 +68,6 @@ async function main() {
     console.log(
       chalk.cyan('   use one for development and one for production later on.\n')
     );
-
-    if (isWindows) {
-      console.log(chalk.red('\n⚠️ Warning for Windows Users:'));
-      console.log(
-        chalk.yellow('Docker Desktop on Windows can sometimes be unstable with Supabase.')
-      );
-      console.log(
-        chalk.yellow(
-          'If you experience issues, we recommend creating a dedicated Dev DB in Supabase instead.\n'
-        )
-      );
-      console.log(
-        chalk.yellow(
-          'Create a project called "[Project Name] Dev DB" in Supabase and use those credentials - this is highly recommended for Windows users.\n'
-        )
-      );
-    }
 
     // Check GitHub SSH authentication
     spinner.text = 'Checking GitHub SSH authentication...';
@@ -338,7 +313,7 @@ async function main() {
       spinner.stop();
       console.log(
         chalk.green(
-          '\n✅ Good choice! Using a dedicated Supabase Dev DB is reliable and avoids local Docker issues.'
+          '\n✅ Good choice! Using a dedicated Supabase Dev DB is reliable and consistent.'
         )
       );
       console.log(
@@ -406,7 +381,7 @@ async function main() {
       spinner.stop();
       console.log(
         chalk.green(
-          '\n✅ Good choice! Using a dedicated Supabase Dev DB is reliable and avoids local Docker issues.'
+          '\n✅ Good choice! Using a dedicated Supabase Dev DB is reliable and consistent.'
         )
       );
       console.log(
