@@ -57,12 +57,12 @@ const AnimatedBackground = () => {
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="overflow-x-hidden w-full">
       <NavBar />
-      <main className="flex min-w-screen min-h-screen flex-col items-center bg-black justify-between">
+      <main className="flex min-h-screen flex-col items-center bg-black justify-between w-full overflow-hidden">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
