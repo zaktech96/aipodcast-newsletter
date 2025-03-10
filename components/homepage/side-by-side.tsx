@@ -61,6 +61,12 @@ export default function SideBySide() {
       ref={ref}
       className="overflow-hidden bg-black py-16"
     >
+      <style jsx global>{`
+        circle {
+          stroke: rgba(74, 222, 128, 0.2) !important;
+          stroke-width: 1px !important;
+        }
+      `}</style>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           <motion.div 
@@ -155,26 +161,38 @@ export default function SideBySide() {
 
               {/* Inner Circles */}
               <OrbitingCircles
-                className="h-[30px] w-[30px] border-none bg-transparent"
+                className="h-[40px] w-[40px] border-none bg-transparent"
                 duration={20}
                 delay={20}
                 radius={80}
                 path={true}
               >
-                <div className="bg-blue-500 p-1 rounded-md flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">TS</span>
+                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                  <Image 
+                    src="/logos/typescript-logo.png" 
+                    alt="TypeScript" 
+                    width={30} 
+                    height={30} 
+                    className="object-contain"
+                  />
                 </div>
               </OrbitingCircles>
               
               <OrbitingCircles
-                className="h-[30px] w-[30px] border-none bg-transparent"
+                className="h-[40px] w-[40px] border-none bg-transparent"
                 duration={20}
                 delay={10}
                 radius={80}
                 path={true}
               >
-                <div className="bg-teal-500 p-1 rounded-md flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">TW</span>
+                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                  <Image 
+                    src="/logos/tailwind-logo.png" 
+                    alt="Tailwind CSS" 
+                    width={30} 
+                    height={30} 
+                    className="object-contain"
+                  />
                 </div>
               </OrbitingCircles>
 
@@ -186,8 +204,14 @@ export default function SideBySide() {
                 duration={20}
                 path={true}
               >
-                <div className="bg-white p-1 rounded-md flex items-center justify-center">
-                  <span className="text-black font-bold text-sm">N</span>
+                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                  <Image 
+                    src="/logos/nextjs-logo.png" 
+                    alt="Next.js" 
+                    width={40} 
+                    height={40} 
+                    className="object-contain"
+                  />
                 </div>
               </OrbitingCircles>
               
@@ -199,8 +223,14 @@ export default function SideBySide() {
                 delay={20}
                 path={true}
               >
-                <div className="bg-green-600 p-1 rounded-md flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">S</span>
+                <div className="bg-white p-1 rounded-md flex items-center justify-center h-full w-full">
+                  <Image 
+                    src="/logos/supabase-logo.png" 
+                    alt="Supabase" 
+                    width={40} 
+                    height={40} 
+                    className="object-contain" 
+                  />
                 </div>
               </OrbitingCircles>
             </div>

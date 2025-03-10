@@ -176,19 +176,6 @@ const CheckItem = ({ text }: { text: string }) => (
   </div>
 );
 
-const PaymentSetupNotice = () => (
-  <div className="w-full py-16 bg-black">
-    <div className="mx-auto max-w-6xl text-center">
-      <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-4">
-        Payments Not Configured
-      </h2>
-      <p className="text-gray-400 max-w-2xl mx-auto">
-        Add your Stripe API keys in the environment variables to enable payments.
-      </p>
-    </div>
-  </div>
-);
-
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState<boolean>(false);
   const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1);
@@ -307,11 +294,6 @@ export default function Pricing() {
       tier: 2,
     },
   ];
-
-  // Skip rendering if payments are not configured
-  if (!config.payments.enabled) {
-    return <PaymentSetupNotice />;
-  }
 
   return (
     <div ref={ref} className="w-full py-16 bg-black">

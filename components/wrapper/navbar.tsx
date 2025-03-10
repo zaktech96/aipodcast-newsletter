@@ -12,7 +12,6 @@ import {
 import { Menu, MoveRight, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ModeToggle from '../mode-toggle';
 import { useAuth } from '@clerk/nextjs';
 import config from '@/config';
 import { UserProfile } from '../user-profile';
@@ -77,18 +76,6 @@ export default function NavBar() {
                               View Documentation
                             </Button>
                           </div>
-                          <div className="flex flex-col text-sm h-full justify-end">
-                            {item.items?.map((subItem) => (
-                              <NavigationMenuLink
-                                href={subItem.href}
-                                key={subItem.title}
-                                className="flex flex-row justify-between items-center hover:bg-muted py-2 px-4 rounded"
-                              >
-                                <span>{subItem.title}</span>
-                                <MoveRight className="w-4 h-4 text-muted-foreground" />
-                              </NavigationMenuLink>
-                            ))}
-                          </div>
                         </div>
                       </NavigationMenuContent>
                     </>
@@ -112,7 +99,6 @@ export default function NavBar() {
               Sign in
             </Button>
           )}
-          <ModeToggle />
         </div>
         <div className="flex w-12 shrink lg:hidden items-end justify-end">
           <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
@@ -131,17 +117,6 @@ export default function NavBar() {
                     ) : (
                       <p className="text-lg">{item.title}</p>
                     )}
-                    {item.items &&
-                      item.items.map((subItem) => (
-                        <Link
-                          key={subItem.title}
-                          href={subItem.href}
-                          className="flex justify-between items-center"
-                        >
-                          <span className="text-muted-foreground">{subItem.title}</span>
-                          <MoveRight className="w-4 h-4 stroke-1" />
-                        </Link>
-                      ))}
                   </div>
                 </div>
               ))}
