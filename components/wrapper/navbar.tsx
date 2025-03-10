@@ -99,7 +99,6 @@ export default function NavBar() {
           </NavigationMenu>
         </div>
         <div className="flex lg:justify-center">
-          <p className="font-semibold">Titan</p>
         </div>
         <div className="flex justify-end w-full gap-4 items-center">
           {userId ? (

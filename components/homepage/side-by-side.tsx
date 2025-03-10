@@ -1,10 +1,10 @@
 'use client';
 
 import { Computer, Network, Zap } from 'lucide-react';
-import { OrbitingCirclesComponent } from './orbiting-circles';
-import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import OrbitingCircles from '@/components/magicui/orbiting-circles';
+import Image from 'next/image';
 
 const features = [
   {
@@ -138,28 +138,71 @@ export default function SideBySide() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex items-center justify-center"
           >
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 blur-2xl opacity-50" />
+            {/* Orbiting circles with improved styling */}
+            <div className="relative flex h-[500px] w-full max-w-[32rem] items-center justify-center overflow-hidden rounded-lg">
+              {/* Glowing background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full blur-3xl opacity-40"></div>
               
-              {/* Tech logos floating around as colored divs */}
-              <div className="relative max-w-xs">
-                <div className="absolute -top-10 right-8 w-10 h-10 bg-white rounded-md flex items-center justify-center opacity-80">
-                  <span className="text-black font-bold">N</span>
+              {/* Central "Build Fast" text */}
+              <motion.span 
+                className="pointer-events-none whitespace-pre-wrap bg-clip-text text-center text-8xl font-semibold leading-none text-transparent bg-gradient-to-br from-green-400 to-emerald-500"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.8 }}
+              >
+                Build Fast
+              </motion.span>
+
+              {/* Inner Circles */}
+              <OrbitingCircles
+                className="h-[30px] w-[30px] border-none bg-transparent"
+                duration={20}
+                delay={20}
+                radius={80}
+                path={true}
+              >
+                <div className="bg-blue-500 p-1 rounded-md flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">TS</span>
                 </div>
-                <div className="absolute -bottom-5 left-10 w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center opacity-80">
-                  <span className="text-white font-bold">TS</span>
+              </OrbitingCircles>
+              
+              <OrbitingCircles
+                className="h-[30px] w-[30px] border-none bg-transparent"
+                duration={20}
+                delay={10}
+                radius={80}
+                path={true}
+              >
+                <div className="bg-teal-500 p-1 rounded-md flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">TW</span>
                 </div>
-                <div className="absolute top-20 -left-6 w-12 h-12 bg-green-600 rounded-md flex items-center justify-center opacity-80">
-                  <span className="text-white font-bold">S</span>
+              </OrbitingCircles>
+
+              {/* Outer Circles (reverse) */}
+              <OrbitingCircles
+                className="h-[50px] w-[50px] border-none bg-transparent"
+                reverse
+                radius={190}
+                duration={20}
+                path={true}
+              >
+                <div className="bg-white p-1 rounded-md flex items-center justify-center">
+                  <span className="text-black font-bold text-sm">N</span>
                 </div>
-                <div className="absolute -right-4 top-10 w-10 h-10 bg-blue-400 rounded-md flex items-center justify-center opacity-80">
-                  <span className="text-white font-bold">R</span>
+              </OrbitingCircles>
+              
+              <OrbitingCircles
+                className="h-[50px] w-[50px] border-none bg-transparent"
+                reverse
+                radius={190}
+                duration={20}
+                delay={20}
+                path={true}
+              >
+                <div className="bg-green-600 p-1 rounded-md flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">S</span>
                 </div>
-                
-                <div className="text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600 py-6">
-                  Build Fast
-                </div>
-              </div>
+              </OrbitingCircles>
             </div>
           </motion.div>
         </div>
