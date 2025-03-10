@@ -95,21 +95,33 @@ export default function NavBar() {
   const scrollToSection = (section: string) => {
     const element = document.getElementById(section);
     if (element) {
-      // Close drawer if it's open
-      setDrawerOpen(false);
-      
-      // Get the height of the navbar (slightly larger buffer for better spacing)
-      const navbarHeight = 100; // Add more buffer to avoid content being hidden under navbar
-      
-      // Calculate scroll position
-      const offsetPosition = element.offsetTop - navbarHeight;
-      
-      // Scroll to the position
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      // First close drawer if it's open
+      if (isDrawerOpen) {
+        setDrawerOpen(false);
+        
+        // Add a small delay before scrolling to allow drawer to close
+        setTimeout(() => {
+          performScroll(element);
+        }, 300);
+      } else {
+        performScroll(element);
+      }
     }
+  };
+  
+  // Helper function to perform the actual scrolling
+  const performScroll = (element: HTMLElement) => {
+    // Get the height of the navbar
+    const navbarHeight = 100; // Buffer to avoid content being hidden under navbar
+    
+    // Calculate scroll position
+    const offsetPosition = element.offsetTop - navbarHeight;
+    
+    // Scroll to the position
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -145,18 +157,21 @@ export default function NavBar() {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-4">
-          {userId ? (
-            <UserProfile />
-          ) : (
-            <Button
-              variant="outline"
-              className="text-white border-green-800/40 hover:bg-green-900/20"
-              onClick={() => window.location.assign('/sign-in')}
-              disabled={!config?.auth?.enabled}
-            >
-              Sign in
-            </Button>
-          )}
+          {/* Sign in button - visible only on desktop */}
+          <div className="hidden md:block">
+            {userId ? (
+              <UserProfile />
+            ) : (
+              <Button
+                variant="outline"
+                className="text-white border-green-800/40 hover:bg-green-900/20"
+                onClick={() => window.location.assign('/sign-in')}
+                disabled={!config?.auth?.enabled}
+              >
+                Sign in
+              </Button>
+            )}
+          </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -171,30 +186,41 @@ export default function NavBar() {
       <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)}>
         <div className="flex flex-col gap-6 pt-4">
           <h2 className="text-xl font-bold text-white mb-4">Menu</h2>
-          {navigationItems.map((item) => (
-            <button
-              key={item.title}
-              className={cn(
-                "flex text-left text-lg font-medium py-3 px-4 border-l-2 transition-colors w-full",
-                activeSection === item.section
-                  ? "text-green-400 border-green-500 bg-green-900/10"
-                  : "text-white border-transparent hover:border-green-600/30 hover:bg-green-900/5"
-              )}
-              onClick={() => scrollToSection(item.section)}
-            >
-              {item.title}
-            </button>
-          ))}
+          
+          {/* Navigation Items */}
+          <div className="flex flex-col gap-4">
+            {navigationItems.map((item) => (
+              <button
+                key={item.title}
+                className={cn(
+                  "flex text-left text-lg font-medium py-3 px-4 border-l-2 transition-colors w-full",
+                  activeSection === item.section
+                    ? "text-green-400 border-green-500 bg-green-900/10"
+                    : "text-white border-transparent hover:border-green-600/30 hover:bg-green-900/5"
+                )}
+                onClick={() => scrollToSection(item.section)}
+              >
+                {item.title}
+              </button>
+            ))}
+          </div>
           
           {/* Mobile Auth Button */}
           <div className="mt-6 pt-6 border-t border-gray-800">
-            <Button
-              variant="outline"
-              className="w-full text-white border-green-800/40 hover:bg-green-900/20"
-              onClick={() => window.location.assign('/sign-in')}
-            >
-              Sign in
-            </Button>
+            {userId ? (
+              <div className="p-4">
+                <UserProfile />
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full text-white border-green-800/40 hover:bg-green-900/20"
+                onClick={() => window.location.assign('/sign-in')}
+                disabled={!config?.auth?.enabled}
+              >
+                Sign in
+              </Button>
+            )}
           </div>
         </div>
       </Drawer>
