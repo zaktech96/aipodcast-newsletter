@@ -59,7 +59,7 @@ export default function SideBySide() {
   return (
     <motion.div 
       ref={ref}
-      className="overflow-hidden bg-black py-16"
+      className="overflow-hidden bg-black py-16 px-4 md:px-6"
     >
       <style jsx global>{`
         circle {
@@ -67,8 +67,8 @@ export default function SideBySide() {
           stroke-width: 1px !important;
         }
       `}</style>
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      <div className="mx-auto max-w-7xl">
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-12 md:gap-y-16 lg:gap-x-12 lg:max-w-none lg:grid-cols-2">
           <motion.div 
             className="lg:pr-8 lg:pt-4"
             initial={{ opacity: 0, x: -50 }}

@@ -153,10 +153,10 @@ function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-green-500/[0.2] mb-8 md:mb-12"
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-green-500/[0.2] mb-4 md:mb-12"
                     >
                         <Circle className="h-2 w-2 fill-green-500/80" />
-                        <span className="text-sm text-white/60 tracking-wide">
+                        <span className="text-xs sm:text-sm text-white/60 tracking-wide">
                             {badge}
                         </span>
                     </motion.div>
@@ -166,17 +166,20 @@ function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
+                        className="px-2"
                     >
-                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-3 md:mb-8 tracking-tight">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                                 {title1}
                             </span>
-                            <br />
-                            <div className="inline-block mt-2">
-                                <Cover className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-green-400 to-emerald-300 text-4xl sm:text-6xl md:text-8xl">
-                                    {title2}
-                                </Cover>
-                            </div>
+                            <br className="md:hidden" />
+                            <span className="md:ml-4">
+                                <div className="inline-block mt-2">
+                                    <Cover className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-green-400 to-emerald-300 text-4xl sm:text-6xl md:text-8xl">
+                                        {title2}
+                                    </Cover>
+                                </div>
+                            </span>
                         </h1>
                     </motion.div>
 
@@ -186,8 +189,8 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
-                            A complete NextJS Boilerplate that handles infrastructure and common features, letting you focus exclusively on building your product.
+                        <p className="text-sm sm:text-base md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-2">
+                            The Ultimate NextJS Boilerplate for quickly building your Startup - Focus on your Product.
                         </p>
                     </motion.div>
 
@@ -196,13 +199,13 @@ function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="flex flex-wrap justify-center gap-4"
+                        className="flex flex-wrap justify-center gap-3 md:gap-4"
                     >
                         <a 
                             href="https://github.com/ObaidUr-Rahmaan/titan" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-green-500 bg-opacity-10 hover:bg-opacity-20 border border-green-500/30 text-white font-medium transition-colors duration-300"
+                            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 md:py-3 rounded-md bg-green-500 bg-opacity-10 hover:bg-opacity-20 border border-green-500/30 text-white font-medium transition-colors duration-300 text-sm sm:text-base"
                         >
                             Start Building
                         </a>
@@ -210,7 +213,7 @@ function HeroGeometric({
                             href="https://discord.gg/F6rUxWvKrV" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-colors duration-300"
+                            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 md:py-3 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-colors duration-300 text-sm sm:text-base"
                         >
                             Join Discord
                         </a>

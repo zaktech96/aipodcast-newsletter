@@ -101,7 +101,7 @@ const PricingCard = ({
   const router = useRouter();
   return (
     <motion.div
-      className={cn('flex flex-col justify-between w-full lg:w-1/3', {
+      className={cn('flex flex-col justify-between w-full', {
         'lg:scale-105 z-10': popular,
       })}
       initial={{ opacity: 0, y: 20 }}
@@ -109,7 +109,7 @@ const PricingCard = ({
       transition={{ duration: 0.5, delay: tier * 0.1 }}
     >
       <Card
-        className={cn('h-full min-w-[280px]', {
+        className={cn('h-full min-w-[260px]', {
           'border border-green-500/20 shadow-lg shadow-green-500/5 dark:shadow-green-500/10': popular,
           'bg-black border-gray-800 hover:border-green-500/20 transition-all duration-200': !popular,
           'bg-gradient-to-br from-black to-green-950 border-green-500/20': popular,
@@ -308,23 +308,24 @@ export default function Pricing() {
           
           <PricingSwitch isYearly={isYearly} togglePricingPeriod={togglePricingPeriod} />
           
-          <section className="flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 mt-12">
+          <section className="flex flex-col lg:flex-row flex-wrap justify-center gap-8 lg:gap-8 mt-12">
             {plans.map((plan) => (
-              <PricingCard
-                key={plan.title}
-                title={plan.title}
-                description={plan.description}
-                monthlyPrice={plan.monthlyPrice}
-                yearlyPrice={plan.yearlyPrice}
-                features={plan.features}
-                priceId={plan.priceId}
-                btnText={plan.btnText}
-                popular={plan.popular}
-                isYearly={isYearly}
-                user={user}
-                handleCheckout={handleCheckout}
-                tier={plan.tier}
-              />
+              <div key={plan.title} className="w-full sm:w-[350px] lg:flex-1">
+                <PricingCard
+                  title={plan.title}
+                  description={plan.description}
+                  monthlyPrice={plan.monthlyPrice}
+                  yearlyPrice={plan.yearlyPrice}
+                  features={plan.features}
+                  priceId={plan.priceId}
+                  btnText={plan.btnText}
+                  popular={plan.popular}
+                  isYearly={isYearly}
+                  user={user}
+                  handleCheckout={handleCheckout}
+                  tier={plan.tier}
+                />
+              </div>
             ))}
           </section>
         </div>

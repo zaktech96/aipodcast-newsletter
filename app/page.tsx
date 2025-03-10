@@ -10,28 +10,33 @@ import HeroSection from '@/components/homepage/hero-section';
 export default function Home() {
   return (
     <PageWrapper>
-      <div className="w-full">
+      <section id="hero" className="w-full">
         <HeroSection />
-      </div>
-      <div className="flex my-8 w-full justify-center items-center">
+      </section>
+      
+      <section id="benefits" className="flex my-8 w-full justify-center items-center">
         <SideBySide />
-      </div>
-      <div className="flex flex-col p-2 w-full justify-center items-center">
+      </section>
+      
+      <section id="technologies" className="flex flex-col p-2 w-full justify-center items-center">
         <MarketingCards />
-      </div>
-      <div className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
-        <div className="w-full max-w-2xl mx-auto">
+      </section>
+      
+      <section id="pricing" className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
+        <div className="w-full max-w-6xl mx-auto">
           <Pricing />
         </div>
-      </div>
-      <div className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
+      </section>
+      
+      <section id="waitlist" className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
         <div className="w-full max-w-2xl mx-auto">
           <WaitlistForm />
         </div>
-      </div>
-      <div className="flex justify-center items-center w-full my-[4rem]">
+      </section>
+      
+      <section id="faq" className="flex justify-center items-center w-full my-[4rem]">
         <FAQ />
-      </div>
+      </section>
       
       <FloatingCTA />
     </PageWrapper>
