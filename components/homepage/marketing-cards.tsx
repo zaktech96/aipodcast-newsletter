@@ -34,7 +34,7 @@ const ProjectsData = [
     name: 'Drizzle ORM',
     description:
       'Modern headless TypeScript ORM for database interactions.',
-    image: 'https://utfs.io/f/c3933696-cd5c-4de7-a24e-1822df8c4215-g7gclc.png',
+    image: '/logos/drizzle-logo.png',
     url: 'https://orm.drizzle.team/',
   },
   {
@@ -63,10 +63,10 @@ const ProjectsData = [
   },
   {
     id: 8,
-    name: 'Umami Analytics',
-    description: 'Privacy-focused, self-hosted web analytics solution for tracking user behavior.',
-    image: 'https://utfs.io/f/e1JG3uPHb3Vp53yq1RsSqnIOvk43btcCKi60G9ezWyQ1NUVP',
-    url: 'https://umami.is',
+    name: 'DataFast',
+    description: 'User Analytics for Actionable Growth (Know exactly which marketing channels are working).',
+    image: '/logos/datafast-logo.png',
+    url: 'https://datafa.st',
   },
 ];
 
