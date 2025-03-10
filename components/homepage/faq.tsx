@@ -64,7 +64,7 @@ export default function FAQ() {
                 Can I customize Titan to match my brand?
               </AccordionTrigger>
               <AccordionContent className="text-gray-400 pb-4">
-                Absolutely! Titan is designed to be fully customizable. You can easily change colors, typography, and other design elements to match your brand identity. The codebase is modular and well-documented for easy customization.
+                Absolutely! Titan is designed to be fully customizable. You can easily change colors, typography, and other design elements to match your brand identity. The codebase is modular and easily customizable.
               </AccordionContent>
             </AccordionItem>
 
@@ -76,7 +76,7 @@ export default function FAQ() {
                 Is Titan suitable for production?
               </AccordionTrigger>
               <AccordionContent className="text-gray-400 pb-4">
-                Yes, Titan is built for production use. It follows best practices for security, performance, and scalability. Many companies are already using Titan in production for their SaaS applications.
+                Yes, Titan is built for production use. All of the providers operate smoothly at high-scale. Vercel also takes care of a lot of the infrastructure for you (including DDOS protection). You shouldn't be worrying about any self-hosting until a significant amount of users are on your platform (e.g. 50,000 MAU).
               </AccordionContent>
             </AccordionItem>
 
@@ -88,7 +88,7 @@ export default function FAQ() {
                 Do you offer support for Titan?
               </AccordionTrigger>
               <AccordionContent className="text-gray-400 pb-4">
-                We offer community support through GitHub discussions and our Discord channel. For enterprise customers, we also offer premium support with dedicated response times and direct access to our development team.
+                Yes. We offer community support through the #ask-for-help Discord channel in the Discord server.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

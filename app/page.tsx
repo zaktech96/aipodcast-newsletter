@@ -18,7 +18,7 @@ export default function Home() {
         <SideBySide />
       </section>
       
-      <section id="technologies" className="flex flex-col p-2 w-full justify-center items-center">
+      <section id="stack" className="flex flex-col p-2 w-full justify-center items-center">
         <MarketingCards />
       </section>
       

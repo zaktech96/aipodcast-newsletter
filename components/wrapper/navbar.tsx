@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 const navigationItems = [
   { title: 'Home', href: '#hero', section: 'hero' },
   { title: 'Benefits', href: '#benefits', section: 'benefits' },
-  { title: 'Technologies', href: '#technologies', section: 'technologies' },
+  { title: 'Stack', href: '#stack', section: 'stack' },
   { title: 'Pricing', href: '#pricing', section: 'pricing' },
   { title: 'FAQ', href: '#faq', section: 'faq' },
 ];
