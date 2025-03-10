@@ -281,7 +281,7 @@ export default function Pricing() {
   ];
 
   return (
-    <div ref={ref} className="w-full py-16 bg-black">
+    <div ref={ref} className="w-full pt-8 py-16 bg-black">
       <motion.div
         className="mx-auto w-full max-w-7xl px-4"
         initial={{ opacity: 0, y: 20 }}

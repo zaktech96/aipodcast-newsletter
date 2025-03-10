@@ -47,21 +47,45 @@ export default function NavBar() {
       // Determine which section is currently in view
       const sections = navigationItems.map(item => item.section);
       
-      for (const section of sections) {
+      // Find all sections and their positions
+      const sectionPositions = sections.map(section => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          const offset = 100; // Navbar height plus some buffer
-          
-          if (rect.top <= offset && rect.bottom >= offset) {
-            setActiveSection(section);
-            break;
-          }
+          return { 
+            section, 
+            top: rect.top,
+            bottom: rect.bottom,
+            height: rect.height
+          };
         }
+        return null;
+      }).filter(Boolean);
+      
+      // Find the current active section
+      const viewportHeight = window.innerHeight;
+      const viewportCenter = viewportHeight / 3; // Use the top third as the detection point
+      
+      // Find the section that occupies the center of the screen
+      const currentSection = sectionPositions.find(section => {
+        if (section && typeof section.top === 'number' && typeof section.bottom === 'number') {
+          return section.top <= viewportCenter && section.bottom >= viewportCenter;
+        }
+        return false;
+      });
+      
+      // Default to hero if no section is active or we're at the top of the page
+      if (currentSection) {
+        setActiveSection(currentSection.section);
+      } else if (scrollPosition < 100) {
+        setActiveSection('hero');
       }
     };
 
     window.addEventListener('scroll', handleScroll);
+    // Initial call to set the active section on page load
+    handleScroll();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -74,8 +98,8 @@ export default function NavBar() {
       // Close drawer if it's open
       setDrawerOpen(false);
       
-      // Get the height of the navbar
-      const navbarHeight = 80; // Approx height of navbar
+      // Get the height of the navbar (slightly larger buffer for better spacing)
+      const navbarHeight = 100; // Add more buffer to avoid content being hidden under navbar
       
       // Calculate scroll position
       const offsetPosition = element.offsetTop - navbarHeight;
@@ -121,13 +145,14 @@ export default function NavBar() {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-4">
-          {config?.auth?.enabled && userId ? (
+          {userId ? (
             <UserProfile />
           ) : (
             <Button
               variant="outline"
               className="text-white border-green-800/40 hover:bg-green-900/20"
               onClick={() => window.location.assign('/sign-in')}
+              disabled={!config?.auth?.enabled}
             >
               Sign in
             </Button>

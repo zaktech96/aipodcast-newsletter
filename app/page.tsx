@@ -10,31 +10,31 @@ import HeroSection from '@/components/homepage/hero-section';
 export default function Home() {
   return (
     <PageWrapper>
-      <section id="hero" className="w-full">
+      <section id="hero" className="w-full min-h-screen">
         <HeroSection />
       </section>
       
-      <section id="features" className="flex my-8 w-full justify-center items-center">
+      <section id="features" className="flex py-24 md:py-32 w-full justify-center items-center">
         <SideBySide />
       </section>
       
-      <section id="stack" className="flex flex-col p-2 w-full justify-center items-center">
+      <section id="stack" className="flex flex-col py-24 md:py-32 w-full justify-center items-center">
         <MarketingCards />
       </section>
       
-      <section id="pricing" className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
+      <section id="pricing" className="flex justify-center items-center w-full py-24 md:py-32 min-h-[600px]">
         <div className="w-full max-w-6xl mx-auto">
           <Pricing />
         </div>
       </section>
       
-      <section id="waitlist" className="flex justify-center items-center w-full my-[4rem] min-h-[200px]">
+      <section id="waitlist" className="flex justify-center items-center w-full py-24 md:py-32 min-h-[400px]">
         <div className="w-full max-w-2xl mx-auto">
           <WaitlistForm />
         </div>
       </section>
       
-      <section id="faq" className="flex justify-center items-center w-full my-[4rem]">
+      <section id="faq" className="flex justify-center items-center w-full py-24 md:py-32">
         <FAQ />
       </section>
       
