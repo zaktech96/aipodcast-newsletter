@@ -4,6 +4,7 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Circle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Cover } from "@/components/ui/cover";
 
 
 function ElegantShape({
@@ -171,13 +172,11 @@ function HeroGeometric({
                                 {title1}
                             </span>
                             <br />
-                            <span
-                                className={cn(
-                                    "bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-green-400 to-emerald-300"
-                                )}
-                            >
-                                {title2}
-                            </span>
+                            <div className="inline-block mt-2">
+                                <Cover className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-green-400 to-emerald-300 text-4xl sm:text-6xl md:text-8xl">
+                                    {title2}
+                                </Cover>
+                            </div>
                         </h1>
                     </motion.div>
 
