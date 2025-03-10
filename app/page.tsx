@@ -9,6 +9,7 @@ import config from '@/config';
 import { WaitlistForm } from '@/lib/components/waitlist-form';
 import { PaymentSetupNotice } from '@/components/payment-setup-notice';
 import { EmailSetupNotice } from '@/components/email-setup-notice';
+import FloatingCTA from '@/components/homepage/floating-cta';
 
 export default function Home() {
   return (
@@ -16,7 +17,7 @@ export default function Home() {
       <div className="flex flex-col justify-center items-center w-full mt-[1rem] p-3">
         <HeroSection />
       </div>
-      <div className="flex my-[8r em] w-full justify-center items-center">
+      <div className="flex my-[8rem] w-full justify-center items-center">
         <SideBySide />
       </div>
       <div className="flex flex-col p-2 w-full justify-center items-center">
@@ -35,6 +36,8 @@ export default function Home() {
       <div className="flex justify-center items-center w-full my-[4rem]">
         <AccordionComponent />
       </div>
+      
+      <FloatingCTA />
     </PageWrapper>
   );
 }

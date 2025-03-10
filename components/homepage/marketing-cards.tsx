@@ -1,8 +1,10 @@
 'use client';
 import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRef } from 'react';
+import { Sparkles, Zap } from 'lucide-react';
 
 const ProjectsData = [
   {
@@ -70,42 +72,150 @@ const ProjectsData = [
   },
 ];
 
-const SpringAnimatedFeatures = () => {
+// Electric pulse animation component
+const ElectricPulse = () => {
   return (
-    <div className="flex flex-col justify-center items-center lg:w-[75%]">
-      <div className="flex flex-col mb-[3rem]">
+    <motion.div 
+      className="absolute -inset-0.5 rounded-md z-0 bg-gradient-to-r from-green-400 to-emerald-500 opacity-0 group-hover:opacity-100"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0 }}
+      whileHover={{ 
+        opacity: [0, 0.7, 0.4],
+        transition: { duration: 0.3 }
+      }}
+    />
+  );
+};
+
+// Zap icon animation
+const AnimatedZap = () => {
+  return (
+    <motion.div
+      className="absolute top-3 right-3 text-green-400 opacity-0 group-hover:opacity-100"
+      initial={{ scale: 0, rotate: -10 }}
+      whileHover={{ 
+        scale: 1,
+        rotate: [0, 15, 0, -10, 0],
+        transition: { 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 5,
+          duration: 1,
+          repeat: Infinity,
+          repeatType: "loop"
+        } 
+      }}
+    >
+      <Sparkles size={16} />
+    </motion.div>
+  );
+};
+
+const SpringAnimatedFeatures = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
+  
+  return (
+    <motion.div 
+      ref={ref}
+      className="flex flex-col justify-center items-center lg:w-[75%]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className="flex flex-col mb-[3rem]"
+        initial={{ y: 20, opacity: 0 }}
+        animate={isInView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
         <h2
           className={`${TITLE_TAILWIND_CLASS} mt-2 font-semibold tracking-tight dark:text-white text-gray-900`}
         >
-          Built with the best Tech - Minimal friction
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={isInView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2"
+          >
+            <span>Built with the best Tech</span>
+            <motion.span
+              animate={{ 
+                rotate: [0, 5, -5, 0],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ 
+                duration: 0.5, 
+                repeat: Infinity, 
+                repeatDelay: 4,
+                ease: "easeInOut" 
+              }}
+            >
+              <Zap className="text-green-500" size={32} />
+            </motion.span>
+          </motion.div>
         </h2>
-        <p className="mx-auto max-w-[600px] text-gray-600 dark:text-gray-400 text-center mt-2 ">
+        <motion.p 
+          className="mx-auto max-w-[600px] text-gray-600 dark:text-gray-400 text-center mt-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={isInView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           Your customers deserve your focus - build with tech that just works.
-        </p>
-      </div>
-      <div className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {ProjectsData.map((project) => {
+        </motion.p>
+      </motion.div>
+
+      <motion.div 
+        className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        {ProjectsData.map((project, index) => {
           return (
             <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: 0.1 * index,
+                type: "spring",
+                stiffness: 100
+              }}
               whileHover={{
                 y: -8,
-              }}
-              transition={{
-                type: 'spring',
-                bounce: 0.7,
+                scale: 1.02,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 10
+                }
               }}
               key={project.id}
-              className="mt-5 text-left border p-6 rounded-md dark:bg-black"
+              className="mt-5 text-left border p-6 rounded-md dark:bg-black/50 bg-white/80 backdrop-blur-sm relative group"
             >
-              <Link href={project?.url} target="_blank" rel="noopener noreferrer">
-                <Image
-                  src={project?.imageDark ? project?.imageDark : project.image}
-                  width={40}
-                  height={30}
-                  className="mb-3 rounded"
-                  alt={project.name}
-                />
-                <div className="mb-1 text-sm font-medium ">{project.name}</div>
+              <ElectricPulse />
+              <AnimatedZap />
+              <Link href={project?.url} target="_blank" rel="noopener noreferrer" className="relative z-10 block">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Image
+                    src={project?.imageDark ? project?.imageDark : project.image}
+                    width={40}
+                    height={30}
+                    className="mb-3 rounded object-contain"
+                    alt={project.name}
+                  />
+                </motion.div>
+                <motion.div 
+                  className="mb-1 text-sm font-medium"
+                  whileHover={{ x: 3 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                >
+                  {project.name}
+                </motion.div>
                 <div className="max-w-[250px] text-sm font-normal text-gray-600 dark:text-gray-400">
                   {project.description}
                 </div>
@@ -113,8 +223,8 @@ const SpringAnimatedFeatures = () => {
             </motion.div>
           );
         })}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

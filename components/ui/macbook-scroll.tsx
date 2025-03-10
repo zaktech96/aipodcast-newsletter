@@ -24,6 +24,54 @@ import { IconCommand } from '@tabler/icons-react';
 import { IconCaretLeftFilled } from '@tabler/icons-react';
 import { IconCaretDownFilled } from '@tabler/icons-react';
 import Image from 'next/image';
+import { Zap } from 'lucide-react';
+
+// Electric pulse component
+const ElectricPulse = ({ className }: { className?: string }) => {
+  return (
+    <motion.div 
+      className={cn(
+        "absolute z-10 rounded-2xl bg-gradient-to-r from-green-400/30 to-emerald-500/30 backdrop-blur-sm",
+        className
+      )}
+      initial={{ opacity: 0 }}
+      animate={{ 
+        opacity: [0, 0.7, 0],
+        scale: [0.95, 1.05, 0.95],
+      }}
+      transition={{ 
+        duration: 3,
+        repeat: Infinity,
+        repeatType: "loop",
+        ease: "easeInOut"
+      }}
+    />
+  );
+};
+
+// Electric spark components
+const ElectricSpark = ({ top, left, delay }: { top: string, left: string, delay: number }) => {
+  return (
+    <motion.div
+      className="absolute z-10 text-green-400"
+      style={{ top, left }}
+      initial={{ opacity: 0, scale: 0, rotate: 0 }}
+      animate={{ 
+        opacity: [0, 1, 0],
+        scale: [0, 1, 0],
+        rotate: [0, 15, 0]
+      }}
+      transition={{ 
+        duration: 1, 
+        delay, 
+        repeat: Infinity, 
+        repeatDelay: Math.random() * 5 + 3
+      }}
+    >
+      <Zap size={16} />
+    </motion.div>
+  );
+};
 
 export const MacbookScroll = ({
   src,
@@ -60,12 +108,36 @@ export const MacbookScroll = ({
   return (
     <div
       ref={ref}
-      className="min-h-[120vh]  flex flex-col items-center py-0 md:py-80 justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.35] sm:scale-50"
+      className="min-h-[120vh] flex flex-col items-center py-0 md:py-80 justify-start flex-shrink-0 [perspective:800px] transform md:scale-100 scale-[0.35] sm:scale-50 relative"
     >
+      {/* Electric effects */}
+      <ElectricPulse className="inset-0 -z-1" />
+      <ElectricPulse className="inset-4 -z-1" />
+      
+      {/* Electric sparks */}
+      <ElectricSpark top="-5%" left="20%" delay={0.5} />
+      <ElectricSpark top="-2%" left="65%" delay={1.5} />
+      <ElectricSpark top="10%" left="90%" delay={2.5} />
+      <ElectricSpark top="20%" left="10%" delay={3.5} />
+      <ElectricSpark top="50%" left="85%" delay={1} />
+      
       {/* Lid */}
       <Lid src={src} scaleX={scaleX} scaleY={scaleY} rotate={rotate} translate={translate} />
+      
       {/* Base area */}
       <div className="h-[22rem] w-[32rem] bg-gray-200 dark:bg-[#272729] rounded-2xl overflow-hidden relative -z-10">
+        {/* Electric glow effect */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-green-500/10 z-0 opacity-0"
+          animate={{ 
+            opacity: [0, 0.7, 0],
+          }}
+          transition={{ 
+            duration: 3, 
+            repeat: Infinity, 
+            repeatType: "reverse" 
+          }}
+        />
         {/* above keyboard bar */}
         <div className="h-10 w-full relative">
           <div className="absolute inset-x-0 mx-auto w-[80%] h-4 bg-[#050505]" />
@@ -453,7 +525,7 @@ export const Keypad = () => {
             <span className="block">fn</span>
           </div>
           <div className="flex justify-start w-full pl-1">
-            <IconWorld className="h-[6px] w-[6px]" />
+            <span className="block">fn</span>
           </div>
         </KBtn>
         <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
