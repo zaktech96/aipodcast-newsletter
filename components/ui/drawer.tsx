@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -11,28 +11,37 @@ type DrawerProps = {
 };
 
 export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
-  // Prevent body scrolling when drawer is open
+  // Store the scroll position
+  const scrollPosRef = useRef(0);
+  
+  // Prevent body scrolling when drawer is open without jumping
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.top = `-${window.scrollY}px`;
+      // Save current scroll position first
+      scrollPosRef.current = window.scrollY;
+      
+      // Add a class to body instead of using inline styles
+      document.body.classList.add('drawer-open');
+      
+      // Apply the scroll position as a negative top margin 
+      document.body.style.top = `-${scrollPosRef.current}px`;
     } else {
-      const scrollY = document.body.style.top;
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
+      // Restore scroll position when drawer is closed
+      document.body.classList.remove('drawer-open');
       document.body.style.top = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      
+      // Only restore if we have a saved position
+      if (scrollPosRef.current) {
+        window.scrollTo({
+          top: scrollPosRef.current,
+          behavior: 'instant' // Instant to avoid animation
+        });
       }
     }
     
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
+      // Clean up in case component unmounts while drawer is open
+      document.body.classList.remove('drawer-open');
       document.body.style.top = '';
     };
   }, [isOpen]);

@@ -100,9 +100,10 @@ export default function NavBar() {
         setDrawerOpen(false);
         
         // Add a small delay before scrolling to allow drawer to close
+        // and the scroll position to be restored
         setTimeout(() => {
           performScroll(element);
-        }, 300);
+        }, 400); // Increased to give more time for drawer close animation
       } else {
         performScroll(element);
       }
