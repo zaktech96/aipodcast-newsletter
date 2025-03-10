@@ -26,21 +26,21 @@ import { IconCaretDownFilled } from '@tabler/icons-react';
 import Image from 'next/image';
 import { Zap } from 'lucide-react';
 
-// Electric pulse component
+// Electric pulse component - reduce opacity and intensity
 const ElectricPulse = ({ className }: { className?: string }) => {
   return (
     <motion.div 
       className={cn(
-        "absolute z-10 rounded-2xl bg-gradient-to-r from-green-400/30 to-emerald-500/30 backdrop-blur-sm",
+        "absolute z-10 rounded-2xl bg-gradient-to-r from-green-400/10 to-emerald-500/10 backdrop-blur-sm",
         className
       )}
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: [0, 0.7, 0],
-        scale: [0.95, 1.05, 0.95],
+        opacity: [0, 0.3, 0],
+        scale: [0.98, 1.02, 0.98],
       }}
       transition={{ 
-        duration: 3,
+        duration: 4,
         repeat: Infinity,
         repeatType: "loop",
         ease: "easeInOut"
@@ -49,15 +49,15 @@ const ElectricPulse = ({ className }: { className?: string }) => {
   );
 };
 
-// Electric spark components
+// Electric spark components - reduce visibility
 const ElectricSpark = ({ top, left, delay }: { top: string, left: string, delay: number }) => {
   return (
     <motion.div
-      className="absolute z-10 text-green-400"
+      className="absolute z-10 text-green-400/40"
       style={{ top, left }}
       initial={{ opacity: 0, scale: 0, rotate: 0 }}
       animate={{ 
-        opacity: [0, 1, 0],
+        opacity: [0, 0.4, 0],
         scale: [0, 1, 0],
         rotate: [0, 15, 0]
       }}
@@ -65,10 +65,10 @@ const ElectricSpark = ({ top, left, delay }: { top: string, left: string, delay:
         duration: 1, 
         delay, 
         repeat: Infinity, 
-        repeatDelay: Math.random() * 5 + 3
+        repeatDelay: Math.random() * 5 + 5 // Longer delay between appearances
       }}
     >
-      <Zap size={16} />
+      <Zap size={12} />
     </motion.div>
   );
 };
@@ -110,30 +110,26 @@ export const MacbookScroll = ({
       ref={ref}
       className="min-h-[120vh] flex flex-col items-center py-0 md:py-80 justify-start flex-shrink-0 [perspective:800px] transform md:scale-100 scale-[0.35] sm:scale-50 relative"
     >
-      {/* Electric effects */}
-      <ElectricPulse className="inset-0 -z-1" />
-      <ElectricPulse className="inset-4 -z-1" />
+      {/* Reduced number of electric effects */}
+      <ElectricPulse className="inset-0 -z-1 opacity-30" />
       
-      {/* Electric sparks */}
-      <ElectricSpark top="-5%" left="20%" delay={0.5} />
-      <ElectricSpark top="-2%" left="65%" delay={1.5} />
-      <ElectricSpark top="10%" left="90%" delay={2.5} />
-      <ElectricSpark top="20%" left="10%" delay={3.5} />
-      <ElectricSpark top="50%" left="85%" delay={1} />
+      {/* Only keep a couple sparks */}
+      <ElectricSpark top="-2%" left="65%" delay={2.5} />
+      <ElectricSpark top="20%" left="10%" delay={4.5} />
       
       {/* Lid */}
       <Lid src={src} scaleX={scaleX} scaleY={scaleY} rotate={rotate} translate={translate} />
       
-      {/* Base area */}
-      <div className="h-[22rem] w-[32rem] bg-gray-200 dark:bg-[#272729] rounded-2xl overflow-hidden relative -z-10">
-        {/* Electric glow effect */}
+      {/* Base area - improved coloring for the keyboard area */}
+      <div className="h-[22rem] w-[32rem] bg-gray-200 dark:bg-[#1e1e20] rounded-2xl overflow-hidden relative -z-10">
+        {/* Subtle electric glow effect */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-green-500/10 z-0 opacity-0"
+          className="absolute inset-0 bg-gradient-to-t from-green-500/2 via-transparent to-green-500/5 z-0 opacity-0"
           animate={{ 
-            opacity: [0, 0.7, 0],
+            opacity: [0, 0.3, 0],
           }}
           transition={{ 
-            duration: 3, 
+            duration: 4, 
             repeat: Infinity, 
             repeatType: "reverse" 
           }}
@@ -143,18 +139,18 @@ export const MacbookScroll = ({
           <div className="absolute inset-x-0 mx-auto w-[80%] h-4 bg-[#050505]" />
         </div>
         <div className="flex relative">
-          <div className="mx-auto w-[10%] overflow-hidden  h-full">
+          <div className="mx-auto w-[10%] overflow-hidden h-full">
             <SpeakerGrid />
           </div>
           <div className="mx-auto w-[80%] h-full">
             <Keypad />
           </div>
-          <div className="mx-auto w-[10%] overflow-hidden  h-full">
+          <div className="mx-auto w-[10%] overflow-hidden h-full">
             <SpeakerGrid />
           </div>
         </div>
         <Trackpad />
-        <div className="h-2 w-20 mx-auto inset-x-0 absolute bottom-0 bg-gradient-to-t from-[#272729] to-[#050505] rounded-tr-3xl rounded-tl-3xl" />
+        <div className="h-2 w-20 mx-auto inset-x-0 absolute bottom-0 bg-gradient-to-t from-[#1e1e20] to-[#050505] rounded-tr-3xl rounded-tl-3xl" />
         {showGradient && (
           <div className="h-40 w-full absolute bottom-0 inset-x-0 bg-gradient-to-t dark:from-black from-white via-white dark:via-black to-transparent z-50"></div>
         )}
@@ -209,15 +205,31 @@ export const Lid = ({
         }}
         className="h-[16rem] w-[32rem] absolute inset-0 bg-[#010101] rounded-2xl p-1"
       >
-        <div className="absolute inset-0 bg-[#272729] rounded-lg" />
-        <Image
-          src={src as string}
-          height={1366}
-          width={1024}
-          alt="macbook display"
-          className="object-cover object-center absolute rounded-lg inset-0 h-full w-full"
-          style={{ objectFit: 'cover' }}
-        />
+        <div className="absolute inset-0 bg-[#111112] rounded-lg" />
+        <motion.div
+          className="absolute inset-0 overflow-hidden rounded-lg z-10"
+          whileInView={{ 
+            boxShadow: [
+              "0 0 0 0 rgba(74, 222, 128, 0)",
+              "0 0 10px 2px rgba(74, 222, 128, 0.2)",
+              "0 0 0 0 rgba(74, 222, 128, 0)"
+            ]
+          }}
+          transition={{ 
+            duration: 3, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+        >
+          <Image
+            src={src as string}
+            height={1366}
+            width={1024}
+            alt="macbook display"
+            className="object-cover object-center absolute rounded-lg inset-0 h-full w-full"
+            style={{ objectFit: 'cover' }}
+          />
+        </motion.div>
       </motion.div>
     </div>
   );
