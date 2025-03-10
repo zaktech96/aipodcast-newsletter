@@ -23,7 +23,7 @@ const features = [
   {
     name: 'Scale with ease',
     description:
-      'Built on a rock-solid foundation with NextJS, TypeScript, and Tailwind CSS. Deploy with confidence and scale without worry.',
+      'Built on a rock-solid foundation with NextJS, TypeScript, and Tailwind CSS. Leveraging the best providers like Clerk, Supabase, and Vercel, everything is designed and optimized for scale. Deploy with confidence and scale without worry.',
     icon: Network,
   },
 ];
