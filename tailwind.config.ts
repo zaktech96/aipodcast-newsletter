@@ -16,6 +16,10 @@ const config = {
   // Enabling dark mode
   darkMode: 'class', // Assuming you want to enable dark mode based on the class strategy
   theme: {
+    // Adding font family
+    fontFamily: {
+      sora: ['Sora', 'sans-serif'],
+    },
     // Merging container configuration from the second file
     container: {
       center: true,

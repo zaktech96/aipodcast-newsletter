@@ -66,7 +66,7 @@ export default function HeroSection() {
         className="relative"
       >
         <motion.h1
-          className={`${TITLE_TAILWIND_CLASS} scroll-m-20 font-semibold tracking-tight text-center max-w-[1120px] bg-clip-text text-transparent bg-gradient-to-b from-gray-900 to-gray-600 dark:from-white dark:to-gray-400`}
+          className={`${TITLE_TAILWIND_CLASS} scroll-m-20 font-semibold tracking-tight text-center max-w-[1120px] text-white`}
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ 
