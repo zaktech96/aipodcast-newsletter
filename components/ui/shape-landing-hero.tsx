@@ -187,7 +187,7 @@ function HeroGeometric({
                         animate="visible"
                     >
                         <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
-                            The Ultimate NextJS Boilerplate for quickly building your Startup - Focus on your Product.
+                            A complete NextJS Boilerplate that handles infrastructure and common features, letting you focus exclusively on building your product.
                         </p>
                     </motion.div>
 

@@ -63,7 +63,7 @@ export const Footer = () => {
                 Titan
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
-                Powerful NextJS Boilerplate for Startups
+                Performant NextJS Boilerplate for Startups
               </p>
             </div>
             <div className="flex gap-20 flex-row">
