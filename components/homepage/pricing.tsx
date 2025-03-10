@@ -19,7 +19,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import { toast } from 'sonner';
 import { TITLE_TAILWIND_CLASS } from '@/utils/constants';
 import { useRouter } from 'next/navigation';
-import { PaymentSetupNotice } from '@/components/payment-setup-notice';
 import config from '@/config';
 
 type PricingSwitchProps = {
@@ -217,11 +216,6 @@ export default function Pricing() {
     }
   };
 
-  // Skip rendering if payments are not configured
-  if (!config.payments.enabled) {
-    return <PaymentSetupNotice />;
-  }
-
   const plans = [
     {
       title: 'Starter',
@@ -274,7 +268,7 @@ export default function Pricing() {
   return (
     <div>
       <PricingHeader
-        title="Simple, Transparent Pricing"
+        title="Example Pricing"
         subtitle="Choose the plan that's right for your team"
       />
       <PricingSwitch onSwitch={togglePricingPeriod} />

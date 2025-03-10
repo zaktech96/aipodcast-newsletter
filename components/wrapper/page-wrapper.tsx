@@ -59,7 +59,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   return (
     <>
       <NavBar />
-      <main className="flex min-w-screen min-h-screen flex-col items-center dark:bg-black/20 bg-transparent justify-between">
+      <main className="flex min-w-screen min-h-screen flex-col items-center bg-black justify-between">
         {children}
       </main>
       <Footer />

@@ -59,7 +59,7 @@ export default function SideBySide() {
   return (
     <motion.div 
       ref={ref}
-      className="overflow-hidden"
+      className="overflow-hidden bg-black py-16"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
@@ -70,16 +70,16 @@ export default function SideBySide() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="lg:max-w-lg">
-              <motion.p
-                className={`${TITLE_TAILWIND_CLASS} mt-2 font-semibold tracking-tight dark:text-white text-gray-900`}
+              <motion.h2
+                className="text-3xl md:text-4xl font-semibold tracking-tight text-white"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.5 }}
               >
                 A faster way to production
-              </motion.p>
+              </motion.h2>
               <motion.dl 
-                className="mt-10 max-w-xl space-y-8 leading-7 text-gray-600 lg:max-w-none"
+                className="mt-10 max-w-xl space-y-8 leading-7 text-gray-300 lg:max-w-none"
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
@@ -97,9 +97,9 @@ export default function SideBySide() {
                       stiffness: 100
                     }}
                   >
-                    <dt className="inline font-semibold dark:text-gray-100 text-gray-900">
+                    <dt className="inline font-semibold text-white mb-1 flex items-start">
                       <motion.div
-                        className="absolute left-1 top-1 h-5 w-5 text-green-500"
+                        className="absolute left-1 top-1 h-5 w-5 text-green-400"
                         whileHover={{ 
                           rotate: 360, 
                           scale: 1.2, 
@@ -121,14 +121,11 @@ export default function SideBySide() {
                       >
                         <feature.icon aria-hidden="true" />
                       </motion.div>
-                      <motion.span
-                        whileHover={{ color: "#10b981" }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <span className="text-green-400">
                         {feature.name}
-                      </motion.span>
-                    </dt>{' '}
-                    <dd className="inline dark:text-gray-400">{feature.description}</dd>
+                      </span>
+                    </dt>
+                    <dd className="block text-gray-400 mt-1 pl-0">{feature.description}</dd>
                   </motion.div>
                 ))}
               </motion.dl>
@@ -139,8 +136,31 @@ export default function SideBySide() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
             transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex items-center justify-center"
           >
-            <OrbitingCirclesComponent />
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 blur-2xl opacity-50" />
+              
+              {/* Tech logos floating around as colored divs */}
+              <div className="relative max-w-xs">
+                <div className="absolute -top-10 right-8 w-10 h-10 bg-white rounded-md flex items-center justify-center opacity-80">
+                  <span className="text-black font-bold">N</span>
+                </div>
+                <div className="absolute -bottom-5 left-10 w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center opacity-80">
+                  <span className="text-white font-bold">TS</span>
+                </div>
+                <div className="absolute top-20 -left-6 w-12 h-12 bg-green-600 rounded-md flex items-center justify-center opacity-80">
+                  <span className="text-white font-bold">S</span>
+                </div>
+                <div className="absolute -right-4 top-10 w-10 h-10 bg-blue-400 rounded-md flex items-center justify-center opacity-80">
+                  <span className="text-white font-bold">R</span>
+                </div>
+                
+                <div className="text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600 py-6">
+                  Build Fast
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>

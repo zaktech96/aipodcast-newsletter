@@ -76,7 +76,7 @@ const ProjectsData = [
 const ElectricPulse = () => {
   return (
     <motion.div 
-      className="absolute -inset-0.5 rounded-md z-0 bg-gradient-to-r from-green-400 to-emerald-500 opacity-0 group-hover:opacity-100"
+      className="absolute -inset-0.5 rounded-md z-0 bg-gradient-to-r from-green-400/30 to-emerald-500/30 opacity-0 group-hover:opacity-100"
       initial={{ opacity: 0 }}
       animate={{ opacity: 0 }}
       whileHover={{ 
@@ -118,7 +118,7 @@ const SpringAnimatedFeatures = () => {
   return (
     <motion.div 
       ref={ref}
-      className="flex flex-col justify-center items-center lg:w-[75%]"
+      className="flex flex-col justify-center items-center lg:w-[75%] py-24 bg-black"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -130,7 +130,7 @@ const SpringAnimatedFeatures = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <h2
-          className={`${TITLE_TAILWIND_CLASS} mt-2 font-semibold tracking-tight dark:text-white text-gray-900`}
+          className="text-4xl md:text-5xl mt-2 font-semibold tracking-tight text-white text-center"
         >
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -156,7 +156,7 @@ const SpringAnimatedFeatures = () => {
           </motion.div>
         </h2>
         <motion.p 
-          className="mx-auto max-w-[600px] text-gray-600 dark:text-gray-400 text-center mt-2"
+          className="mx-auto max-w-[600px] text-gray-400 text-center mt-2"
           initial={{ y: 20, opacity: 0 }}
           animate={isInView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -192,7 +192,7 @@ const SpringAnimatedFeatures = () => {
                 }
               }}
               key={project.id}
-              className="mt-5 text-left border p-6 rounded-md dark:bg-black/50 bg-white/80 backdrop-blur-sm relative group"
+              className="mt-5 text-left border border-gray-800 p-6 rounded-md dark:bg-black/30 bg-gray-900 backdrop-blur-sm relative group"
             >
               <ElectricPulse />
               <AnimatedZap />
@@ -210,13 +210,13 @@ const SpringAnimatedFeatures = () => {
                   />
                 </motion.div>
                 <motion.div 
-                  className="mb-1 text-sm font-medium"
+                  className="mb-1 text-sm font-medium text-white"
                   whileHover={{ x: 3 }}
                   transition={{ type: "spring", stiffness: 300, damping: 10 }}
                 >
                   {project.name}
                 </motion.div>
-                <div className="max-w-[250px] text-sm font-normal text-gray-600 dark:text-gray-400">
+                <div className="max-w-[250px] text-sm font-normal text-gray-400">
                   {project.description}
                 </div>
               </Link>
