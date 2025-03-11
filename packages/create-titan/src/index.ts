@@ -268,7 +268,7 @@ async function main() {
       return value;
     };
     
-    const clerkPublishableKey = await promptWithConfirmation('Enter your Clerk Publishable Key:', 'password');
+    const clerkPublishableKey = await promptWithConfirmation('Enter your Clerk Public Key:', 'password');
     const clerkSecretKey = await promptWithConfirmation('Enter your Clerk Secret Key:', 'password');
     
     const authConfig = {
