@@ -582,13 +582,6 @@ ${projectDescription}
     // Write final .env file
     await fs.writeFile(path.join(projectDir, '.env'), envContent);
 
-    console.log(chalk.green('\n✨ Project created and pushed to GitHub successfully! ✨'));
-    console.log(chalk.cyan('\nNext steps:'));
-    console.log(chalk.cyan('1. cd into your project'));
-    console.log(chalk.cyan('2. Run bun install'));
-    console.log(chalk.cyan('3. Run bun run db:init to set up your database'));
-    console.log(chalk.cyan('4. Run bun dev to start the development server'));
-
     // Update layout.tsx with project-specific content
     spinner.start('Customizing application layout...');
     const layoutPath = path.join(projectDir, 'app', 'layout.tsx');

@@ -489,12 +489,6 @@ ${projectDescription}
     await execa(...gitInit, [], { cwd: projectDir });
     spinner.succeed("Git repository initialized");
     await fs.writeFile(path.join(projectDir, ".env"), envContent);
-    console.log(chalk.green("\n\u2728 Project created and pushed to GitHub successfully! \u2728"));
-    console.log(chalk.cyan("\nNext steps:"));
-    console.log(chalk.cyan("1. cd into your project"));
-    console.log(chalk.cyan("2. Run bun install"));
-    console.log(chalk.cyan("3. Run bun run db:init to set up your database"));
-    console.log(chalk.cyan("4. Run bun dev to start the development server"));
     spinner.start("Customizing application layout...");
     const layoutPath = path.join(projectDir, "app", "layout.tsx");
     const formatProjectName = (name) => {
