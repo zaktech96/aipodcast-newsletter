@@ -250,7 +250,7 @@ async function main() {
         const confirmation = await prompts({
           type: 'text',
           name: 'confirmed',
-          message: 'Are you sure you\'ve inputted that env var correctly?',
+          message: 'Are you sure you\'ve inputted that env var correctly? (Type "yes" to proceed)',
         }, {
           onCancel: () => {
             console.log('\nSetup cancelled');

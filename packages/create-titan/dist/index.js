@@ -208,7 +208,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
         const confirmation = await prompts({
           type: "text",
           name: "confirmed",
-          message: "Are you sure you've inputted that env var correctly?"
+          message: `Are you sure you've inputted that env var correctly? (Type "yes" to proceed)`
         }, {
           onCancel: () => {
             console.log("\nSetup cancelled");
