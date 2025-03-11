@@ -673,8 +673,7 @@ export default function RootLayout({
     console.log(chalk.green('\n✨ Project created and pushed to GitHub successfully! ✨'));
     console.log(chalk.cyan('\nNext steps:'));
     console.log(chalk.cyan('1. cd into your project'));
-    console.log(chalk.cyan('2. Run bun install'));
-    console.log(chalk.cyan('3. Run bun run db:init to set up your database'));
+    console.log(chalk.cyan('2. Run bun i'));
     console.log(chalk.cyan('4. Run bun dev to start the development server'));
   } catch (error) {
     if (spinner) spinner.fail('Failed to create project');
