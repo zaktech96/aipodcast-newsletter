@@ -447,7 +447,7 @@ async function main() {
     // Payments Configuration
     spinner.stop();
     
-    const stripePublicKey = await promptWithConfirmation('Enter your Stripe Public Key:');
+    const stripePublicKey = await promptWithConfirmation('Enter your Stripe Publishable Key:');
     const stripeSecretKey = await promptWithConfirmation('Enter your Stripe Secret Key:', 'password');
     const stripePriceId = await promptWithConfirmation('Enter your Stripe Price ID:');
     

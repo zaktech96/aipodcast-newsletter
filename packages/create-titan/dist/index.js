@@ -386,7 +386,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
       console.log(chalk.cyan("  bun run db:push"));
     }
     spinner.stop();
-    const stripePublicKey = await promptWithConfirmation("Enter your Stripe Public Key:");
+    const stripePublicKey = await promptWithConfirmation("Enter your Stripe Publishable Key:");
     const stripeSecretKey = await promptWithConfirmation("Enter your Stripe Secret Key:", "password");
     const stripePriceId = await promptWithConfirmation("Enter your Stripe Price ID:");
     const paymentConfig = {
