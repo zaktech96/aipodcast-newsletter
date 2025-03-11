@@ -408,7 +408,7 @@ Error: Directory ${projectName} already exists. Please choose a different name o
 `;
     spinner.succeed("Payments configured");
     spinner.stop();
-    const plunkApiKey = await promptWithConfirmation("Enter your Plunk API Key:");
+    const plunkApiKey = await promptWithConfirmation("Enter your Plunk Secret API Key:");
     const emailConfig = {
       plunkApiKey
     };
