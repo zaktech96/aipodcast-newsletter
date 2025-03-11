@@ -321,9 +321,8 @@ Error: Directory ${projectName} already exists. Please choose a different name o
 
 `;
       await fs.writeFile(path.join(projectDir, ".env"), envContent);
-      console.log(chalk.yellow("\nDatabase setup is skipped during project creation."));
+      console.log(chalk.yellow("\nSupabase env variables are set. We're skipping database setup during project creation."));
       console.log(chalk.cyan("After installation, you can set up the database with:"));
-      console.log(chalk.cyan("  cd " + projectDir));
       console.log(chalk.cyan("  bun run db:init"));
     } else {
       spinner.stop();
