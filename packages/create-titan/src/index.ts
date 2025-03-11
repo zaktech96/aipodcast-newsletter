@@ -529,20 +529,28 @@ export default config;
     spinner.start('Setting up git repository...');
     try {
       // Fresh git setup
-      await execa('rm', ['-rf', '.git']);
-      await execa('git', ['init']);
-      await execa('git', ['add', '.']);
-      await execa('git', ['commit', '-m', 'Initial commit from Titan CLI']);
-      await execa('git', ['branch', '-M', 'main']); // Ensure we're on main branch
-      await execa('git', ['remote', 'add', 'origin', githubRepo]);
+      await execa('rm', ['-rf', path.join(projectDir, '.git')]);
+      await execa('git', ['init'], { cwd: projectDir });
+      await execa('git', ['add', '.'], { cwd: projectDir });
+      await execa('git', ['commit', '-m', 'Initial commit from Titan CLI'], { cwd: projectDir });
+      await execa('git', ['branch', '-M', 'main'], { cwd: projectDir }); // Ensure we're on main branch
+      
+      // Remove any existing origin and add the new one
+      try {
+        await execa('git', ['remote', 'remove', 'origin'], { cwd: projectDir });
+      } catch (error) {
+        // It's okay if there was no origin to remove
+      }
+      
+      await execa('git', ['remote', 'add', 'origin', githubRepo], { cwd: projectDir });
 
       // Try to push to main branch
       try {
-        await execa('git', ['push', '-u', 'origin', 'main', '--force']);
+        await execa('git', ['push', '-u', 'origin', 'main', '--force'], { cwd: projectDir });
       } catch (pushError) {
         // If main push fails, try master branch
-        await execa('git', ['branch', '-M', 'master']);
-        await execa('git', ['push', '-u', 'origin', 'master', '--force']);
+        await execa('git', ['branch', '-M', 'master'], { cwd: projectDir });
+        await execa('git', ['push', '-u', 'origin', 'master', '--force'], { cwd: projectDir });
       }
 
       spinner.succeed('Git repository setup complete');
@@ -574,13 +582,9 @@ ${projectDescription}
     }
 
     // Remove .git folder and initialize new git repository
-    spinner.start('Initializing and pushing to git repository...');
-    await execa(...rmrf, [path.join(projectDir, '.git')]);
-    await execa(...gitInit, [], { cwd: projectDir });
-    spinner.succeed('Git repository initialized');
-
-    // Write final .env file
+    spinner.start('Writing final configurations...');
     await fs.writeFile(path.join(projectDir, '.env'), envContent);
+    spinner.succeed('Final configurations written');
 
     // Update layout.tsx with project-specific content
     spinner.start('Customizing application layout...');
