@@ -14,27 +14,27 @@ export default function Home() {
         <HeroSection />
       </section>
       
-      <section id="benefits" className="flex py-24 md:py-32 w-full justify-center items-center px-4 sm:px-6">
+      <section id="benefits" className="flex py-24 md:py-24 w-full justify-center items-center px-4 sm:px-6">
         <SideBySide />
       </section>
       
-      <section id="stack" className="flex flex-col py-24 md:py-32 w-full justify-center items-center px-4 sm:px-6">
+      <section id="tech-stack" className="flex flex-col py-24 md:py-12 w-full justify-center items-center px-4 sm:px-6">
         <MarketingCards />
       </section>
       
-      <section id="pricing" className="flex justify-center items-center w-full py-24 md:py-32 min-h-[600px] px-4 sm:px-6">
+      <section id="pricing" className="flex justify-center items-center w-full py-24 md:py-16 min-h-[600px] px-4 sm:px-6">
         <div className="w-full max-w-6xl mx-auto">
           <Pricing />
         </div>
       </section>
       
-      <section id="waitlist" className="flex justify-center items-center w-full py-24 md:py-32 min-h-[400px] px-4 sm:px-6">
+      <section id="waitlist" className="flex justify-center items-center w-full py-24 md:py-24 min-h-[400px] px-4 sm:px-6">
         <div className="w-full max-w-2xl mx-auto">
           <WaitlistForm />
         </div>
       </section>
       
-      <section id="faq" className="flex justify-center items-center w-full py-24 md:py-32 px-4 sm:px-6">
+      <section id="faq" className="flex justify-center items-center w-full py-24 md:py-24 px-4 sm:px-6">
         <FAQ />
       </section>
       
