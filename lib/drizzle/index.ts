@@ -1,8 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { createBrowserClient, createServerClient as createSupabaseServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { SupabaseClient } from '@supabase/supabase-js';
 import * as schema from '@/db/schema';
 
@@ -47,6 +45,8 @@ export async function createServerClient(): Promise<SupabaseClient> {
     );
   }
 
+  // Import cookies dynamically to prevent headers() errors at module initialization
+  const { cookies } = await import('next/headers');
   const cookieStore = await cookies();
 
   const supabase = createSupabaseServerClient(
@@ -54,14 +54,32 @@ export async function createServerClient(): Promise<SupabaseClient> {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        get(name) {
+          const cookie = cookieStore.get(name);
+          return cookie?.value;
         },
-        set(name: string, value: string, options: Omit<ResponseCookie, 'name' | 'value'>) {
-          cookieStore.set({ name, value, ...options });
+        set(name, value, options) {
+          // Explicitly define all cookie properties to avoid object spreading
+          cookieStore.set({
+            name,
+            value,
+            path: options?.path,
+            domain: options?.domain,
+            maxAge: options?.maxAge,
+            httpOnly: options?.httpOnly,
+            secure: options?.secure,
+            sameSite: options?.sameSite,
+            expires: options?.expires,
+            priority: options?.priority,
+          });
         },
-        remove(name: string, options: Omit<ResponseCookie, 'name' | 'value'>) {
-          cookieStore.delete({ name, ...options });
+        remove(name, options) {
+          // Explicitly define all cookie properties to avoid object spreading
+          cookieStore.delete({
+            name,
+            path: options?.path,
+            domain: options?.domain,
+          });
         },
       },
     }

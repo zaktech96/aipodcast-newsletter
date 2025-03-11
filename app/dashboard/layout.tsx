@@ -2,10 +2,14 @@ import NotAuthorized from '@/components/not-authorized';
 import { isAuthorized } from '@/utils/data/user/isAuthorized';
 import { currentUser } from '@clerk/nextjs/server';
 import { ReactNode } from 'react';
-import DashboardSideBar from './_components/dashboard-side-bar';
 import DashboardTopNav from './_components/dashbord-top-nav';
+import { headers } from 'next/headers';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
+  // Force headers to be evaluated first to avoid headers() errors
+  await headers();
+  
+  // Then get the current user
   const user = await currentUser();
 
   const { authorized, message } = await isAuthorized(user?.id!);
@@ -15,10 +19,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   // }
 
   return (
-    <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
-      <DashboardSideBar />
+    <div className="min-h-screen w-full bg-background">
       <DashboardTopNav>
-        <main className="flex flex-col gap-4 p-4 lg:gap-6">{children}</main>
+        <main className="mx-auto max-w-7xl w-full p-4 sm:p-6 lg:p-8">{children}</main>
       </DashboardTopNav>
     </div>
   );

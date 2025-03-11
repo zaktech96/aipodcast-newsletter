@@ -5,10 +5,14 @@ import { createDirectClient } from '@/lib/drizzle';
 import { subscriptions } from '@/db/schema/subscriptions';
 import { eq } from 'drizzle-orm';
 import config from '@/config';
+import { headers } from 'next/headers';
 
 export const isAuthorized = async (
   userId: string
 ): Promise<{ authorized: boolean; message: string }> => {
+  // Force headers evaluation first to avoid headers() errors
+  await headers();
+  
   if (!config.payments.enabled) {
     return {
       authorized: true,

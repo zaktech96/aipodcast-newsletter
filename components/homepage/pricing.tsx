@@ -13,7 +13,6 @@ import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
 import { toast } from 'sonner';
@@ -165,10 +164,34 @@ export default function Pricing() {
   const [isYearly, setIsYearly] = useState<boolean>(false);
   const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1);
   
-  // Only use the Clerk hook if auth is enabled
-  const clerkUser = config.auth.enabled ? useUser() : { user: null, isLoaded: true, isSignedIn: false };
-  const { user } = clerkUser;
+  // Instead of using Clerk hook directly, use state with useEffect
+  const [user, setUser] = useState<any>(null);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  
   const router = useRouter();
+  
+  // Load Clerk only after component mount
+  useEffect(() => {
+    async function loadUserData() {
+      if (config.auth.enabled) {
+        try {
+          const { useUser } = await import('@clerk/nextjs');
+          const clerkUser = useUser();
+          setUser(clerkUser.user);
+          setIsLoaded(clerkUser.isLoaded);
+          setIsSignedIn(clerkUser.isSignedIn || false);
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          setIsLoaded(true);
+        }
+      } else {
+        setIsLoaded(true);
+      }
+    }
+    
+    loadUserData();
+  }, []);
   
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
   const ref = useRef(null);

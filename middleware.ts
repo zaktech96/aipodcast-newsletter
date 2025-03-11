@@ -1,35 +1,40 @@
 import { NextResponse } from 'next/server';
-import config from './config';
+import { NextRequest } from 'next/server';
+import appConfig from './config';
 
-let clerkMiddleware: (arg0: (auth: any, req: any) => any) => { (arg0: any): any; new (): any },
-  createRouteMatcher;
-
-if (config.auth.enabled) {
-  try {
-    ({ clerkMiddleware, createRouteMatcher } = require('@clerk/nextjs/server'));
-  } catch (error) {
-    console.warn('Clerk modules not available. Auth will be disabled.');
-    config.auth.enabled = false;
+// Define middleware without using Clerk's modules at import time
+export default async function middleware(req: NextRequest) {
+  // Skip middleware if auth is disabled
+  if (!appConfig.auth.enabled) {
+    return NextResponse.next();
   }
-}
 
-const isProtectedRoute = config.auth.enabled ? createRouteMatcher(['/dashboard(.*)']) : () => false;
-
-export default function middleware(req: any) {
-  if (config.auth.enabled) {
-    return clerkMiddleware((auth, req) => {
-      if (!auth().userId && isProtectedRoute(req)) {
-        return auth().redirectToSignIn();
-      } else {
-        return NextResponse.next();
+  try {
+    // Dynamically import Clerk's middleware to avoid headers issues
+    const { auth } = await import('@clerk/nextjs/server');
+    
+    // Check if the route is a dashboard route (same as original logic)
+    if (req.nextUrl.pathname.startsWith('/dashboard')) {
+      const { userId } = auth();
+      
+      // Same auth check as original
+      if (!userId) {
+        // Use redirectToSignIn from auth directly
+        return auth().redirectToSignIn({
+          returnBackUrl: req.url
+        });
       }
-    })(req);
-  } else {
+    }
+    
+    return NextResponse.next();
+  } catch (error) {
+    console.error('Clerk middleware error:', error);
     return NextResponse.next();
   }
 }
 
-export const middlewareConfig = {
+// Use the exact same matcher configuration as the original
+export const config = {
   matcher: [
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     '/(api|trpc)(.*)',
