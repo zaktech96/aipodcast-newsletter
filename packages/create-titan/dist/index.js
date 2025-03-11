@@ -442,7 +442,7 @@ export default config;
     spinner.succeed(chalk.green("Project configured successfully! \u{1F680}"));
     spinner.start("Installing dependencies...");
     try {
-      await execa("bun", ["install"], { stdio: "inherit" });
+      await execa("bun", ["install"], { stdio: "inherit", cwd: projectDir });
       spinner.succeed("Dependencies installed");
     } catch (error) {
       spinner.fail("Failed to install dependencies");
@@ -451,7 +451,7 @@ export default config;
     }
     spinner.start("Setting up git repository...");
     try {
-      await execa("rm", ["-rf", path.join(projectDir, ".git")]);
+      await execa("rm", ["-rf", path.join(projectDir, ".git")], { cwd: projectDir });
       await execa("git", ["init"], { cwd: projectDir });
       await execa("git", ["add", "."], { cwd: projectDir });
       await execa("git", ["commit", "-m", "Initial commit from Titan CLI"], { cwd: projectDir });
@@ -483,7 +483,7 @@ ${projectDescription}
 
 - Add todos here...
 `;
-    await fs.writeFile("README.md", readmeContent);
+    await fs.writeFile(path.join(projectDir, "README.md"), readmeContent);
     try {
       await fs.rm(path.join(projectDir, "packages"), { recursive: true, force: true });
     } catch (error) {
