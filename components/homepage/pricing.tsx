@@ -164,35 +164,12 @@ export default function Pricing() {
   const [isYearly, setIsYearly] = useState<boolean>(false);
   const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1);
   
-  // Instead of using Clerk hook directly, use state with useEffect
+  // Auth-related state - simplify since we know auth is disabled
   const [user, setUser] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(true); // Set to true initially since auth is disabled
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   
   const router = useRouter();
-  
-  // Load Clerk only after component mount
-  useEffect(() => {
-    async function loadUserData() {
-      if (config.auth.enabled) {
-        try {
-          const { useUser } = await import('@clerk/nextjs');
-          const clerkUser = useUser();
-          setUser(clerkUser.user);
-          setIsLoaded(clerkUser.isLoaded);
-          setIsSignedIn(clerkUser.isSignedIn || false);
-        } catch (error) {
-          console.error("Error loading user data:", error);
-          setIsLoaded(true);
-        }
-      } else {
-        setIsLoaded(true);
-      }
-    }
-    
-    loadUserData();
-  }, []);
-  
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.2 });
