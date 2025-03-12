@@ -6,7 +6,7 @@ const config = {
     enabled: false,
   },
   email: {
-    enabled: true,
+    enabled: false,
   },
 };
 
