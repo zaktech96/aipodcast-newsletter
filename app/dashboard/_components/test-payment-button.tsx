@@ -5,11 +5,17 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@clerk/nextjs';
 import { loadStripe } from '@stripe/stripe-js';
+import config from '@/config';
 
 // Load Stripe outside of component render to avoid recreating Stripe object on every render
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
 export function TestPaymentButton() {
+  // Return null if auth is disabled to prevent Clerk components from rendering
+  if (!config?.auth?.enabled) {
+    return null;
+  }
+  
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useUser();
