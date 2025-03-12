@@ -5,7 +5,7 @@ const requiredEnvVars = {
   payments: [
     'STRIPE_SECRET_KEY',
     'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
-    'NEXT_PUBLIC_STRIPE_PRICE_ID',
+    'NEXT_PUBLIC_STRIPE_PRODUCT_1_PRICE_ID',
   ],
   email: ['PLUNK_API_KEY'],
 } as const;
