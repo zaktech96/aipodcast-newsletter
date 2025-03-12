@@ -512,6 +512,7 @@ async function main() {
       envContent = `# Authentication - Clerk (https://clerk.dev)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
+CLERK_WEBHOOK_SECRET=your_clerk_webhook_secret
 
 # Clerk redirect URLs
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
@@ -534,6 +535,7 @@ FRONTEND_URL=http://localhost:3000
 STRIPE_SECRET_KEY=your_stripe_secret_key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 NEXT_PUBLIC_STRIPE_PRICE_ID=your_stripe_price_id
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 
 # Email - Plunk (https://useplunk.com)
 PLUNK_API_KEY=your_plunk_api_key
