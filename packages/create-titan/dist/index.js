@@ -465,8 +465,7 @@ PLUNK_API_KEY=your_plunk_api_key
 
 # NOTE: You need to replace the placeholder values with your actual credentials
 # before running the application. This file was created by create-titan CLI
-# with the "setup environment variables later" option.
-`;
+# with the "setup environment variables later" option.`;
       spinner.succeed("Created placeholder .env file with instructions");
     }
     await fs.writeFile(path.join(projectDir, ".env"), envContent);
@@ -499,29 +498,40 @@ export default config;
     }
     spinner.start("Setting up git repository...");
     try {
-      await execa("rm", ["-rf", path.join(projectDir, ".git")], { cwd: projectDir });
-      await execa("git", ["init"], { cwd: projectDir });
-      await execa("git", ["add", "."], { cwd: projectDir });
-      await execa("git", ["commit", "-m", "Initial commit from Titan CLI"], { cwd: projectDir });
-      await execa("git", ["branch", "-M", "main"], { cwd: projectDir });
+      await execa("rm", ["-rf", path.join(projectDir, ".git")]);
+      const originalDir = process.cwd();
+      process.chdir(projectDir);
+      await execa("git", ["init"]);
+      await execa("git", ["add", "."]);
+      await execa("git", ["commit", "-m", "Initial commit from Titan CLI"]);
+      await execa("git", ["branch", "-M", "main"]);
       try {
-        await execa("git", ["remote", "remove", "origin"], { cwd: projectDir });
+        await execa("git", ["remote", "remove", "origin"]);
       } catch (error) {
       }
-      await execa("git", ["remote", "add", "origin", githubRepo], { cwd: projectDir });
+      await execa("git", ["remote", "add", "origin", githubRepo]);
       try {
-        await execa("git", ["push", "-u", "origin", "main", "--force"], { cwd: projectDir });
+        await execa("git", ["push", "-u", "origin", "main", "--force"]);
       } catch (pushError) {
-        await execa("git", ["branch", "-M", "master"], { cwd: projectDir });
-        await execa("git", ["push", "-u", "origin", "master", "--force"], { cwd: projectDir });
+        await execa("git", ["branch", "-M", "master"]);
+        await execa("git", ["push", "-u", "origin", "master", "--force"]);
       }
+      process.chdir(originalDir);
       spinner.succeed("Git repository setup complete");
     } catch (error) {
+      try {
+        const originalDir = process.cwd();
+        if (originalDir !== projectDir) {
+          process.chdir(originalDir);
+        }
+      } catch (e) {
+      }
       spinner.warn("Git setup had some issues");
       console.log(chalk.yellow("\nTo push your code to GitHub manually:"));
-      console.log(chalk.cyan("1. git remote add origin " + githubRepo));
-      console.log(chalk.cyan("2. git branch -M main"));
-      console.log(chalk.cyan("3. git push -u origin main --force"));
+      console.log(chalk.cyan(`1. cd ${projectName}`));
+      console.log(chalk.cyan("2. git remote add origin " + githubRepo));
+      console.log(chalk.cyan("3. git branch -M main"));
+      console.log(chalk.cyan("4. git push -u origin main --force"));
     }
     const readmeContent = `# ${projectName}
 

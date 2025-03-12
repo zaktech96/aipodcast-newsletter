@@ -540,8 +540,7 @@ PLUNK_API_KEY=your_plunk_api_key
 
 # NOTE: You need to replace the placeholder values with your actual credentials
 # before running the application. This file was created by create-titan CLI
-# with the "setup environment variables later" option.
-`;
+# with the "setup environment variables later" option.`;
       spinner.succeed('Created placeholder .env file with instructions');
     }
 
@@ -582,38 +581,60 @@ export default config;
 
     spinner.start('Setting up git repository...');
     try {
-      // Fresh git setup
-      await execa('rm', ['-rf', path.join(projectDir, '.git')], { cwd: projectDir });
-      await execa('git', ['init'], { cwd: projectDir });
-      await execa('git', ['add', '.'], { cwd: projectDir });
-      await execa('git', ['commit', '-m', 'Initial commit from Titan CLI'], { cwd: projectDir });
-      await execa('git', ['branch', '-M', 'main'], { cwd: projectDir }); // Ensure we're on main branch
+      // First make sure we're removing the existing .git directory
+      await execa('rm', ['-rf', path.join(projectDir, '.git')]);
+      
+      // Store the original directory
+      const originalDir = process.cwd();
+      
+      // Change to the project directory for all git operations
+      process.chdir(projectDir);
+      
+      // Initialize new git repo
+      await execa('git', ['init']);
+      await execa('git', ['add', '.']);
+      await execa('git', ['commit', '-m', 'Initial commit from Titan CLI']);
+      await execa('git', ['branch', '-M', 'main']);
       
       // Remove any existing origin and add the new one
       try {
-        await execa('git', ['remote', 'remove', 'origin'], { cwd: projectDir });
+        await execa('git', ['remote', 'remove', 'origin']);
       } catch (error) {
         // It's okay if there was no origin to remove
       }
       
-      await execa('git', ['remote', 'add', 'origin', githubRepo], { cwd: projectDir });
+      await execa('git', ['remote', 'add', 'origin', githubRepo]);
 
       // Try to push to main branch
       try {
-        await execa('git', ['push', '-u', 'origin', 'main', '--force'], { cwd: projectDir });
+        await execa('git', ['push', '-u', 'origin', 'main', '--force']);
       } catch (pushError) {
         // If main push fails, try master branch
-        await execa('git', ['branch', '-M', 'master'], { cwd: projectDir });
-        await execa('git', ['push', '-u', 'origin', 'master', '--force'], { cwd: projectDir });
+        await execa('git', ['branch', '-M', 'master']);
+        await execa('git', ['push', '-u', 'origin', 'master', '--force']);
       }
+      
+      // Change back to original directory
+      process.chdir(originalDir);
 
       spinner.succeed('Git repository setup complete');
     } catch (error) {
+      // Make sure we're back in the original directory
+      try {
+        const originalDir = process.cwd();
+        if (originalDir !== projectDir) {
+          process.chdir(originalDir);
+        }
+      } catch (e) {
+        // Ignore errors when changing directory back
+      }
+      
       spinner.warn('Git setup had some issues');
       console.log(chalk.yellow('\nTo push your code to GitHub manually:'));
-      console.log(chalk.cyan('1. git remote add origin ' + githubRepo));
-      console.log(chalk.cyan('2. git branch -M main'));
-      console.log(chalk.cyan('3. git push -u origin main --force'));
+      console.log(chalk.cyan(`1. cd ${projectName}`));
+      console.log(chalk.cyan('2. git remote add origin ' + githubRepo));
+      console.log(chalk.cyan('3. git branch -M main'));
+      console.log(chalk.cyan('4. git push -u origin main --force'));
       // Continue with project creation
     }
 
