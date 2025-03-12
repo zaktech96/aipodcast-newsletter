@@ -65,7 +65,7 @@ export default function NavBar() {
       
       // Find the current active section
       const viewportHeight = window.innerHeight;
-      const viewportCenter = viewportHeight / 3; // Use the top third as the detection point
+      const viewportCenter = viewportHeight / 4; // Use the top quarter as detection point
       
       // Find the section that occupies the center of the screen
       const currentSection = sectionPositions.find(section => {
@@ -78,7 +78,7 @@ export default function NavBar() {
       // Default to hero if no section is active or we're at the top of the page
       if (currentSection) {
         setActiveSection(currentSection.section);
-      } else if (scrollPosition < 100) {
+      } else if (scrollPosition < 50) { // Reduced from 100
         setActiveSection('hero');
       }
     };

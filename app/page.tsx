@@ -10,15 +10,15 @@ import HeroSection from '@/components/homepage/hero-section';
 export default function Home() {
   return (
     <PageWrapper>
-      <section id="hero" className="w-full min-h-screen">
+      <section id="hero" className="w-full min-h-screen pt-24">
         <HeroSection />
       </section>
       
-      <section id="benefits" className="flex py-24 md:py-24 w-full justify-center items-center px-4 sm:px-6">
+      <section id="benefits" className="flex py-24 md:py-16 w-full justify-center items-center px-4 sm:px-6">
         <SideBySide />
       </section>
       
-      <section id="tech-stack" className="flex flex-col py-24 md:py-12 w-full justify-center items-center px-4 sm:px-6">
+      <section id="tech-stack" className="flex flex-col w-full justify-center items-center px-4 sm:px-6">
         <MarketingCards />
       </section>
       
