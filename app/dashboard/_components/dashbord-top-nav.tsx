@@ -15,7 +15,7 @@ export default function DashboardTopNav({ children }: { children: ReactNode }) {
           </Link>
         </div>
         <div className="flex justify-center items-center">
-          {config?.auth?.enabled && <UserProfile />}
+          <UserProfile />
         </div>
       </header>
       {children}

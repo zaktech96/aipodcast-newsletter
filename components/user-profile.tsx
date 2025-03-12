@@ -19,14 +19,16 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 export function UserProfile() {
+  // Return null early if auth is disabled to prevent Clerk components from rendering
+  if (!config?.auth?.enabled) {
+    return null;
+  }
+
   const router = useRouter();
   const pathname = usePathname();
   const isDashboardPage = pathname?.startsWith('/dashboard');
-
-  if (!config?.auth?.enabled) {
-    router.back();
-  }
   const { user } = useUser();
+  
   return (
     <div className="flex items-center gap-2">
       {!isDashboardPage && (

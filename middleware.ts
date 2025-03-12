@@ -1,6 +1,13 @@
 import { clerkMiddleware } from '@clerk/nextjs/server'
+import { NextRequest } from 'next/server'
+import appConfig from '@/config'
 
-export default clerkMiddleware()
+// Only use Clerk middleware if auth is enabled
+const middleware = appConfig?.auth?.enabled 
+  ? clerkMiddleware() 
+  : (req: NextRequest) => new Response(null)
+
+export default middleware
 
 export const config = {
   matcher: [
