@@ -263,10 +263,12 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event, supabase: Sup
         customer_details: JSON.stringify(session.customer_details),
         payment_intent: session.payment_intent,
         payment_time: dateTime,
+        payment_date: dateTime,
         currency: session.currency,
       };
 
-      console.log(`[STRIPE WEBHOOK] Inserting payment data:`, paymentData);
+      console.log(`[STRIPE WEBHOOK] Inserting payment data with fields:`, Object.keys(paymentData));
+      console.log(`[STRIPE WEBHOOK] Payment data values:`, paymentData);
       const { data: paymentsData, error: paymentsError } = await supabase
         .from('payments')
         .insert([paymentData]);
@@ -275,23 +277,11 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event, supabase: Sup
         throw new Error('Error inserting payment');
       }
       
-      const updatedCredits = Number(user?.[0]?.credits || 0) + (session.amount_total || 0) / 100;
-      console.log(`[STRIPE WEBHOOK] Updating user credits to ${updatedCredits} for user ID: ${metadata?.userId}`);
+      console.log(`[STRIPE WEBHOOK] Payment recorded successfully for session: ${session.id}`);
       
-      const { data: updatedUser, error: userUpdateError } = await supabase
-        .from('user')
-        .update({ credits: updatedCredits })
-        .eq('user_id', metadata?.userId);
-      if (userUpdateError) {
-        console.error(`[STRIPE WEBHOOK] Error updating user credits:`, userUpdateError);
-        throw new Error('Error updating user credits');
-      }
-
-      console.log(`[STRIPE WEBHOOK] Payment and credits updated successfully for session: ${session.id}`);
       return NextResponse.json({
         status: 200,
-        message: 'Payment and credits updated successfully',
-        updatedUser,
+        message: 'Payment recorded successfully',
       });
     } catch (error) {
       console.error('[STRIPE WEBHOOK] Error handling checkout session:', error);
@@ -300,6 +290,539 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event, supabase: Sup
         error,
       });
     }
+  }
+}
+
+async function handlePaymentIntentSucceeded(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing payment_intent.succeeded event: ${event.id}`);
+  
+  const paymentIntent = event.data.object as Stripe.PaymentIntent;
+  console.log(`[STRIPE WEBHOOK] Payment intent ID: ${paymentIntent.id}, Status: ${paymentIntent.status}`);
+  
+  // We don't need to do anything special here as the checkout.session.completed event
+  // will handle the payment recording. This handler is just to acknowledge the event.
+  return NextResponse.json({
+    status: 200,
+    message: 'Payment intent succeeded acknowledged',
+  });
+}
+
+async function handleRefund(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing charge.refunded event: ${event.id}`);
+  
+  const charge = event.data.object as Stripe.Charge;
+  console.log(`[STRIPE WEBHOOK] Charge ID: ${charge.id}, Amount refunded: ${charge.amount_refunded / 100}`);
+  
+  // Extract refund ID from the charge
+  const refundId = charge.refunds?.data[0]?.id || `refund_${charge.id}`;
+  
+  try {
+    // Check if this refund is already recorded in our database
+    console.log(`[STRIPE WEBHOOK] Checking if refund with ID ${refundId} already exists`);
+    const { data: existingRefund, error: existingRefundError } = await supabase
+      .from('refunds')
+      .select('*')
+      .eq('refund_id', refundId)
+      .maybeSingle();
+    
+    if (existingRefund) {
+      console.log(`[STRIPE WEBHOOK] Refund with ID ${refundId} already exists, skipping creation`);
+      return NextResponse.json({
+        status: 200,
+        message: 'Refund already exists in the database',
+      });
+    }
+    
+    // First, try to find the payment in the payments table
+    console.log(`[STRIPE WEBHOOK] Searching for payment with payment_intent: ${charge.payment_intent}`);
+    const { data: payment, error: paymentError } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('payment_intent', charge.payment_intent)
+      .maybeSingle();
+    
+    // If not found in payments, try to find in subscriptions
+    let paymentSource;
+    let userId;
+    let paymentId;
+    
+    if (payment) {
+      console.log(`[STRIPE WEBHOOK] Found payment in payments table: ${payment.id}`);
+      paymentSource = 'payment';
+      userId = payment.user_id;
+      paymentId = payment.id;
+    } else {
+      console.log(`[STRIPE WEBHOOK] Payment not found in payments table, checking subscriptions...`);
+      
+      // Get invoice from payment intent if available
+      let invoiceId = null;
+      if (charge.invoice) {
+        console.log(`[STRIPE WEBHOOK] Charge has invoice ID: ${charge.invoice}`);
+        invoiceId = charge.invoice;
+      }
+      
+      // Try to find in subscriptions using invoice ID or customer ID
+      const { data: subscription, error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('stripe_user_id', charge.customer)
+        .maybeSingle();
+      
+      if (subscription) {
+        console.log(`[STRIPE WEBHOOK] Found subscription for customer: ${charge.customer}`);
+        paymentSource = 'subscription';
+        userId = subscription.user_id;
+        paymentId = subscription.id;
+      } else {
+        console.log(`[STRIPE WEBHOOK] No record found in payments or subscriptions tables`);
+        return NextResponse.json({
+          status: 404,
+          error: 'No payment or subscription found for this refund',
+        });
+      }
+    }
+    
+    // Create a refund record
+    const refundData = {
+      payment_id: paymentId,
+      user_id: userId,
+      refund_id: refundId,
+      amount: charge.amount_refunded / 100,
+      currency: charge.currency,
+      refund_date: new Date().toISOString(),
+      status: 'completed',
+      reason: charge.refunds?.data[0]?.reason || 'requested_by_customer',
+      metadata: JSON.stringify({
+        charge_id: charge.id,
+        payment_intent: charge.payment_intent,
+        payment_source: paymentSource,
+        customer: charge.customer,
+        invoice: charge.invoice,
+        event_id: event.id,
+        event_type: event.type
+      })
+    };
+    
+    console.log(`[STRIPE WEBHOOK] Recording refund data:`, refundData);
+    
+    const { data: refundResult, error: refundError } = await supabase
+      .from('refunds')
+      .insert([refundData]);
+    
+    if (refundError) {
+      console.error(`[STRIPE WEBHOOK] Error recording refund:`, refundError);
+      return NextResponse.json({
+        status: 500,
+        error: 'Error recording refund',
+      });
+    }
+    
+    console.log(`[STRIPE WEBHOOK] Refund recorded successfully for charge: ${charge.id}`);
+    return NextResponse.json({
+      status: 200,
+      message: 'Refund recorded successfully',
+    });
+  } catch (error) {
+    console.error('[STRIPE WEBHOOK] Error handling refund:', error);
+    return NextResponse.json({
+      status: 500,
+      error: 'Error processing refund',
+    });
+  }
+}
+
+// Add a new handler for refund.updated events
+async function handleRefundUpdated(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing refund.updated event: ${event.id}`);
+  
+  const refund = event.data.object as Stripe.Refund;
+  console.log(`[STRIPE WEBHOOK] Refund ID: ${refund.id}, Status: ${refund.status}`);
+  
+  try {
+    // Find the refund in our database
+    const { data: existingRefund, error: findError } = await supabase
+      .from('refunds')
+      .select('*')
+      .eq('refund_id', refund.id)
+      .maybeSingle();
+    
+    if (existingRefund) {
+      // Update the existing refund
+      console.log(`[STRIPE WEBHOOK] Updating existing refund with ID: ${existingRefund.id}`);
+      
+      const { error: updateError } = await supabase
+        .from('refunds')
+        .update({
+          status: refund.status,
+          metadata: JSON.stringify({
+            ...JSON.parse(existingRefund.metadata || '{}'),
+            last_updated: new Date().toISOString(),
+            stripe_status: refund.status,
+            event_id: event.id,
+            event_type: event.type
+          })
+        })
+        .eq('id', existingRefund.id);
+      
+      if (updateError) {
+        console.error(`[STRIPE WEBHOOK] Error updating refund:`, updateError);
+        return NextResponse.json({
+          status: 500,
+          error: 'Error updating refund',
+        });
+      }
+      
+      console.log(`[STRIPE WEBHOOK] Refund updated successfully for ID: ${refund.id}`);
+      return NextResponse.json({
+        status: 200,
+        message: 'Refund updated successfully',
+      });
+    } else {
+      // This refund doesn't exist in our system yet, but we received an update
+      
+      // Early exit if there's a charge.refunded event already in progress for this refund
+      // This helps prevent race conditions with close timing between events
+      console.log(`[STRIPE WEBHOOK] Checking recent refunds for ID ${refund.id}`);
+      const fiveSecondsAgo = new Date(Date.now() - 5000).toISOString();
+      const { data: recentRefunds } = await supabase
+        .from('refunds')
+        .select('*')
+        .gt('created_time', fiveSecondsAgo);
+        
+      if (recentRefunds && recentRefunds.length > 0) {
+        console.log(`[STRIPE WEBHOOK] Found ${recentRefunds.length} recent refunds, possible race condition. Waiting before creating new refund.`);
+        return NextResponse.json({
+          status: 202,
+          message: 'Possible race condition detected. Skipping to prevent duplicates.',
+        });
+      }
+      
+      console.log(`[STRIPE WEBHOOK] Refund not found in database, fetching charge data...`);
+      
+      if (!stripe) {
+        console.error('[STRIPE WEBHOOK] Missing STRIPE_SECRET_KEY environment variable');
+        return NextResponse.json({ error: 'Stripe configuration error' }, { status: 500 });
+      }
+      
+      // Get the charge ID to locate the payment
+      const chargeId = refund.charge;
+      if (!chargeId) {
+        console.error(`[STRIPE WEBHOOK] No charge ID found for refund: ${refund.id}`);
+        return NextResponse.json({
+          status: 400,
+          error: 'No charge ID associated with this refund',
+        });
+      }
+      
+      // Create a fake charge.refunded event and process it
+      const chargeEvent = {
+        id: `synthetic_${event.id}`,
+        type: 'charge.refunded',
+        data: {
+          object: await stripe.charges.retrieve(chargeId as string)
+        }
+      } as unknown as Stripe.Event;
+      
+      console.log(`[STRIPE WEBHOOK] Created synthetic charge.refunded event for charge: ${chargeId}`);
+      return await handleRefund(chargeEvent, supabase);
+    }
+  } catch (error) {
+    console.error('[STRIPE WEBHOOK] Error handling refund update:', error);
+    return NextResponse.json({
+      status: 500,
+      error: 'Error processing refund update',
+    });
+  }
+}
+
+// Add this new handler function after handleRefundUpdated and before webhooksHandler
+async function handleRefundFailed(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing refund.failed event: ${event.id}`);
+  
+  const refund = event.data.object as Stripe.Refund;
+  console.log(`[STRIPE WEBHOOK] Refund ID: ${refund.id}, Status: ${refund.status}`);
+  
+  try {
+    // Find the refund in our database - try multiple ways to find it
+    console.log(`[STRIPE WEBHOOK] Searching for refund with Stripe ID: ${refund.id}`);
+    
+    // First try with the exact ID
+    let { data: existingRefund, error: findError } = await supabase
+      .from('refunds')
+      .select('*')
+      .eq('refund_id', refund.id)
+      .maybeSingle();
+    
+    // If not found, try with the prefixed ID (some might be stored with 'refund_' prefix)
+    if (!existingRefund) {
+      console.log(`[STRIPE WEBHOOK] Not found with exact ID, trying with custom prefix`);
+      ({ data: existingRefund, error: findError } = await supabase
+        .from('refunds')
+        .select('*')
+        .eq('refund_id', `refund_${refund.charge}`)
+        .maybeSingle());
+    }
+    
+    // If still not found, try looking for the charge ID in metadata
+    if (!existingRefund) {
+      console.log(`[STRIPE WEBHOOK] Trying to find by charge ID: ${refund.charge}`);
+      const { data: allRefunds } = await supabase.from('refunds').select('*');
+      
+      if (allRefunds && allRefunds.length > 0) {
+        existingRefund = allRefunds.find(r => {
+          try {
+            const metadata = JSON.parse(r.metadata || '{}');
+            return metadata.charge_id === refund.charge;
+          } catch {
+            return false;
+          }
+        });
+      }
+    }
+    
+    if (existingRefund) {
+      // Update the existing refund
+      console.log(`[STRIPE WEBHOOK] Updating existing refund with ID: ${existingRefund.id} to failed/canceled status`);
+      
+      const { error: updateError } = await supabase
+        .from('refunds')
+        .update({
+          status: 'cancelled', // Using consistent spelling in the database
+          reason: refund.failure_reason || 'canceled_by_user',
+          metadata: JSON.stringify({
+            ...JSON.parse(existingRefund.metadata || '{}'),
+            last_updated: new Date().toISOString(),
+            stripe_status: refund.status, 
+            cancellation_time: new Date().toISOString(),
+            event_id: event.id,
+            event_type: event.type,
+            stripe_refund_id: refund.id // Store the Stripe refund ID explicitly
+          })
+        })
+        .eq('id', existingRefund.id);
+      
+      if (updateError) {
+        console.error(`[STRIPE WEBHOOK] Error updating refund:`, updateError);
+        return NextResponse.json({
+          status: 500,
+          error: 'Error updating refund status to cancelled',
+        });
+      }
+      
+      console.log(`[STRIPE WEBHOOK] Refund status updated to cancelled for ID: ${refund.id}`);
+      return NextResponse.json({
+        status: 200,
+        message: 'Refund status updated to cancelled',
+      });
+    } else {
+      console.log(`[STRIPE WEBHOOK] Refund not found in database for failed event, creating simple record`);
+      
+      // Create a minimal record if we can't find an existing one
+      if (refund.charge) {
+        const refundData = {
+          refund_id: refund.id,
+          amount: refund.amount / 100,
+          currency: refund.currency,
+          status: 'cancelled',
+          reason: refund.failure_reason || 'canceled_by_user',
+          refund_date: new Date().toISOString(),
+          metadata: JSON.stringify({
+            charge_id: refund.charge,
+            payment_intent: refund.payment_intent,
+            event_id: event.id,
+            event_type: event.type,
+            original_refund_status: refund.status
+          })
+        };
+        
+        const { error: insertError } = await supabase
+          .from('refunds')
+          .insert([refundData]);
+          
+        if (insertError) {
+          console.error(`[STRIPE WEBHOOK] Error creating cancelled refund record:`, insertError);
+        } else {
+          console.log(`[STRIPE WEBHOOK] Created new cancelled refund record for ID: ${refund.id}`);
+        }
+      }
+      
+      return NextResponse.json({
+        status: 200,
+        message: 'Refund failure recorded',
+      });
+    }
+  } catch (error) {
+    console.error('[STRIPE WEBHOOK] Error handling refund failure:', error);
+    return NextResponse.json({
+      status: 500,
+      error: 'Error processing refund failure',
+    });
+  }
+}
+
+// Add this new handler for refund.created events
+async function handleRefundCreated(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing refund.created event: ${event.id}`);
+  
+  const refund = event.data.object as Stripe.Refund;
+  console.log(`[STRIPE WEBHOOK] Refund ID: ${refund.id}, Amount: ${refund.amount / 100}`);
+  
+  // Check if we already have this refund in our database
+  const { data: existingRefund } = await supabase
+    .from('refunds')
+    .select('*')
+    .or(`refund_id.eq.${refund.id},refund_id.eq.refund_${refund.charge}`)
+    .maybeSingle();
+    
+  if (existingRefund) {
+    console.log(`[STRIPE WEBHOOK] Refund already exists in database, skipping creation`);
+    return NextResponse.json({
+      status: 200,
+      message: 'Refund already recorded',
+    });
+  }
+  
+  // We'll let the charge.refunded event handle the actual creation in most cases
+  // This is just a placeholder to acknowledge the event
+  console.log(`[STRIPE WEBHOOK] Refund creation will be handled by charge.refunded event`);
+  return NextResponse.json({
+    status: 200,
+    message: 'Refund creation event received',
+  });
+}
+
+// Add this new handler after handleRefundFailed
+async function handleChargeRefundUpdated(event: Stripe.Event, supabase: SupabaseClient) {
+  console.log(`[STRIPE WEBHOOK] Processing charge.refund.updated event: ${event.id}`);
+  
+  // For charge.refund.updated events, the structure is different
+  const refund = event.data.object as any; // Using any because the type here is non-standard
+  
+  // Extract the refund ID - may need to check different properties depending on the event structure
+  console.log(`[STRIPE WEBHOOK] Refund object:`, refund);
+  
+  // Try to get refund ID from different possible locations
+  let refundId = refund.id;
+  if (!refundId && refund.refund) {
+    refundId = refund.refund;
+  }
+  if (!refundId && refund.refunds && refund.refunds.data && refund.refunds.data.length > 0) {
+    refundId = refund.refunds.data[0].id;
+  }
+  
+  console.log(`[STRIPE WEBHOOK] Extracted refund ID: ${refundId}`);
+  
+  if (!refundId) {
+    console.error(`[STRIPE WEBHOOK] Could not extract refund ID from event`);
+    return NextResponse.json({
+      status: 400,
+      error: 'Could not extract refund ID from event',
+    });
+  }
+  
+  try {
+    // Search for the refund in our database with more flexible matching
+    console.log(`[STRIPE WEBHOOK] Searching for refund with ID: ${refundId}`);
+    
+    // Do a broader search to find the refund by checking both the refund_id field
+    // and also looking in the metadata JSON where we might have stored the ID
+    const { data: refunds, error: searchError } = await supabase
+      .from('refunds')
+      .select('*');
+    
+    if (searchError) {
+      console.error(`[STRIPE WEBHOOK] Error searching for refunds:`, searchError);
+      return NextResponse.json({
+        status: 500,
+        error: 'Error searching for refunds',
+      });
+    }
+    
+    // Find the matching refund either by refund_id or in metadata
+    let existingRefund = null;
+    if (refunds && refunds.length > 0) {
+      console.log(`[STRIPE WEBHOOK] Found ${refunds.length} total refunds, checking for match`);
+      
+      // First try direct match on refund_id
+      existingRefund = refunds.find(r => r.refund_id === refundId);
+      
+      // If not found, try looking in metadata
+      if (!existingRefund) {
+        existingRefund = refunds.find(r => {
+          try {
+            const metadata = JSON.parse(r.metadata || '{}');
+            return metadata.charge_id === refund.id || 
+                   metadata.refund_id === refundId ||
+                   r.metadata.includes(refundId);
+          } catch (e) {
+            return false;
+          }
+        });
+      }
+    }
+    
+    if (existingRefund) {
+      console.log(`[STRIPE WEBHOOK] Found matching refund with ID: ${existingRefund.id}`);
+      
+      // Determine the new status
+      let newStatus = 'updated';
+      if (refund.status === 'failed' || refund.status === 'canceled') {
+        newStatus = 'failed';
+      } else if (refund.status === 'succeeded') {
+        newStatus = 'completed';
+      } else if (refund.status) {
+        newStatus = refund.status;
+      }
+      
+      // Update the existing refund
+      console.log(`[STRIPE WEBHOOK] Updating existing refund status to: ${newStatus}`);
+      
+      const { error: updateError } = await supabase
+        .from('refunds')
+        .update({
+          status: newStatus,
+          metadata: JSON.stringify({
+            ...JSON.parse(existingRefund.metadata || '{}'),
+            last_updated: new Date().toISOString(),
+            event_id: event.id,
+            event_type: event.type,
+            charge_refund_updated: true
+          })
+        })
+        .eq('id', existingRefund.id);
+      
+      if (updateError) {
+        console.error(`[STRIPE WEBHOOK] Error updating refund:`, updateError);
+        return NextResponse.json({
+          status: 500,
+          error: 'Error updating refund',
+        });
+      }
+      
+      console.log(`[STRIPE WEBHOOK] Refund updated successfully for ID: ${existingRefund.id}`);
+      return NextResponse.json({
+        status: 200,
+        message: 'Refund updated successfully',
+      });
+    } else {
+      console.log(`[STRIPE WEBHOOK] No matching refund found for ID: ${refundId}`);
+      
+      // We couldn't find a matching refund record
+      // Since this is an update event, not having a record is unusual
+      // Let's log additional information to help debug
+      console.log(`[STRIPE WEBHOOK] Event data:`, event.data);
+      
+      return NextResponse.json({
+        status: 404,
+        message: 'No matching refund found in database. This may indicate an issue with event ordering.',
+      });
+    }
+  } catch (error) {
+    console.error('[STRIPE WEBHOOK] Error handling charge.refund.updated:', error);
+    return NextResponse.json({
+      status: 500,
+      error: 'Error processing charge.refund.updated',
+    });
   }
 }
 
@@ -346,7 +869,10 @@ async function webhooksHandler(
 
   // Handle the events
   try {
-    switch (event.type) {
+    // Use type assertion to handle event types not included in Stripe's type definitions
+    const eventType = event.type as string;
+    
+    switch (eventType) {
       case 'customer.subscription.created':
         console.log(`[STRIPE WEBHOOK] Processing customer.subscription.created event: ${event.id}`);
         return await handleSubscriptionEvent(event, 'created', supabase);
@@ -365,10 +891,28 @@ async function webhooksHandler(
       case 'checkout.session.completed':
         console.log(`[STRIPE WEBHOOK] Processing checkout.session.completed event: ${event.id}`);
         return await handleCheckoutSessionCompleted(event, supabase);
+      case 'payment_intent.succeeded':
+        console.log(`[STRIPE WEBHOOK] Processing payment_intent.succeeded event: ${event.id}`);
+        return await handlePaymentIntentSucceeded(event, supabase);
+      case 'charge.refunded':
+        console.log(`[STRIPE WEBHOOK] Processing charge.refunded event: ${event.id}`);
+        return await handleRefund(event, supabase);
+      case 'refund.updated':
+        console.log(`[STRIPE WEBHOOK] Processing refund.updated event: ${event.id}`);
+        return await handleRefundUpdated(event, supabase);
+      case 'refund.failed':
+        console.log(`[STRIPE WEBHOOK] Processing refund.failed event: ${event.id}`);
+        return await handleRefundFailed(event, supabase);
+      case 'charge.refund.updated':
+        console.log(`[STRIPE WEBHOOK] Processing charge.refund.updated event: ${event.id}`);
+        return await handleChargeRefundUpdated(event, supabase);
+      case 'refund.created':
+        console.log(`[STRIPE WEBHOOK] Processing refund.created event: ${event.id}`);
+        return await handleRefundCreated(event, supabase);
       default:
-        console.log(`[STRIPE WEBHOOK] Unhandled event type: ${event.type}`);
+        console.log(`[STRIPE WEBHOOK] Unhandled event type: ${eventType}`);
         return NextResponse.json(
-          { received: true, event: event.type },
+          { received: true, event: eventType },
           { status: 200 }
         );
     }

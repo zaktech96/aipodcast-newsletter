@@ -3,10 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowUpRight, LineChart, Users, Activity, Layers, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { BarChartBetter } from './_components/bar-chart-better';
+import { TestPaymentButton } from './_components/test-payment-button';
 
 export default async function Dashboard() {
   return (
     <div className="space-y-8">
+      {/* Page Header with Test Payment Button */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <TestPaymentButton />
+      </div>
+      
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
