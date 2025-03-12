@@ -4,6 +4,7 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
+import { sendWelcomeEmail } from '@/lib/welcome-email-service';
 
 export async function POST(req: Request) {
   console.log(`[CLERK WEBHOOK] Received webhook request at ${new Date().toISOString()}`);
@@ -81,9 +82,18 @@ export async function POST(req: Request) {
 
         console.log(`[CLERK WEBHOOK] User successfully created in database for user ID: ${id}`);
         
+        // Send welcome email
+        if (userData.email) {
+          console.log(`[CLERK WEBHOOK] Sending welcome email to ${userData.email}`);
+          await sendWelcomeEmail({
+            to: userData.email,
+            firstName: userData.first_name,
+          });
+        }
+        
         return NextResponse.json({
           status: 200,
-          message: 'User info inserted',
+          message: 'User info inserted and welcome email sent',
         });
       } catch (error: any) {
         console.error(`[CLERK WEBHOOK] Error creating user in database:`, error);

@@ -1,12 +1,12 @@
 const config = {
   auth: {
-    enabled: true,
+    enabled: false,
   },
   payments: {
-    enabled: true,
+    enabled: false,
   },
   email: {
-    enabled: false,
+    enabled: true,
   },
 };
 
