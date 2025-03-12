@@ -303,7 +303,7 @@ export default function Pricing() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Start building with Titan for free, or upgrade to unlock all features. Our pricing is designed to scale with your business.
+            Add a hook here to encourage users to pay for your product!
           </motion.p>
           
           <PricingSwitch isYearly={isYearly} togglePricingPeriod={togglePricingPeriod} />
