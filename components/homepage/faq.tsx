@@ -88,7 +88,7 @@ export default function FAQ() {
                 Do you offer support for Titan?
               </AccordionTrigger>
               <AccordionContent className="text-gray-400 pb-4">
-                Yes. We offer community support through the #ask-for-help Discord channel in the Discord server.
+                Yes. We offer community support through the #ask-for-help Discord channel in the <a href="https://discord.gg/Gh67NqaY" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300">Discord Server</a>.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
