@@ -96,23 +96,6 @@ function HeroGeometric({
         }),
     };
 
-    const badgeHoverVariants = {
-        initial: { 
-            scale: 1,
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            boxShadow: "0 0 0 rgba(74, 222, 128, 0)",
-        },
-        hover: { 
-            scale: 1.05, 
-            backgroundColor: "rgba(255, 255, 255, 0.07)",
-            boxShadow: "0 0 10px rgba(74, 222, 128, 0.2)",
-            transition: {
-                duration: 0.2,
-                ease: "easeOut"
-            }
-        }
-    };
-
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.05] via-transparent to-emerald-500/[0.05] blur-3xl" />
@@ -166,29 +149,33 @@ function HeroGeometric({
 
             <div className="relative z-10 w-full mx-auto px-4 md:px-6">
                 <div className="max-w-3xl mx-auto text-center">
-                    <a 
-                        href="https://www.codeandcreed.tech/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block"
+                    <motion.div
+                        custom={0}
+                        variants={fadeUpVariants}
+                        initial="hidden"
+                        animate="visible"
                     >
-                        <motion.div
-                            custom={0}
-                            variants={{
-                                ...fadeUpVariants,
-                                ...badgeHoverVariants
-                            }}
-                            initial="hidden"
-                            animate="visible"
-                            whileHover="hover"
+                        <motion.a 
+                            href="https://www.codeandcreed.tech/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-green-500/[0.2] mb-8 md:mb-12 cursor-pointer"
+                            whileHover={{ 
+                                scale: 1.05, 
+                                backgroundColor: "rgba(255, 255, 255, 0.07)",
+                                boxShadow: "0 0 10px rgba(74, 222, 128, 0.2)",
+                            }}
+                            transition={{
+                                duration: 0.2,
+                                ease: "easeOut"
+                            }}
                         >
                             <Circle className="h-2 w-2 fill-green-500/80" />
                             <span className="text-sm text-white/60 tracking-wide">
                                 {badge}
                             </span>
-                        </motion.div>
-                    </a>
+                        </motion.a>
+                    </motion.div>
 
                     <motion.div
                         custom={1}
