@@ -75,9 +75,11 @@ function ElegantShape({
 }
 
 function HeroGeometric({
+    badge = "Powering Code&Creed Startups",
     title1 = "Build & Ship",
     title2 = "Fast",
 }: {
+    badge?: string;
     title1?: string;
     title2?: string;
 }) {
@@ -147,6 +149,19 @@ function HeroGeometric({
 
             <div className="relative z-10 w-full mx-auto px-4 md:px-6">
                 <div className="max-w-3xl mx-auto text-center">
+                    <motion.div
+                        custom={0}
+                        variants={fadeUpVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-green-500/[0.2] mb-8 md:mb-12"
+                    >
+                        <Circle className="h-2 w-2 fill-green-500/80" />
+                        <span className="text-sm text-white/60 tracking-wide">
+                            {badge}
+                        </span>
+                    </motion.div>
+
                     <motion.div
                         custom={1}
                         variants={fadeUpVariants}
