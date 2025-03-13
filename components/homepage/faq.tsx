@@ -76,7 +76,7 @@ export default function FAQ() {
                 Is Titan suitable for production?
               </AccordionTrigger>
               <AccordionContent className="text-gray-400 pb-4">
-                Yes, Titan is built for production use. All of the providers operate smoothly at high-scale. Vercel also takes care of a lot of the infrastructure for you (including DDOS protection). You shouldn't be worrying about any self-hosting until a significant amount of users are on your platform (e.g. 50,000 MAU).
+                Yes, Titan is built for production use. All of the providers operate smoothly at high-scale. Vercel also takes care of a lot of the infrastructure for you (including DDOS protection). You shouldn't be worrying about any self-hosting until a significant amount of users are on your platform (e.g. 100,000 MAU).
               </AccordionContent>
             </AccordionItem>
 
