@@ -8,14 +8,14 @@ This security audit evaluates the Titan SaaS template repository for potential s
 
 ### Strengths
 - Comprehensive Row Level Security (RLS) policies with optimized performance
-- Use of Clerk for authentication
+- Use of Clerk for authentication with proper webhook signature verification
 - Supabase integration with secure configuration patterns
 - Environment variable management with templates
+- Stripe webhooks with signature verification
 
 ### Areas for Improvement
 - Lack of API rate limiting despite dependencies being included
 - Missing CSP (Content Security Policy) implementation
-- Incomplete webhook handling security
 - Limited input validation
 - Missing CORS policy configuration
 
@@ -45,9 +45,7 @@ Several API security concerns were identified:
 
 1. **Rate Limiting**: Despite including the `@upstash/ratelimit` and `@upstash/redis` packages, no actual rate limiting implementation was found. This leaves the API vulnerable to brute force attacks and DoS.
 
-2. **Webhook Security**: While webhook endpoints exist, there's limited validation of webhook signatures, particularly for payment processing.
-
-3. **Input Validation**: Limited use of schema validation with Zod was observed, but not consistently across all API routes.
+2. **Input Validation**: Limited use of schema validation with Zod was observed, but not consistently across all API routes.
 
 ### Environment Variable Management
 
@@ -125,11 +123,8 @@ Using Cloudflare in front of Vercel provides better security against DDoS and ot
 2. **Add Content Security Policy**:
    Create a CSP in next.config.js or as HTTP headers.
 
-3. **Implement Webhook Signature Verification**:
-   Ensure all webhooks (Stripe, Clerk) verify signatures.
+3. **Add Input Validation** with Zod across all API routes.
 
-4. **Add Input Validation** with Zod across all API routes.
+4. **Set Up Regular Dependency Scanning** with tools like Dependabot.
 
-5. **Set Up Regular Dependency Scanning** with tools like Dependabot.
-
-6. **Add CORS Policies** to restrict API access to trusted domains. 
+5. **Add CORS Policies** to restrict API access to trusted domains. 
