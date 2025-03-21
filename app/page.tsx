@@ -6,6 +6,7 @@ import { WaitlistForm } from '@/lib/components/waitlist-form';
 import FloatingCTA from '@/components/homepage/floating-cta';
 import FAQ from '@/components/homepage/faq';
 import HeroSection from '@/components/homepage/hero-section';
+import { SecurityFeatures } from '@/components/homepage/security-features';
 
 export default function Home() {
   return (
@@ -20,6 +21,10 @@ export default function Home() {
       
       <section id="tech-stack" className="flex flex-col w-full justify-center items-center px-4 sm:px-6">
         <MarketingCards />
+      </section>
+      
+      <section id="security" className="w-full">
+        <SecurityFeatures />
       </section>
       
       <section id="pricing" className="flex justify-center items-center w-full py-24 md:py-16 min-h-[600px] px-4 sm:px-6">
