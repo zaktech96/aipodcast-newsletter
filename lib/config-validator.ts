@@ -8,6 +8,7 @@ const requiredEnvVars = {
     'NEXT_PUBLIC_STRIPE_PRODUCT_1_PRICE_ID',
   ],
   email: ['PLUNK_API_KEY'],
+  ratelimit: ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN'],
 } as const;
 
 function checkEnvVars(feature: keyof typeof requiredEnvVars): boolean {

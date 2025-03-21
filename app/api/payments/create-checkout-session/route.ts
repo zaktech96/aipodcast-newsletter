@@ -1,21 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { applyRateLimit } from '@/lib/ratelimit';
+import { z } from 'zod';
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : undefined;
 
+// Input validation schema
+const checkoutSchema = z.object({
+  userId: z.string().optional(),
+  email: z.string().email().optional(),
+  priceId: z.string().min(1, "Price ID is required"),
+  subscription: z.boolean().optional().default(false)
+});
+
 export async function POST(req: NextRequest) {
+  // Apply rate limiting
+  const rateLimit = await applyRateLimit(req, "payment");
+  if (!rateLimit.success) {
+    return new NextResponse(
+      JSON.stringify({ error: "Too many requests" }),
+      { 
+        status: 429, 
+        headers: rateLimit.headers 
+      }
+    );
+  }
+
   if (!stripe) {
     console.error('Missing STRIPE_SECRET_KEY environment variable');
     return NextResponse.json({ error: 'Stripe configuration error' }, { status: 500 });
   }
 
-  const { userId, email, priceId, subscription } = await req.json();
-
-  if (!priceId) {
-    return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
+  // Parse and validate request body
+  let body;
+  try {
+    body = await req.json();
+    const result = checkoutSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json({ 
+        error: 'Invalid request data',
+        details: result.error.format() 
+      }, { 
+        status: 400,
+        headers: rateLimit.headers
+      });
+    }
+    body = result.data;
+  } catch (e) {
+    return NextResponse.json({ 
+      error: 'Invalid JSON' 
+    }, { 
+      status: 400,
+      headers: rateLimit.headers
+    });
   }
+
+  const { userId, email, priceId, subscription } = body;
 
   if (subscription) {
     try {
@@ -32,10 +74,13 @@ export async function POST(req: NextRequest) {
         allow_promotion_codes: true,
       });
 
-      return NextResponse.json({ sessionId: session.id });
+      return NextResponse.json({ sessionId: session.id }, { headers: rateLimit.headers });
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 400 });
+      return NextResponse.json({ error: 'Failed to create checkout session' }, { 
+        status: 400,
+        headers: rateLimit.headers
+      });
     }
   } else {
     try {
@@ -51,10 +96,13 @@ export async function POST(req: NextRequest) {
         cancel_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cancel`,
       });
 
-      return NextResponse.json({ sessionId: session.id });
+      return NextResponse.json({ sessionId: session.id }, { headers: rateLimit.headers });
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 400 });
+      return NextResponse.json({ error: 'Failed to create checkout session' }, { 
+        status: 400,
+        headers: rateLimit.headers
+      });
     }
   }
 }

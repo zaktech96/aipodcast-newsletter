@@ -16,8 +16,54 @@ if (config.auth.enabled) {
 
 const isProtectedRoute = config.auth.enabled ? createRouteMatcher(['/dashboard(.*)']) : () => false;
 const isOnboardingRoute = config.auth.enabled ? createRouteMatcher(['/onboarding']) : () => false;
+const isApiRoute = (req: any) => req.nextUrl.pathname.startsWith('/api');
+
+// List of allowed origins for CORS - Add your frontend URL and other trusted domains
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  // Add more trusted domains if needed
+];
 
 export default function middleware(req: any) {
+  // Handle CORS for API routes
+  if (isApiRoute(req)) {
+    const origin = req.headers.get('origin');
+    
+    // Create base response
+    const response = NextResponse.next();
+    
+    // Always allow the built-in frontend to access the API
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Only allow specified origins
+    if (origin && allowedOrigins.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+    } else {
+      // For non-allowed origins, set origin to null (blocks the request in browsers)
+      response.headers.set('Access-Control-Allow-Origin', 'null');
+    }
+    
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      response.headers.set('Access-Control-Max-Age', '86400'); // 24 hours
+      
+      return response;
+    }
+    
+    // For clerk-based auth, proceed with auth check after setting CORS headers
+    if (config.auth.enabled) {
+      return clerkMiddleware(async (auth, req) => {
+        // Any additional auth checks for API routes
+        return response;
+      })(req);
+    }
+    
+    return response;
+  }
+
+  // Handle non-API routes with clerk middleware if enabled
   if (config.auth.enabled) {
     return clerkMiddleware(async (auth, req) => {
       const userId = auth().userId;
