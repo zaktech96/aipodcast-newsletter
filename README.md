@@ -12,6 +12,7 @@ NOTE: You'll only want to use this repo if you want to create an App idea that n
 - [Clerk](https://clerk.com/) - Authenticate your users (ban, impersonate etc.)
 - [Stripe](https://stripe.com/) - Collect Payments
 - [Plunk](https://useplunk.com/) - Send Emails Programmatically
+- [Upstash](https://upstash.com/) - Redis for rate limiting
 - [DataFast](https://datafa.st/) - User Analytics for Actionable Growth (Know exactly which marketing channels are working)
 - [UserJot](https://userjot.com/) - User Feedback/Bug-Reports and Product Roadmap
 - [GetFernand](https://getfernand.com/) - Fast, Calm Customer Support
