@@ -23,7 +23,7 @@ export default function Home() {
         <MarketingCards />
       </section>
       
-      <section id="security" className="w-full">
+      <section id="security" className="w-full py-24 md:py-16">
         <SecurityFeatures />
       </section>
       
