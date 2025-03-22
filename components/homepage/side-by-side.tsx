@@ -17,7 +17,7 @@ const features = [
   {
     name: 'Production Ready',
     description:
-      'Built with best-in-class tools for a professional experience. NextJS 15, TypeScript, Supabase, Clerk, Stripe, and more - all integrated and ready to go. No compromises on quality or performance.',
+      'Built with best-in-class providers for scale - all integrated and ready to go. Enterprise-grade security with row-level protection, API rate limiting, and comprehensive authentication. No compromises on quality, security or performance.',
     icon: Computer,
   },
   {

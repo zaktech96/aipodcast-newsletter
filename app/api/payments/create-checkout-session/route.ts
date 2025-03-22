@@ -67,12 +67,16 @@ export async function POST(req: NextRequest) {
           price: priceId,
           quantity: 1 
         }],
-        metadata: { userId, email, subscription },
+        metadata: { 
+          userId: userId?.toString() || '', 
+          email: email || '',
+          subscription: subscription ? 'true' : 'false'
+        },
         mode: 'subscription',
         success_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cancel`,
         allow_promotion_codes: true,
-      });
+      } as Stripe.Checkout.SessionCreateParams);
 
       return NextResponse.json({ sessionId: session.id }, { headers: rateLimit.headers });
     } catch (error) {
@@ -90,11 +94,15 @@ export async function POST(req: NextRequest) {
           price: priceId,
           quantity: 1 
         }],
-        metadata: { userId, email, subscription },
+        metadata: { 
+          userId: userId?.toString() || '', 
+          email: email || '',
+          subscription: subscription ? 'true' : 'false'
+        },
         mode: 'payment',
         success_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cancel`,
-      });
+      } as Stripe.Checkout.SessionCreateParams);
 
       return NextResponse.json({ sessionId: session.id }, { headers: rateLimit.headers });
     } catch (error) {

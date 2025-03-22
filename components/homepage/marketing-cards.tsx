@@ -142,6 +142,14 @@ const ProjectsData = [
     svgContent: `<svg aria-label="Vercel Logo" fill="white" viewBox="0 0 75 65" class="w-full h-full"><path d="M37.59.25l36.95 64H.64l36.95-64z"></path></svg>`,
     url: 'https://vercel.com',
   },
+  {
+    id: 12,
+    name: 'Upstash',
+    description: 'Serverless Redis for rate limiting and caching with global distribution and per-request pricing.',
+    image: '/icons/upstash-icon-dark-bg.png',
+    svgContent: null,
+    url: 'https://upstash.com',
+  },
 ];
 
 // Electric pulse animation component
