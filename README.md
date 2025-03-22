@@ -2,8 +2,6 @@
 
 Easy-to-setup, fully-featured, and customizable NextJS 15 Boilerplate.
 
-NOTE: You'll only want to use this repo if you want to create an App idea that needs Authentication and you'll be charging users for it (Payments). Otherwise, it's overkill.
-
 ## Tech Stack
 
 - [NextJS 15](https://nextjs.org/) - Full-Stack React framework
