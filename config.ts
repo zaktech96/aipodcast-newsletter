@@ -5,9 +5,6 @@ const config = {
   payments: {
     enabled: false,
   },
-  email: {
-    enabled: false,
-  },
 };
 
 export default config;

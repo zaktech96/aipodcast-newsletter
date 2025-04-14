@@ -1,1 +1,1 @@
-export const TITLE_TAILWIND_CLASS = 'text-2xl sm:text-2xl md:text-3xl lg:text-4xl';
+export const TITLE_TAILWIND_CLASS = 'text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none';
