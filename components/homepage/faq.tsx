@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
+import { FC } from 'react';
 
 const faqs = [
   {
@@ -39,7 +40,7 @@ const faqs = [
   },
 ] as const;
 
-export default function FAQ() {
+const FAQ: FC = () => {
   return (
     <div className="w-full max-w-3xl mx-auto">
       <motion.div
@@ -75,3 +76,5 @@ export default function FAQ() {
     </div>
   );
 }
+
+export default FAQ;

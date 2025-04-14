@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Brain, Clock, Globe, Share2, Sparkles, Target, Headphones, Youtube, Podcast } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { FC } from 'react';
 
 const features = [
   {
@@ -55,7 +56,7 @@ const features = [
   },
 ] as const;
 
-export default function Features() {
+const Features: FC = () => {
   return (
     <div className="container px-4 md:px-6">
       <div className="text-center space-y-4">
@@ -130,4 +131,6 @@ export default function Features() {
       </motion.div>
     </div>
   );
-} 
+}
+
+export default Features; 

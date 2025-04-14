@@ -1,4 +1,4 @@
-import Hero from '@/components/homepage/hero';
+import HeroSection from '@/components/homepage/hero-section';
 import Features from '@/components/homepage/features';
 import HowItWorks from '@/components/homepage/how-it-works';
 import Testimonials from '@/components/homepage/testimonials';
@@ -11,7 +11,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center">
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 bg-gradient-to-b from-background to-background/80">
-        <Hero />
+        <HeroSection />
       </section>
 
       {/* Features Grid */}
