@@ -4,9 +4,8 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Headphones, MessageSquareText, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { FC } from 'react';
 
-const HeroSection: FC = () => {
+export default function HeroSection() {
   return (
     <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
@@ -68,5 +67,3 @@ const HeroSection: FC = () => {
     </div>
   );
 }
-
-export default HeroSection;

@@ -3,11 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { FC } from 'react';
 
-interface CTAProps {}
-
-const CTA: FC<CTAProps> = () => {
+export default function CTA() {
   return (
     <div className="container px-4 md:px-6">
       <motion.div 
@@ -60,6 +57,4 @@ const CTA: FC<CTAProps> = () => {
       </motion.div>
     </div>
   );
-}
-
-export default CTA; 
+} 

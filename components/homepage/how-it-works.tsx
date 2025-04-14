@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { FileAudio, FileText, MessageSquareText, Send } from 'lucide-react';
-import { FC } from 'react';
 
 const steps = [
   {
@@ -31,7 +30,7 @@ const steps = [
   },
 ];
 
-const HowItWorks: FC = () => {
+export default function HowItWorks() {
   return (
     <div className="container px-4 md:px-6">
       <div className="text-center">
@@ -95,6 +94,4 @@ const HowItWorks: FC = () => {
       </div>
     </div>
   );
-}
-
-export default HowItWorks; 
+} 

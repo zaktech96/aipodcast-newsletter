@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
-import { FC } from 'react';
 
 const testimonials = [
   {
@@ -33,7 +32,7 @@ const testimonials = [
   },
 ] as const;
 
-const Testimonials: FC = () => {
+export default function Testimonials() {
   return (
     <div className="container px-4 md:px-6">
       <div className="text-center">
@@ -117,6 +116,4 @@ const Testimonials: FC = () => {
       </motion.div>
     </div>
   );
-}
-
-export default Testimonials; 
+} 

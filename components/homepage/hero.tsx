@@ -53,9 +53,9 @@ export default function Hero() {
             </div>
           </div>
         </motion.div>
-        
+
         {/* Right Preview */}
-        <motion.div
+        <motion.div 
           className="mx-auto w-full max-w-[400px] lg:max-w-none"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -76,22 +76,17 @@ export default function Hero() {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <h4 className="font-medium">The Future of AI in Business</h4>
-                      <p className="text-sm text-muted-foreground">Episode #142 • 55 minutes</p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      In this episode, we explore how artificial intelligence is transforming modern business practices. 
-                      Key discussion points include machine learning applications, ethical considerations, and practical implementation strategies.
-                    </p>
+                    <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-5/6 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
                   </div>
                   <div className="mt-6 pt-6 border-t">
                     <div className="text-sm font-medium mb-2">Key Takeaways</div>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li>• AI adoption rates have increased by 150% in the last year</li>
-                      <li>• Small businesses can benefit from AI through automation</li>
-                      <li>• Ethical considerations remain a top priority</li>
-                    </ul>
+                    <div className="space-y-2">
+                      <div className="h-3 w-full bg-muted rounded animate-pulse" />
+                      <div className="h-3 w-4/5 bg-muted rounded animate-pulse" />
+                      <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+                    </div>
                   </div>
                 </div>
               </div>
