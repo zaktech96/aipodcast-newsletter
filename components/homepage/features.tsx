@@ -1,114 +1,90 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Brain, Clock, FileText, Globe, MessageSquare, Share2, Sparkles, Target } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { Brain, Clock, Share2, BarChart3, Sparkles, Newspaper } from 'lucide-react';
 
 const features = [
   {
-    title: 'AI-Powered Analysis',
-    description: 'Advanced machine learning algorithms extract key insights and themes from your episodes with 95% accuracy.',
+    title: "AI-Powered Transcription",
+    description: "95% accurate transcription with speaker diarization, handling multiple accents and languages with ease.",
     icon: Brain,
+    color: "from-purple-500 to-pink-500"
   },
   {
-    title: 'Quick Summaries',
-    description: 'Get comprehensive episode summaries in under 5 minutes, saving hours of manual work.',
+    title: "Time-Saving Summaries",
+    description: "Reduce 1-hour episodes to 5-minute reads while preserving key insights and memorable quotes.",
     icon: Clock,
+    color: "from-blue-500 to-cyan-500"
   },
   {
-    title: 'Newsletter Integration',
-    description: 'Automatically generate engaging newsletters that keep your audience informed and coming back.',
-    icon: FileText,
-  },
-  {
-    title: 'Smart Highlights',
-    description: 'Automatically identify and extract key quotes, timestamps, and memorable moments.',
-    icon: Sparkles,
-  },
-  {
-    title: 'Multi-Platform Sharing',
-    description: 'Share your summaries across social media, blogs, and newsletters with one click.',
+    title: "Multi-Format Export",
+    description: "Generate newsletters, social posts, and blog articles automatically from your podcast content.",
     icon: Share2,
+    color: "from-green-500 to-emerald-500"
   },
   {
-    title: 'Audience Engagement',
-    description: 'Foster discussion with AI-generated conversation starters and key talking points.',
-    icon: MessageSquare,
+    title: "Engagement Analytics",
+    description: "Track content performance with detailed metrics on reader engagement and social sharing.",
+    icon: BarChart3,
+    color: "from-orange-500 to-red-500"
   },
   {
-    title: 'Global Reach',
-    description: 'Support for multiple languages helps you reach international audiences effectively.',
-    icon: Globe,
+    title: "Smart Highlights",
+    description: "AI identifies key moments, quotable segments, and trending topics from your episodes.",
+    icon: Sparkles,
+    color: "from-violet-500 to-purple-500"
   },
   {
-    title: 'Custom Focus',
-    description: 'Train the AI to focus on topics and themes that matter most to your audience.',
-    icon: Target,
-  },
+    title: "Newsletter Integration",
+    description: "Direct integration with popular email platforms for automated content distribution.",
+    icon: Newspaper,
+    color: "from-yellow-500 to-orange-500"
+  }
 ];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
 
 export default function Features() {
   return (
-    <div className="container px-4 md:px-6">
-      <div className="text-center">
+    <div className="container px-4 py-24 mx-auto">
+      <div className="text-center max-w-3xl mx-auto mb-16">
         <motion.h2 
-          className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          className="text-3xl font-bold tracking-tight sm:text-4xl mb-4"
         >
           Powerful Features for Podcast Creators
         </motion.h2>
-        <motion.p 
-          className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl"
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ delay: 0.1 }}
+          className="text-lg text-muted-foreground"
         >
-          Everything you need to transform your podcast content into engaging, shareable summaries
+          Everything you need to transform your podcast content into engaging written material that reaches a wider audience.
         </motion.p>
       </div>
 
-      <motion.div 
-        className="mx-auto mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-      >
-        {features.map((feature) => (
-          <motion.div key={feature.title} variants={itemVariants}>
-            <Card className="relative overflow-hidden p-6 hover:bg-muted/50 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <feature.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">{feature.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{feature.description}</p>
-                </div>
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature, index) => (
+          <motion.div
+            key={feature.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="p-6 h-full bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 backdrop-blur-sm border-2 hover:border-emerald-500/50 transition-all duration-300">
+              <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4`}>
+                <feature.icon className="w-6 h-6 text-white" />
               </div>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground">{feature.description}</p>
             </Card>
           </motion.div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 } 

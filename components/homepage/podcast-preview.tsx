@@ -38,102 +38,90 @@ Expert guest Dr. Michael Roberts shares insights from his 15 years of experience
 
 export default function PodcastPreview() {
   return (
-    <div className="container px-4 md:px-6 py-12">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">See It In Action</h2>
-        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-          Transform hour-long episodes into engaging, shareable content in minutes
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-4"
-        >
-          <Card className="p-6 border-2 border-emerald-500/20">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{samplePodcast.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{samplePodcast.host}</p>
-              </div>
-              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                <Clock className="w-4 h-4 mr-1" />
-                {samplePodcast.duration}
-              </div>
-            </div>
-            <div className="prose dark:prose-invert max-w-none">
-              <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line">
-                {samplePodcast.summary}
+    <div className="relative overflow-hidden bg-purple-50/50 dark:bg-purple-950/10">
+      <div className="container px-4 md:px-6 py-12">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl">
+                Transform Your Podcast Into
+                <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Engaging Content</span>
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Our AI-powered platform turns your episodes into compelling summaries, key takeaways, and shareable moments.
               </p>
             </div>
-          </Card>
 
-          <Card className="p-6 border-2 border-emerald-500/20">
-            <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white flex items-center">
-              <Sparkles className="w-5 h-5 mr-2 text-emerald-500" />
-              Key Takeaways
-            </h4>
-            <ul className="space-y-2">
-              {samplePodcast.keyTakeaways.map((takeaway, index) => (
-                <li key={index} className="text-gray-600 dark:text-gray-300 text-sm">
-                  • {takeaway}
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="space-y-4"
-        >
-          <Card className="p-6 border-2 border-emerald-500/20">
-            <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white flex items-center">
-              <MessageSquare className="w-5 h-5 mr-2 text-emerald-500" />
-              Episode Timeline
-            </h4>
-            <div className="space-y-2">
-              {samplePodcast.timestamps.map((stamp, index) => (
-                <div key={index} className="flex items-start">
-                  <span className="text-emerald-500 font-mono text-sm mr-3">{stamp.time}</span>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">{stamp.topic}</span>
+            <Card className="p-6 bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+              <div className="grid gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <Clock className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Save Time</h3>
+                    <p className="text-sm text-gray-500">Generate summaries in minutes, not hours</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="p-6 border-2 border-emerald-500/20">
-            <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white flex items-center">
-              <Share2 className="w-5 h-5 mr-2 text-emerald-500" />
-              Engagement Insights
-            </h4>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Sentiment</span>
-                <span className="text-sm font-medium text-emerald-500">{samplePodcast.engagement.sentiment}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Key Topics</span>
-                <div className="flex gap-2">
-                  {samplePodcast.engagement.topics.map((topic, index) => (
-                    <span key={index} className="text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-1 rounded-full">
-                      {topic}
-                    </span>
-                  ))}
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <Share2 className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Boost Engagement</h3>
+                    <p className="text-sm text-gray-500">Increase listener interaction by 3x</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <Sparkles className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">High Accuracy</h3>
+                    <p className="text-sm text-gray-500">95% accuracy in key point extraction</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Reading Time</span>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{samplePodcast.engagement.readingTime}</span>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative"
+          >
+            <Card className="p-6 bg-white dark:bg-gray-950 shadow-xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Latest Episode Summary</h3>
+                  <p className="text-sm text-gray-500">Generated in 5 minutes</p>
+                </div>
               </div>
-            </div>
-          </Card>
-        </motion.div>
+              <div className="space-y-4">
+                <div className="h-4 w-3/4 bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+                <div className="h-4 w-full bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+              </div>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+                <div className="text-sm font-medium mb-2">Key Takeaways</div>
+                <div className="space-y-2">
+                  <div className="h-3 w-full bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+                  <div className="h-3 w-4/5 bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+                  <div className="h-3 w-3/4 bg-purple-100 dark:bg-purple-900/30 rounded animate-pulse" />
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
