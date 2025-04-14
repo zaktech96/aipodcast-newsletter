@@ -13,15 +13,10 @@ interface SendWelcomeEmailParams {
 
 export async function sendWelcomeEmail({ to, firstName }: SendWelcomeEmailParams) {
   try {
-    // Skip sending if email is disabled in config
-    if (!config.email.enabled) {
-      console.log('[EMAIL] Skipping welcome email - email service is disabled in config');
-      return { success: false, error: 'Email service disabled' };
-    }
-
+    // Skip sending if PLUNK_API_KEY is not configured
     if (!process.env.PLUNK_API_KEY) {
-      console.error('[EMAIL] Missing PLUNK_API_KEY environment variable');
-      return { success: false, error: 'Missing API key' };
+      console.log('[EMAIL] Skipping welcome email - email service is not configured');
+      return { success: false, error: 'Email service not configured' };
     }
 
     const url = process.env.FRONTEND_URL || 'http://localhost:3000/dashboard';

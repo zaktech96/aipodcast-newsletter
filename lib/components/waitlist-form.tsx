@@ -4,7 +4,7 @@ import { useState } from 'react';
 import config from '@/config';
 
 export function WaitlistForm() {
-  if (!config.email.enabled) {
+  if (config.auth.enabled) {
     return null;
   }
 
