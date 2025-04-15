@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@clerk/nextjs':
-        specifier: ^5.0.7
+        specifier: ^5.7.5
         version: 5.7.5(next@15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@clerk/themes':
         specifier: ^2.2.20

@@ -1,15 +1,11 @@
-import Provider from '@/app/provider';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/sonner';
-import AuthWrapper from '@/components/wrapper/auth-wrapper';
-import { Analytics } from '@vercel/analytics/react';
-import type { Metadata } from 'next';
 import './globals.css';
-import { validateConfig } from '@/lib/config-validator';
 import '@fontsource/sora/400.css';
 import '@fontsource/sora/500.css';
 import '@fontsource/sora/600.css';
 import '@fontsource/sora/700.css';
+import { validateConfig } from '@/lib/config-validator';
+import ClientProviders from './providers';
+import type { Metadata } from 'next';
 
 // Validate config on app initialization
 validateConfig();
@@ -51,40 +47,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthWrapper>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" type="image/png" href="/favicon.png" />
-          <link
-            rel="preload"
-            href="https://utfs.io/f/31dba2ff-6c3b-4927-99cd-b928eaa54d5f-5w20ij.png"
-            as="image"
-          />
-          <link
-            rel="preload"
-            href="https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png"
-            as="image"
-          />
-        </head>
-
-        {/* REPLACE ME ---- Insert </script> tag for DataFast to analyse User traffic */}
-
-        <body className="font-sora">
-          <Provider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </Provider>
-          <Analytics />
-        </body>
-      </html>
-    </AuthWrapper>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link
+          rel="preload"
+          href="https://utfs.io/f/31dba2ff-6c3b-4927-99cd-b928eaa54d5f-5w20ij.png"
+          as="image"
+        />
+        <link
+          rel="preload"
+          href="https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png"
+          as="image"
+        />
+      </head>
+      <body className="font-sora">
+        <ClientProviders>{children}</ClientProviders>
+      </body>
+    </html>
   );
 }

@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import config from '@/config';
+import { dark } from '@clerk/themes';
 
 interface AuthWrapperProps {
   children: ReactNode;
@@ -15,7 +16,18 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     return <>{children}</>;
   }
 
-  return <ClerkProvider>{children}</ClerkProvider>;
+  return (
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+        variables: {
+          colorPrimary: '#10b981'
+        }
+      }}
+    >
+      {children}
+    </ClerkProvider>
+  );
 };
 
 export default AuthWrapper;
