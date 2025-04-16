@@ -72,23 +72,23 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="space-y-4 bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-center lg:text-left">Works with all major platforms</h3>
-              <div className="flex flex-wrap items-center gap-8 justify-center lg:justify-start">
+            <div className="space-y-4 bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-lg p-8">
+              <h3 className="text-2xl font-bold text-center lg:text-left">Works with all major platforms</h3>
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-12">
                 {platforms.map((platform) => (
                   <motion.div
                     key={platform.name}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex flex-col items-center lg:items-start gap-2"
+                    className="flex flex-col items-center gap-3"
                   >
                     <img 
                       src={platform.icon} 
                       alt={platform.name} 
-                      className="h-10 w-10 opacity-80 hover:opacity-100 transition-all duration-200"
+                      className="h-16 w-16 opacity-90 hover:opacity-100 transition-all duration-200"
                     />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">{platform.name}</span>
+                    <span className="text-lg text-gray-700 dark:text-gray-300">{platform.name}</span>
                   </motion.div>
                 ))}
               </div>
