@@ -47,24 +47,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <link
-          rel="preload"
-          href="https://utfs.io/f/31dba2ff-6c3b-4927-99cd-b928eaa54d5f-5w20ij.png"
-          as="image"
-        />
-        <link
-          rel="preload"
-          href="https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png"
-          as="image"
-        />
-      </head>
-      <body className="font-sora">
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="icon" type="image/png" href="/favicon.png" />
+          <link
+            rel="preload"
+            href="https://utfs.io/f/31dba2ff-6c3b-4927-99cd-b928eaa54d5f-5w20ij.png"
+            as="image"
+          />
+          <link
+            rel="preload"
+            href="https://utfs.io/f/69a12ab1-4d57-4913-90f9-38c6aca6c373-1txg2.png"
+            as="image"
+          />
+        </head>
+        <body className="font-sora">
         <ClientProviders>{children}</ClientProviders>
-      </body>
-    </html>
+        </body>
+      </html>
   );
 }
